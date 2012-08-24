@@ -1,0 +1,59 @@
+#pragma once
+
+#define WIN32_LEAN_AND_MEAN
+#include <Windows.h>
+#include <string>
+#include "GameTimer.h"
+
+using namespace std;
+
+class Graphics;
+class D3DCore;
+
+/**
+	Initializes the Win32 window.
+	This class should be inherited in all your applications.
+	Contains the game loop and a Graphics instance.
+	Declared as a global for convenience.
+*/
+class Runnable
+{
+public:
+	Runnable(HINSTANCE hInstance, string caption, int width, int height);
+	virtual ~Runnable();
+
+	// None-framwork methods.
+	int		Run();
+	bool	InitWin32();
+	void	SwitchScreenMode();
+	void	CalculateFrameStats();
+
+	// Framework methods.
+	virtual void Init();
+	virtual void Update(float dt) = 0;
+	virtual void Draw(Graphics* pGraphics) = 0;
+	virtual LRESULT MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
+	// Getters and setters.
+	void SetVisible(bool visible);
+	
+	HINSTANCE	GetInstance();
+	HWND		GetHwnd();	
+	int			GetScreenWidth();
+	int			GetScreenHeight();
+
+	D3DCore*	GetD3D();
+	Graphics*	GetGraphics();
+private:
+	Graphics*	mGraphics;
+	GameTimer	mTimer;
+	string		mCaption;
+	HINSTANCE	mhInstance;
+	HWND		mhMainWindow;
+	int			mScreenWidth;
+	int			mScreenHeight;
+
+};	// Class
+
+// Global
+extern Runnable* gGame;
