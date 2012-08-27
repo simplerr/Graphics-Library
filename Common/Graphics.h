@@ -1,8 +1,13 @@
 #pragma once
 
 #include <Windows.h>
+#include <string>
+
+using namespace std;
 
 class D3DCore;
+class Effect;
+class EffectManager;
 struct D3DXCOLOR;
 
 /**
@@ -17,10 +22,14 @@ public:
 	~Graphics();
 
 	bool Init(int clientWidth, int clientHeight, HWND hwnd, bool fullscreen = false);
-	void ClearScene(D3DXCOLOR color);
+	Effect* LoadEffect(string filename);
+	void ClearScene();
 	void Present();
+
+	void BuildVertexLayout();
 
 	D3DCore* GetD3D();
 private:
 	D3DCore* mD3DCore;
+	EffectManager* mEffectManager;
 };	// Class

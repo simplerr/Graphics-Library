@@ -4,9 +4,12 @@
 #include "Common\D3DCore.h"
 #include "Common\d3dUtil.h"
 #include "Common\Graphics.h"
+#include "Common\PrimitiveFactory.h"
+#include "Common\Object3D.h"
 
 // Set globals to nullptrs
 Runnable* gGame = nullptr;
+PrimitiveFactory* gPrimitiveFactory = nullptr;
 
 //! The program starts here.
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance, PSTR cmdLine, int showCmd)
@@ -27,28 +30,33 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance, PSTR cmdLine, in
 Game::Game(HINSTANCE hInstance, string caption, int width, int height)
 	: Runnable(hInstance, caption, width, height)
 {
-
+	
 }
 	
 Game::~Game()
 {
-
+	delete gPrimitiveFactory;
 }
 
 void Game::Init()
 {
 	// Important to run Systems Init() function.
 	Runnable::Init();
+
+	gPrimitiveFactory = new PrimitiveFactory();
+	mObject = new Object3D();
 }
 	
 void Game::Update(float dt)
 {
-
+	int ased = 1;
 }
 	
 void Game::Draw(Graphics* pGraphics)
 {
-	pGraphics->ClearScene(Colors::Cyan);
+	pGraphics->ClearScene();
+
+	mObject->Draw(pGraphics);
 
 	pGraphics->Present();
 }

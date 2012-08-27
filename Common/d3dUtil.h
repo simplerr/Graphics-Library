@@ -3,6 +3,7 @@
 #include <d3dx11.h>
 #include <dxerr.h>
 #include <assert.h>
+#include <Windows.h>
 #include <xnamath.h>
 #include <D3DX10math.h>
 
@@ -34,14 +35,14 @@
 // Convenient storage of often used colors.
 namespace Colors
 {
-	GLOBALCONST D3DXCOLOR White(1.0f, 1.0f, 1.0f, 1.0f);
-	GLOBALCONST D3DXCOLOR Black(0.0f, 0.0f, 0.0f, 1.0f);
-	GLOBALCONST D3DXCOLOR Red(1.0f, 0.0f, 0.0f, 1.0f);
-	GLOBALCONST D3DXCOLOR Green(0.0f, 1.0f, 0.0f, 1.0f);
-	GLOBALCONST D3DXCOLOR Blue(0.0f, 0.0f, 1.0f, 1.0f);
-	GLOBALCONST D3DXCOLOR Yellow(1.0f, 1.0f, 0.0f, 1.0f);
-	GLOBALCONST D3DXCOLOR Cyan(0.0f, 1.0f, 1.0f, 1.0f);
-	GLOBALCONST D3DXCOLOR Magenta(1.0f, 0.0f, 1.0f, 1.0f);
-	GLOBALCONST D3DXCOLOR Silver(0.75f, 0.75f, 0.75f, 1.0f);
-	GLOBALCONST D3DXCOLOR LightSteelBlue(0.69f, 0.77f, 0.87f, 1.0f);
+	GLOBALCONST XMVECTORF32 White     = {1.0f, 1.0f, 1.0f, 1.0f};
+	GLOBALCONST XMVECTORF32 Black     = {0.0f, 0.0f, 0.0f, 1.0f};
+	GLOBALCONST XMVECTORF32 Red       = {1.0f, 0.0f, 0.0f, 1.0f};
+	GLOBALCONST XMVECTORF32 Green     = {0.0f, 1.0f, 0.0f, 1.0f};
+	GLOBALCONST XMVECTORF32 Blue      = {0.0f, 0.0f, 1.0f, 1.0f};
+	GLOBALCONST XMVECTORF32 Yellow    = {1.0f, 1.0f, 0.0f, 1.0f};
+	GLOBALCONST XMVECTORF32 Cyan      = {0.0f, 1.0f, 1.0f, 1.0f};
+	GLOBALCONST XMVECTORF32 Magenta   = {1.0f, 0.0f, 1.0f, 1.0f};
+	GLOBALCONST XMVECTORF32 Silver    = {0.75f, 0.75f, 0.75f, 1.0f};
+	GLOBALCONST XMVECTORF32 LightSteelBlue = {0.69f, 0.77f, 0.87f, 1.0f};
 }

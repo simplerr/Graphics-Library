@@ -1,4 +1,8 @@
+#pragma once
+
 #include "Common\Runnable.h"
+
+class Object3D;
 
 class Game : public Runnable
 {
@@ -12,4 +16,5 @@ public:
 
 	LRESULT MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 private:
+	Object3D* mObject;
 };
