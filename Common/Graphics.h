@@ -10,6 +10,7 @@ class D3DCore;
 class Effect;
 class Primitive;
 class EffectManager;
+class Camera;
 struct D3DXCOLOR;
 
 /**
@@ -24,6 +25,7 @@ public:
 	~Graphics();
 
 	bool Init(int clientWidth, int clientHeight, HWND hwnd, bool fullscreen = false);
+	void Update(float dt);
 	Effect* LoadEffect(string filename);
 
 	void DrawPrimitive(Primitive* primitive, CXMMATRIX worldMatrix, Effect* effect);
@@ -37,6 +39,7 @@ public:
 private:
 	D3DCore* mD3DCore;
 	EffectManager* mEffectManager;
+	Camera*	mCamera;
 
 	// Move these to the camera class later
 	// [NOTE] Never store XMMATRIX as a member because of alignment problems.

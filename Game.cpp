@@ -6,10 +6,12 @@
 #include "Common\Graphics.h"
 #include "Common\PrimitiveFactory.h"
 #include "Common\Object3D.h"
+#include "Common\Input.h"
 
 // Set globals to nullptrs
-Runnable* gGame = nullptr;
-PrimitiveFactory* gPrimitiveFactory = nullptr;
+Runnable*			gGame				= nullptr;
+PrimitiveFactory*	gPrimitiveFactory	= nullptr;
+Input*				gInput				= nullptr;
 
 //! The program starts here.
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance, PSTR cmdLine, int showCmd)
@@ -24,6 +26,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance, PSTR cmdLine, in
 
 	game.Init();
 
+	gInput = new Input();
+
 	return gGame->Run();
 }
 
@@ -36,6 +40,7 @@ Game::Game(HINSTANCE hInstance, string caption, int width, int height)
 Game::~Game()
 {
 	delete gPrimitiveFactory;
+	delete gInput;
 }
 
 void Game::Init()
@@ -55,7 +60,8 @@ void Game::Init()
 	
 void Game::Update(float dt)
 {
-	int ased = 1;
+	gInput->update(dt);
+	GetGraphics()->Update(dt);
 }
 	
 void Game::Draw(Graphics* pGraphics)

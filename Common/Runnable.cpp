@@ -1,6 +1,7 @@
 #include <sstream>
 #include "Runnable.h"
 #include "Graphics.h"
+#include "Input.h"
 
 LRESULT CALLBACK
 MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -101,6 +102,7 @@ int Runnable::Run()
 		{
 			// Calculate the delta time and call the abstract Update() and Draw() functions. 
 			mTimer.Tick();
+			gInput->poll();
 			CalculateFrameStats();
 			Update(mTimer.DeltaTime());
 			Draw(GetGraphics());

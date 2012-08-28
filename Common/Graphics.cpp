@@ -7,6 +7,7 @@
 #include "Effect.h"
 #include "EffectManager.h"
 #include "../Primitive.h"
+#include "Camera.h"
 
 //! Constructor. The Init() function handles the initialization.
 Graphics::Graphics()
@@ -14,6 +15,7 @@ Graphics::Graphics()
 	// Set default values.
 	mD3DCore = nullptr;
 	mEffectManager = nullptr;
+	mCamera = nullptr;
 }
 	
 //! Cleans up and frees all pointers.
@@ -22,6 +24,7 @@ Graphics::~Graphics()
 	// Cleanup.
 	delete mD3DCore;
 	delete mEffectManager;
+	delete mCamera;
 }
 
 //! Initializes Direct3D by calling D3DCore::Init(...).
@@ -38,6 +41,10 @@ bool Graphics::Init(int clientWidth, int clientHeight, HWND hwnd, bool fullscree
 
 	// Create the effect manager
 	mEffectManager = new EffectManager();
+
+	// Create the camera.
+	mCamera = new Camera();
+	mCamera->setPosition(XMFLOAT3(6.0f, 6.0f, 6.0f));
 
 	// Initialize Direct3D.
 	if(!mD3DCore->Init(clientWidth, clientHeight, hwnd, fullscreen)) {
@@ -58,6 +65,11 @@ bool Graphics::Init(int clientWidth, int clientHeight, HWND hwnd, bool fullscree
 	XMStoreFloat4x4(&mProj, proj);
 }
 
+void Graphics::Update(float dt)
+{
+	mCamera->update(dt);
+}
+
 //! Draws a primitive.
 /**
 @param primitive the primitive containing the buffers to draw
@@ -73,8 +85,8 @@ void Graphics::DrawPrimitive(Primitive* primitive, CXMMATRIX worldMatrix, Effect
 	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	// Set the world matrix.
-	XMMATRIX view = XMLoadFloat4x4(&mView);
-	XMMATRIX proj = XMLoadFloat4x4(&mProj);
+	XMMATRIX view = XMLoadFloat4x4(&mCamera->getViewMatrix());
+	XMMATRIX proj = XMLoadFloat4x4(&mCamera->getProjectionMatrix());
 	effect->SetWorldViewProj(&(worldMatrix * view * proj));
 	effect->Apply();
 

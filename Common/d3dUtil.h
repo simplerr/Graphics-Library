@@ -7,6 +7,13 @@
 #include <xnamath.h>
 #include <D3DX10math.h>
 
+// Overloaded operators to make things smoother.
+XMFLOAT3 operator+(const XMFLOAT3 a, const XMFLOAT3 b);
+XMFLOAT3 operator-(const XMFLOAT3 a, const XMFLOAT3 b);
+
+XMFLOAT3 operator+=(const XMFLOAT3 a, const XMVECTOR b);
+XMFLOAT3 operator-=(const XMFLOAT3 a, const XMVECTOR b);
+
 // Debug macro that catches HRESULT errors.
 #if defined(DEBUG) | defined(_DEBUG)
 	#ifndef HR
