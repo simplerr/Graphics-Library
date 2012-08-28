@@ -44,7 +44,7 @@ bool Graphics::Init(int clientWidth, int clientHeight, HWND hwnd, bool fullscree
 
 	// Create the camera.
 	mCamera = new Camera();
-	mCamera->setPosition(XMFLOAT3(6.0f, 6.0f, 6.0f));
+	mCamera->setPosition(XMFLOAT3(15.0f, 6.0f, 0.0f));
 
 	// Initialize Direct3D.
 	if(!mD3DCore->Init(clientWidth, clientHeight, hwnd, fullscreen)) {

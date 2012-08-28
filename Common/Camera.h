@@ -35,6 +35,7 @@ public:
 	XMFLOAT3	getDirection();
 	XMFLOAT3	getRight();
 private:
+	void UpdatePitchYaw();
 	XMFLOAT4X4	mView;
 	XMFLOAT4X4	mProj;
 	XMFLOAT3	mPosition;

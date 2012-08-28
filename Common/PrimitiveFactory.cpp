@@ -3,6 +3,7 @@
 #include "Runnable.h"
 #include "D3DCore.h"
 #include <D3DX11.h>
+#include <vector>
 #include "../Primitive.h"
 #include "../Vertex.h"
 
@@ -28,6 +29,8 @@ Primitive* PrimitiveFactory::CreateBox()
 	if(mPrimitiveMap.find("box") != mPrimitiveMap.end())
 		return &mPrimitiveMap["box"];
 
+	Primitive primitive;
+
 	// Create the vertices.
     Vertex vertices[] =
     {
@@ -40,8 +43,6 @@ Primitive* PrimitiveFactory::CreateBox()
 		{XMFLOAT3(+1.0f, +1.0f, +1.0f), (const float*)&Colors::Cyan    },
 		{XMFLOAT3(+1.0f, -1.0f, +1.0f), (const float*)&Colors::Magenta }
     };
-
-	Primitive primitive;
 
 	// Set the primitives vertices.
     primitive.SetVertices(gGame->GetD3D()->GetDevice(), vertices, 8);
@@ -81,4 +82,72 @@ Primitive* PrimitiveFactory::CreateBox()
 
 	// Return adress to newly added primitive.
 	return &mPrimitiveMap["box"];
+}
+
+Primitive* PrimitiveFactory::CreateGrid(float width, float depth, UINT m, UINT n)
+{
+	if(mPrimitiveMap.find("grid") != mPrimitiveMap.end())
+		return &mPrimitiveMap["grid"];
+
+	UINT vertexCount = m*n;
+	UINT faceCount   = (m-1)*(n-1)*2;
+
+	float halfWidth = 0.5f*width;
+	float halfDepth = 0.5f*depth;
+
+	float dx = width / (n-1);
+	float dz = depth / (m-1);
+
+	float du = 1.0f / (n-1);
+	float dv = 1.0f / (m-1);
+
+	Primitive primitive;
+
+	// Create the vertices.
+	vector<Vertex> vertices;
+	vertices.resize(vertexCount);
+	for(UINT i = 0; i < m; ++i)
+	{
+		float z = halfDepth - i*dz;
+		for(UINT j = 0; j < n; ++j)
+		{
+			float x = -halfWidth + j*dx;
+
+			vertices[i*n+j].Pos		= XMFLOAT3(x, 0.0f, z);
+			vertices[i*n+j].Color   = (const float*)&Colors::Black;
+
+			// Stretch texture over grid.
+			//meshData.Vertices[i*n+j].TexC.x = j*du;
+			//meshData.Vertices[i*n+j].TexC.y = i*dv;
+		}
+	}
+ 
+	primitive.SetVertices(gGame->GetD3D()->GetDevice(), &vertices[0], vertexCount);
+
+	// Create the indices.
+	vector<UINT> indices;
+	indices.resize(faceCount*3);
+
+	// Iterate over each quad and compute indices.
+	UINT k = 0;
+	for(UINT i = 0; i < m-1; ++i)
+	{
+		for(UINT j = 0; j < n-1; ++j)
+		{
+			indices[k]   = i*n+j;
+			indices[k+1] = i*n+j+1;
+			indices[k+2] = (i+1)*n+j;
+
+			indices[k+3] = (i+1)*n+j;
+			indices[k+4] = i*n+j+1;
+			indices[k+5] = (i+1)*n+j+1;
+
+			k += 6; // next quad
+		}
+	}
+
+	primitive.SetIndices(gGame->GetD3D()->GetDevice(), &indices[0], faceCount*3);
+
+	mPrimitiveMap["grid"] = primitive;
+	return &mPrimitiveMap["grid"];
 }

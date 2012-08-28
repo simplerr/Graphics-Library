@@ -18,6 +18,7 @@ public:
 	~PrimitiveFactory();
 
 	Primitive* CreateBox();
+	Primitive* CreateGrid(float width, float depth, UINT m, UINT n);
 private:
 	map<string, Primitive> mPrimitiveMap;
 };

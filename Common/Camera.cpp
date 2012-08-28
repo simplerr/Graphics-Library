@@ -10,16 +10,18 @@ Camera::Camera()
 	setSpeed(0.005f);
 
 	// Default position and target
-	mPosition   = XMFLOAT3(6, 6, 6);
+	mPosition	= XMFLOAT3(9, 6, 0);
 	mTarget		= XMFLOAT3(0.0f, 0.0f, 0.0f);
 	mUp			= XMFLOAT3(0.0f, 1.0f, 0.0f);		// Weird up vector
-	
-	mYaw		= 0.0f;
-	mPitch		= 0.0f;
 
+	// Calculate the new direction.
+	UpdatePitchYaw();
+	
 	// Build the projection matrix
 	XMMATRIX proj = XMMatrixPerspectiveFovLH(XM_PI * 0.25, (float)gGame->GetScreenWidth()/(float)gGame->GetScreenHeight(), 1.0f, 1000.0f);
 	XMStoreFloat4x4(&mProj, proj);
+
+	updateView();
 }
 
 Camera::~Camera()
@@ -146,21 +148,29 @@ void Camera::setPosition(XMFLOAT3 position)
 	XMFLOAT3 direction = mTarget - mPosition;
 	mPosition = position;
 	mTarget = mPosition + direction;
+	UpdatePitchYaw();
 }
 
 void Camera::setDirection(XMFLOAT3 direction)
 {
 	mTarget = mPosition + direction;
-
-	// Calculate the new direction.
-	mPitch = asinf(direction.y);
-	float r = cosf(mPitch);
-	mYaw = asinf(direction.x / r);
+	UpdatePitchYaw();
 }
 
 void Camera::setTarget(XMFLOAT3 target)
 {
 	mTarget = target;
+	XMFLOAT3 direction = mTarget - mPosition;
+	UpdatePitchYaw();
+}
+
+void Camera::UpdatePitchYaw()
+{
+	// Calculate new yaw and pitch.
+	XMFLOAT3 direction = getDirection();
+	mPitch = asinf(direction.y);
+	float r = cosf(mPitch);
+	mYaw = asinf(direction.x / r);
 }
 
 void Camera::setSensitivity(float sensitivity)

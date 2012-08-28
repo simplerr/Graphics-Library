@@ -52,10 +52,15 @@ void Game::Init()
 
 	// Test object.
 	mObject = new Object3D();
+	mObject2 = new Object3D();
 
 	// Load the effect and the primitive.
 	mObject->SetEffect(gGame->GetGraphics()->LoadEffect("color.fx"));
 	mObject->SetPrimitive(gPrimitiveFactory->CreateBox());
+	mObject->SetPosition(XMFLOAT3(0, 3, 0));
+
+	mObject2->SetEffect(gGame->GetGraphics()->LoadEffect("color.fx"));
+	mObject2->SetPrimitive(gPrimitiveFactory->CreateGrid(160.0f, 160.0f, 50, 50));
 }
 	
 void Game::Update(float dt)
@@ -69,6 +74,7 @@ void Game::Draw(Graphics* pGraphics)
 	pGraphics->ClearScene();
 
 	mObject->Draw(pGraphics);
+	mObject2->Draw(pGraphics);
 
 	pGraphics->Present();
 }

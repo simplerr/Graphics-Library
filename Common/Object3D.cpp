@@ -11,9 +11,9 @@ Object3D::Object3D()
 	mEffect = nullptr;
 	mPrimitive = nullptr;
 
-	mPosition = XMFLOAT3(0.0f, 0.0f, 0.0f);
-	mRotation = XMFLOAT3(0.0f, 0.0f, 0.0f);
-	mScale = XMFLOAT3(1.0f, 1.0f, 1.0f);
+	SetPosition(XMFLOAT3(0.0f, 0.0f, 0.0f));
+	SetRotation(XMFLOAT3(0.0f, 0.0f, 0.0f));
+	SetScale(XMFLOAT3(1.0f, 1.0f, 1.0f));
 }
 	
 Object3D::~Object3D()
