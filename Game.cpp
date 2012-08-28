@@ -68,8 +68,23 @@ LRESULT Game::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 	case WM_COMMAND:
 		switch(wParam)
 		{
-
+		
 		};
+		break;
+	case WM_LBUTTONDOWN:
+		{
+		XMFLOAT3 rotation = mObject->GetRotation();
+		rotation.x += 0.1;
+		mObject->SetRotation(rotation);
+		break;
+		}
+	case WM_RBUTTONDOWN: 
+		{
+		XMFLOAT3 scale = mObject->GetScale();
+		scale.y += 0.1;
+		mObject->SetScale(scale);
+		break;
+		}
 	};
 
 	return Runnable::MsgProc(hwnd, msg, wParam, lParam);

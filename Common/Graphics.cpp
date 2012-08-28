@@ -6,6 +6,7 @@
 #include "d3dx11effect.h"
 #include "Effect.h"
 #include "EffectManager.h"
+#include "../Primitive.h"
 
 //! Constructor. The Init() function handles the initialization.
 Graphics::Graphics()
@@ -43,6 +44,37 @@ bool Graphics::Init(int clientWidth, int clientHeight, HWND hwnd, bool fullscree
 		MessageBox(0, "Failed initializing Direct3D", "Error", MB_ICONEXCLAMATION);
 		return false;
 	}
+
+	// Move to camera...
+	XMVECTOR pos    = XMVectorSet(6, 6, 6, 1.0f);
+	XMVECTOR target = XMVectorZero();
+	XMVECTOR up     = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+
+	XMMATRIX view = XMMatrixLookAtLH(pos, target, up);
+	XMStoreFloat4x4(&mView, view);
+
+	// The window resized, so update the aspect ratio and recompute the projection matrix.
+	XMMATRIX proj = XMMatrixPerspectiveFovLH(0.25f*3.14f, (float)clientWidth/(float)clientHeight, 1.0f, 1000.0f);
+	XMStoreFloat4x4(&mProj, proj);
+}
+
+void Graphics::DrawPrimitive(Primitive* primitive, XMFLOAT4X4 worldMatrix, Effect* effect)
+{
+	ID3D11DeviceContext* context = GetD3D()->GetContext();
+
+	// Set the input layout and the primitive topology.
+	context->IASetInputLayout(effect->GetInputLayout());
+	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	// Set the world matrix.
+	XMMATRIX world = XMLoadFloat4x4(&worldMatrix);
+	XMMATRIX view = XMLoadFloat4x4(&mView);
+	XMMATRIX proj = XMLoadFloat4x4(&mProj);
+	effect->SetWorldViewProj(&(world * view * proj));
+	effect->Apply();
+
+	// Call the primitives draw function.
+	primitive->Draw(context);
 }
 
 //! Clears the backbuffer with the color "color".

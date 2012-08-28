@@ -6,9 +6,6 @@
 #include "PrimitiveFactory.h"
 #include "D3DCore.h"
 
-XMMATRIX view;
-XMMATRIX proj;
-
 Object3D::Object3D()
 {
 	// Load the effect.
@@ -19,15 +16,9 @@ Object3D::Object3D()
 	// Create the primitive.
 	mPrimitive = gPrimitiveFactory->CreateBox();
 
-	// Build the view matrix.
-	XMVECTOR pos    = XMVectorSet(6, 6, 6, 1.0f);
-	XMVECTOR target = XMVectorZero();
-	XMVECTOR up     = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-
-	view = XMMatrixLookAtLH(pos, target, up);
-
-	// The window resized, so update the aspect ratio and recompute the projection matrix.
-	proj = XMMatrixPerspectiveFovLH(0.25f*3.14f, 800.0f/600.0f, 1.0f, 1000.0f);
+	mPosition = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	mRotation = XMFLOAT3(0.0f, 0.0f, 0.0f);
+	mScale = XMFLOAT3(1.0f, 1.0f, 1.0f);
 }
 	
 Object3D::~Object3D()
@@ -42,16 +33,51 @@ void Object3D::Update(float dt)
 	
 void Object3D::Draw(Graphics* pGraphics)
 {
-	ID3D11DeviceContext* context = pGraphics->GetD3D()->GetContext();
+	// Draw the primitive.
+	pGraphics->DrawPrimitive(mPrimitive, GetWorldMatrix(), mEffect);
+}
 
-	// Set the input layout and the primitive topology.
-	context->IASetInputLayout(mEffect->GetInputLayout());
-	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+XMFLOAT4X4 Object3D::GetWorldMatrix()
+{
+	XMMATRIX T, R, S, W;
+	T = XMMatrixTranslation(mPosition.x, mPosition.y, mPosition.z);
+	R = XMMatrixRotationRollPitchYaw(mRotation.x, mRotation.y, mRotation.z);
+	S = XMMatrixScaling(mScale.x, mScale.y, mScale.z);
 
-	// Set the effect variables.
-	mEffect->SetWorldViewProj(&(view * proj));
-	mEffect->Apply();
+	W = S*R*T;
 
-	// Call the primitives draw function.
-	mPrimitive->Draw(context);
+	XMFLOAT4X4 world;
+	XMStoreFloat4x4(&world, W);
+
+	return world;
+}
+
+XMFLOAT3 Object3D::GetPosition()
+{
+	return mPosition;
+}
+
+XMFLOAT3 Object3D::GetRotation()
+{
+	return mRotation;
+}
+	
+XMFLOAT3 Object3D::GetScale()
+{
+	return mScale;
+}
+
+void Object3D::SetPosition(XMFLOAT3 position)
+{
+	mPosition = position;
+}
+	
+void Object3D::SetRotation(XMFLOAT3 rotation)
+{
+	mRotation = rotation;
+}
+	
+void Object3D::SetScale(XMFLOAT3 scale)
+{
+	mScale = scale;
 }
