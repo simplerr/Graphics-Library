@@ -16,6 +16,10 @@ EffectManager::~EffectManager()
 
 }
 
+//! Loads and returns an effect. Effects already loaded are stored to decrease memory usage.
+/**
+@param filename the effect file to load, ex "color.fx"
+*/
 Effect* EffectManager::LoadEffect(string filename)
 {
 	// Effect already loaded.
@@ -52,6 +56,7 @@ Effect* EffectManager::LoadEffect(string filename)
 	}
 }
 
+//! Creates a ID3DX11Effect instance from memory. Called by LoadEffect().
 ID3DX11Effect* EffectManager::CreateFx(string filename)
 {
 	ID3DX11Effect* effect;

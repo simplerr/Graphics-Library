@@ -26,7 +26,7 @@ public:
 	bool Init(int clientWidth, int clientHeight, HWND hwnd, bool fullscreen = false);
 	Effect* LoadEffect(string filename);
 
-	void DrawPrimitive(Primitive* primitive, XMFLOAT4X4 worldMatrix, Effect* effect);
+	void DrawPrimitive(Primitive* primitive, CXMMATRIX worldMatrix, Effect* effect);
 
 	void ClearScene();
 	void Present();

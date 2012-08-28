@@ -3,6 +3,9 @@
 #include <D3DX11.h>
 struct Vertex;
 
+/**
+	Contains a vertex and index buffer.
+*/
 class Primitive
 {
 public:
@@ -18,4 +21,6 @@ public:
 private:
 	ID3D11Buffer* mVertexBuffer;
 	ID3D11Buffer* mIndexBuffer;
+	UINT mNumVertices;
+	UINT mNumIndices;
 };

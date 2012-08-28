@@ -7,6 +7,10 @@ using namespace std;
 
 class Primitive;
 
+/**
+	Handles creation of different primitives.
+	Stores each primitive in a map to enable instancing.
+*/
 class PrimitiveFactory
 {
 public:

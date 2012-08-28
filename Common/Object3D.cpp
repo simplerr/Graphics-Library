@@ -8,13 +8,8 @@
 
 Object3D::Object3D()
 {
-	// Load the effect.
-	mEffect = gGame->GetGraphics()->LoadEffect("color.fx");
-
-	//mPosition = XMVectorZero();
-
-	// Create the primitive.
-	mPrimitive = gPrimitiveFactory->CreateBox();
+	mEffect = nullptr;
+	mPrimitive = nullptr;
 
 	mPosition = XMFLOAT3(0.0f, 0.0f, 0.0f);
 	mRotation = XMFLOAT3(0.0f, 0.0f, 0.0f);
@@ -37,19 +32,30 @@ void Object3D::Draw(Graphics* pGraphics)
 	pGraphics->DrawPrimitive(mPrimitive, GetWorldMatrix(), mEffect);
 }
 
-XMFLOAT4X4 Object3D::GetWorldMatrix()
+//! Set the effect to use when drawing.
+void Object3D::SetEffect(Effect* effect)
+{
+	mEffect = effect;
+}
+
+//! Set the primitive to use when drawing.
+void Object3D::SetPrimitive(Primitive* primitive)
+{
+	if(mPrimitive != nullptr)
+		mPrimitive->Cleanup();
+
+	mPrimitive = primitive;
+}
+
+//! Returns the world matrix.
+XMMATRIX Object3D::GetWorldMatrix()
 {
 	XMMATRIX T, R, S, W;
 	T = XMMatrixTranslation(mPosition.x, mPosition.y, mPosition.z);
 	R = XMMatrixRotationRollPitchYaw(mRotation.x, mRotation.y, mRotation.z);
 	S = XMMatrixScaling(mScale.x, mScale.y, mScale.z);
 
-	W = S*R*T;
-
-	XMFLOAT4X4 world;
-	XMStoreFloat4x4(&world, W);
-
-	return world;
+	return S*R*T;
 }
 
 XMFLOAT3 Object3D::GetPosition()

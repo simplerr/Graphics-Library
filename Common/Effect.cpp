@@ -42,6 +42,7 @@ ID3D11InputLayout* Effect::CreateInputLayout()
 	return inputLayout;
 }
 
+//! Applies the effect to the render pipeline.
 void Effect::Apply()
 {
 	// Applies the changes effect and it changes to the pipeline.

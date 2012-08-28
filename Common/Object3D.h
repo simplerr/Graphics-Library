@@ -7,6 +7,10 @@ class Graphics;
 class Effect;
 class Primitive;
 
+/**
+	Base class for all objects.
+	Contains a primitive, effect and position information.
+*/
 class Object3D
 {
 public:
@@ -17,11 +21,13 @@ public:
 	void Draw(Graphics* pGraphics);
 
 	// Getters & setters.
-	XMFLOAT4X4 GetWorldMatrix();
+	XMMATRIX GetWorldMatrix();
 	XMFLOAT3 GetPosition();
 	XMFLOAT3 GetRotation();
 	XMFLOAT3 GetScale();
 
+	void SetEffect(Effect* effect);
+	void SetPrimitive(Primitive* primitive);
 	void SetPosition(XMFLOAT3 position);
 	void SetRotation(XMFLOAT3 rotation);
 	void SetScale(XMFLOAT3 scale);

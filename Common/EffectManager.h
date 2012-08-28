@@ -8,6 +8,7 @@ using namespace std;
 
 class Effect;
 
+//! Structure used to store the loaded effects in EffectManagers map.
 struct EffectData
 {
 	ID3DX11Effect* effect;
@@ -15,6 +16,11 @@ struct EffectData
 	ID3D11InputLayout* inputLayout; 
 };
 
+/**
+	Handles loading of effects.
+	Makes sure an effect only gets loaded once.
+	Returns pointer if an effect already is loaded.
+*/
 class EffectManager
 {
 public:

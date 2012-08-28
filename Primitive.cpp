@@ -28,7 +28,7 @@ void Primitive::Draw(ID3D11DeviceContext* dc)
 	UINT offset = 0;
 	dc->IASetVertexBuffers(0, 1, &mVertexBuffer, &stride, &offset);
 	dc->IASetIndexBuffer(mIndexBuffer, DXGI_FORMAT_R32_UINT, 0);	// [NOTE] Important with right format!! 16 or 32!
-	dc->DrawIndexed(36, 0, 0);
+	dc->DrawIndexed(mNumIndices, 0, 0);
 }
 	
 void Primitive::SetVertices(ID3D11Device* device, Vertex* vertices, UINT count)
@@ -48,6 +48,8 @@ void Primitive::SetVertices(ID3D11Device* device, Vertex* vertices, UINT count)
 
 	// Create the vertex buffer.
 	HR(device->CreateBuffer(&vbd, &initData, &mVertexBuffer));
+
+	mNumVertices = count;
 }
 	
 void Primitive::SetIndices(ID3D11Device* device, const UINT* indices, UINT count)
@@ -67,4 +69,6 @@ void Primitive::SetIndices(ID3D11Device* device, const UINT* indices, UINT count
 
 	// Create the index buffer.
 	HR(device->CreateBuffer(&ibd, &initData, &mIndexBuffer));
+
+	mNumIndices = count;
 }

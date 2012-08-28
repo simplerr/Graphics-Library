@@ -4,6 +4,10 @@
 #include <Windows.h>
 #include <xnamath.h>
 
+/**
+	Wrapper for the effect interface.
+	Extend this class to use custom effects.
+*/
 class Effect
 {
 public:

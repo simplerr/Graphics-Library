@@ -58,7 +58,13 @@ bool Graphics::Init(int clientWidth, int clientHeight, HWND hwnd, bool fullscree
 	XMStoreFloat4x4(&mProj, proj);
 }
 
-void Graphics::DrawPrimitive(Primitive* primitive, XMFLOAT4X4 worldMatrix, Effect* effect)
+//! Draws a primitive.
+/**
+@param primitive the primitive containing the buffers to draw
+@param worldMatrix the primitives world transform matrix
+@param effect the effect to use when rendering the primitive
+*/
+void Graphics::DrawPrimitive(Primitive* primitive, CXMMATRIX worldMatrix, Effect* effect)
 {
 	ID3D11DeviceContext* context = GetD3D()->GetContext();
 
@@ -67,13 +73,12 @@ void Graphics::DrawPrimitive(Primitive* primitive, XMFLOAT4X4 worldMatrix, Effec
 	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	// Set the world matrix.
-	XMMATRIX world = XMLoadFloat4x4(&worldMatrix);
 	XMMATRIX view = XMLoadFloat4x4(&mView);
 	XMMATRIX proj = XMLoadFloat4x4(&mProj);
-	effect->SetWorldViewProj(&(world * view * proj));
+	effect->SetWorldViewProj(&(worldMatrix * view * proj));
 	effect->Apply();
 
-	// Call the primitives draw function.
+	// Draw the primitive.
 	primitive->Draw(context);
 }
 

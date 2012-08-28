@@ -44,7 +44,13 @@ void Game::Init()
 	Runnable::Init();
 
 	gPrimitiveFactory = new PrimitiveFactory();
+
+	// Test object.
 	mObject = new Object3D();
+
+	// Load the effect and the primitive.
+	mObject->SetEffect(gGame->GetGraphics()->LoadEffect("color.fx"));
+	mObject->SetPrimitive(gPrimitiveFactory->CreateBox());
 }
 	
 void Game::Update(float dt)
