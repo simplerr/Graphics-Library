@@ -10,30 +10,26 @@ public:
 	Camera();
 	~Camera();
 
-	void update(float dt);
-	void move();
-	void rotate();
-	void rotate(float pitch, float yaw);
-	void drawDebug();
-	void updateView();
+	void Update(float dt);
+	void Move();
+	void Rotate();
+	void DrawDebug();
+	void UpdateViewMatrix();
 
-	void setPosition(XMFLOAT3 position);
-	void setTarget(XMFLOAT3 target);
-	void setSensitivity(float sensitivity);
-	void setSpeed(float speed);
-	void setDirection(XMFLOAT3 direction);
-	void setYaw(float yaw);
-	void setPitch(float pitch);
+	void SetPosition(XMFLOAT3 position);
+	void SetTarget(XMFLOAT3 target);
+	void SetLookSensitivity(float sensitivity);
+	void SetMoveSpeed(float speed);
+	void SetDirection(XMFLOAT3 direction);
+	void SetYaw(float yaw);
+	void SetPitch(float pitch);
 
-	float getYaw();
-	float getPitch();
-
-	XMFLOAT4X4	getViewMatrix();
-	XMFLOAT4X4	getProjectionMatrix();
-	XMFLOAT3	getPosition();
-	XMFLOAT3	getTarget();
-	XMFLOAT3	getDirection();
-	XMFLOAT3	getRight();
+	XMFLOAT4X4	GetViewMatrix();
+	XMFLOAT4X4	GetProjectionMatrix();
+	XMFLOAT3	GetPosition();
+	XMFLOAT3	GetTarget();
+	XMFLOAT3	GetDirection();
+	XMFLOAT3	GetRight();
 private:
 	void UpdatePitchYaw();
 	XMFLOAT4X4	mView;

@@ -3,6 +3,7 @@
 #include <Windows.h>
 #include <string>
 #include <xnamath.h>
+#include <d3dx9.h>
 
 using namespace std;
 
@@ -29,6 +30,7 @@ public:
 	Effect* LoadEffect(string filename);
 
 	void DrawPrimitive(Primitive* primitive, CXMMATRIX worldMatrix, Effect* effect);
+	void DrawText(string text, int x, int y, D3DXCOLOR textColor, int size);
 
 	void ClearScene();
 	void Present();
@@ -40,6 +42,7 @@ private:
 	D3DCore* mD3DCore;
 	EffectManager* mEffectManager;
 	Camera*	mCamera;
+	ID3DXFont* mFont;
 
 	// Move these to the camera class later
 	// [NOTE] Never store XMMATRIX as a member because of alignment problems.

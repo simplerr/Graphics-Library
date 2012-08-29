@@ -3,6 +3,7 @@
 #include "D3DCore.h"
 #include "Runnable.h"
 #include <d3dx10math.h>
+#include <tchar.h>
 #include "d3dx11effect.h"
 #include "Effect.h"
 #include "EffectManager.h"
@@ -44,7 +45,7 @@ bool Graphics::Init(int clientWidth, int clientHeight, HWND hwnd, bool fullscree
 
 	// Create the camera.
 	mCamera = new Camera();
-	mCamera->setPosition(XMFLOAT3(15.0f, 6.0f, 0.0f));
+	//mCamera->setPosition(XMFLOAT3(15.0f, 6.0f, 0.0f));
 
 	// Initialize Direct3D.
 	if(!mD3DCore->Init(clientWidth, clientHeight, hwnd, fullscreen)) {
@@ -63,11 +64,26 @@ bool Graphics::Init(int clientWidth, int clientHeight, HWND hwnd, bool fullscree
 	// The window resized, so update the aspect ratio and recompute the projection matrix.
 	XMMATRIX proj = XMMatrixPerspectiveFovLH(0.25f*3.14f, (float)clientWidth/(float)clientHeight, 1.0f, 1000.0f);
 	XMStoreFloat4x4(&mProj, proj);
+
+	// Font
+	D3DXFONT_DESC fontDesc;
+	fontDesc.Height          = 28;
+    fontDesc.Width           = 14;
+    fontDesc.Weight          = 7;
+    fontDesc.MipLevels       = 1;
+    fontDesc.Italic          = false;
+    fontDesc.CharSet         = DEFAULT_CHARSET;
+    fontDesc.OutputPrecision = OUT_DEFAULT_PRECIS;
+    fontDesc.Quality         = 10;
+    fontDesc.PitchAndFamily  = DEFAULT_PITCH | FF_DONTCARE;
+	 _tcscpy(fontDesc.FaceName, _T("Bitstream Vera Sans Mono"));
+
+	// HR(D3DXCreateFontIndirect(gGame->GetD3D()->GetDevice(), &fontDesc, &mFont));
 }
 
 void Graphics::Update(float dt)
 {
-	mCamera->update(dt);
+	mCamera->Update(dt);
 }
 
 //! Draws a primitive.
@@ -85,13 +101,40 @@ void Graphics::DrawPrimitive(Primitive* primitive, CXMMATRIX worldMatrix, Effect
 	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	// Set the world matrix.
-	XMMATRIX view = XMLoadFloat4x4(&mCamera->getViewMatrix());
-	XMMATRIX proj = XMLoadFloat4x4(&mCamera->getProjectionMatrix());
+	XMMATRIX view = XMLoadFloat4x4(&mCamera->GetViewMatrix());
+	XMMATRIX proj = XMLoadFloat4x4(&mCamera->GetProjectionMatrix());
 	effect->SetWorldViewProj(&(worldMatrix * view * proj));
 	effect->Apply();
 
 	// Draw the primitive.
 	primitive->Draw(context);
+}
+
+void Graphics::DrawText(string text, int x, int y, D3DXCOLOR textColor, int size)
+{
+	RECT pos = {x, y, 0, 0};
+	mFont->DrawText(0, text.c_str(), -1, &pos, DT_NOCLIP, textColor);
+
+	/*if(mFontList.find(size) != mFontList.end())
+		mFontList[size]->DrawText(0, text.c_str(), -1, &pos, DT_NOCLIP, textColor);
+	else {
+		ID3DXFont* font;
+		D3DXFONT_DESC fontDesc;
+		fontDesc.Height          = size;
+		fontDesc.Width           = size/2;
+		fontDesc.Weight          = 0;
+		fontDesc.MipLevels       = 1;
+		fontDesc.Italic          = false;
+		fontDesc.CharSet         = DEFAULT_CHARSET;
+		fontDesc.OutputPrecision = OUT_DEFAULT_PRECIS;
+		fontDesc.Quality         = 10;
+		fontDesc.PitchAndFamily  = DEFAULT_PITCH | FF_DONTCARE;
+			_tcscpy(fontDesc.FaceName, _T("Bitstream Vera Sans Mono"));
+
+		HR(D3DXCreateFontIndirect(gd3dDevice, &fontDesc, &font));
+		mFontList[size] = font;
+		//mFontList[size]->DrawText(0, text.c_str(), -1, &pos, DT_NOCLIP, textColor);
+	}*/
 }
 
 //! Clears the backbuffer with the color "color".
