@@ -102,7 +102,7 @@ int Runnable::Run()
 		{
 			// Calculate the delta time and call the abstract Update() and Draw() functions. 
 			mTimer.Tick();
-			gInput->poll();
+			gInput->Poll();
 			CalculateFrameStats();
 			Update(mTimer.DeltaTime());
 			Draw(GetGraphics());

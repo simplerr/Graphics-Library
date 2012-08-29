@@ -65,7 +65,7 @@ void Game::Init()
 	
 void Game::Update(float dt)
 {
-	gInput->update(dt);
+	gInput->Update(dt);
 	GetGraphics()->Update(dt);
 }
 	

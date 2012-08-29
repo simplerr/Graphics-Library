@@ -38,7 +38,7 @@ Input::~Input()
 /**
 @param dt The delta time since the last frame.
 */
-void Input::update(float dt)
+void Input::Update(float dt)
 {
 	// Set the old states.
 	memcpy(mLastKeyState, mKeyState, sizeof(mKeyState));
@@ -48,7 +48,7 @@ void Input::update(float dt)
 }
 
 //! Draws debug information.
-void Input::draw()
+void Input::Draw()
 {
 
 }
@@ -59,12 +59,12 @@ void Input::draw()
 @param wParam Message data.
 @param lParam Message data.
 */
-LRESULT Input::msgProc(UINT msg, WPARAM wParam, LPARAM lParam)
+LRESULT Input::MsgProc(UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	switch( msg )
 	{
 	case WM_MOUSEMOVE:	{
-		setMousePosition(XMFLOAT3(LOWORD(lParam), HIWORD(lParam), 0));
+		SetMousePosition(XMFLOAT3(LOWORD(lParam), HIWORD(lParam), 0));
 		return 0;
 		}
 	case WM_LBUTTONDOWN:	{
@@ -79,7 +79,7 @@ LRESULT Input::msgProc(UINT msg, WPARAM wParam, LPARAM lParam)
 @param key The to check.
 @return True if pressed.
 */
-bool Input::keyPressed(int key)
+bool Input::KeyPressed(int key)
 {
 	if(key > 255 || key < 0)
 		return false;
@@ -95,7 +95,7 @@ bool Input::keyPressed(int key)
 @param key The to check.
 @return True if down.
 */
-bool Input::keyDown(int key)
+bool Input::KeyDown(int key)
 {
 	if(key > 255 || key < 0)
 		return false;
@@ -108,7 +108,7 @@ bool Input::keyDown(int key)
 @param key The to check.
 @return True if released.
 */
-bool Input::keyReleased(int key)
+bool Input::KeyReleased(int key)
 {
 	if(key > 255 || key < 0)
 		return false;
@@ -120,7 +120,7 @@ bool Input::keyReleased(int key)
 /**
 @return The mouse position.
 */
-XMFLOAT3 Input::mousePosition()
+XMFLOAT3 Input::MousePosition()
 {
 	POINT pos;
 	GetCursorPos(&pos);
@@ -146,32 +146,32 @@ XMFLOAT3 Input::mousePosition()
 @param pos The new position.
 @note Doesn't acctually change the mouse position on the screen, just the data.
 */
-void Input::setMousePosition(XMFLOAT3 pos)
+void Input::SetMousePosition(XMFLOAT3 pos)
 {
-	mDx = pos.x - mousePosition().x;
-	mDy = pos.y - mousePosition().y;
+	mDx = pos.x - MousePosition().x;
+	mDy = pos.y - MousePosition().y;
 
 	mMousePosition = pos;
 }
 
 //! Returns horizontal delta movement.
-float Input::mouseDx()
+float Input::MouseDx()
 {
 	return (float)mMouseState.lX;
 }
 
 //! Returns vertical delta movement.
-float Input::mouseDy()
+float Input::MouseDy()
 {
 	return (float)mMouseState.lY;
 }
 
-float Input::mouseDz()
+float Input::MouseDz()
 {
 	return (float)mMouseState.lZ;
 }
 
-void Input::poll()
+void Input::Poll()
 {
 	// Poll mouse.
 	memcpy(&mLastMouseState, &mMouseState, sizeof(mMouseState));
@@ -186,7 +186,7 @@ void Input::poll()
 	}
 }
 
-void Input::getWorldPickingRay(D3DXVECTOR3& originW, D3DXVECTOR3& dirW)
+void Input::GetWorldPickingRay(D3DXVECTOR3& originW, D3DXVECTOR3& dirW)
 {
 	//// Get the screen point clicked.
 	//POINT s;

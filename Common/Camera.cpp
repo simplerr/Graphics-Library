@@ -64,25 +64,25 @@ void Camera::Move()
 	direction = XMLoadFloat3(&GetDirection());
 
 	// Fast scroll zooming
-	mPosition += direction * gInput->mouseDz() / 8;
-	mTarget += direction * gInput->mouseDz() / 8;
+	mPosition += direction * gInput->MouseDz() / 8;
+	mTarget += direction * gInput->MouseDz() / 8;
 
 	// Check for keypresses
-	if(gInput->keyDown('W')) {
+	if(gInput->KeyDown('W')) {
 		XMStoreFloat3(&mPosition, XMLoadFloat3(&mPosition) + direction*mVelocity);
 		XMStoreFloat3(&mTarget, XMLoadFloat3(&mTarget) + direction*mVelocity);
 	}
-	else if(gInput->keyDown('S')) {
+	else if(gInput->KeyDown('S')) {
 		XMStoreFloat3(&mPosition, XMLoadFloat3(&mPosition) - direction*mVelocity);
 		XMStoreFloat3(&mTarget, XMLoadFloat3(&mTarget) - direction*mVelocity);
 	}
 
-	if(gInput->keyDown('A')) {
+	if(gInput->KeyDown('A')) {
 		XMVECTOR right = XMLoadFloat3(&GetRight());
 		XMStoreFloat3(&mPosition, XMLoadFloat3(&mPosition) - right*mVelocity);
 		XMStoreFloat3(&mTarget, XMLoadFloat3(&mTarget) - right*mVelocity);
 	}
-	else if(gInput->keyDown('D')) {
+	else if(gInput->KeyDown('D')) {
 		XMVECTOR right = XMLoadFloat3(&GetRight());
 		XMStoreFloat3(&mPosition, XMLoadFloat3(&mPosition) + right*mVelocity);
 		XMStoreFloat3(&mTarget, XMLoadFloat3(&mTarget) + right*mVelocity);
@@ -93,8 +93,8 @@ void Camera::Move()
 void Camera::Rotate()
 {
 	// Increase the pitch and yaw angles.
-	mPitch += gInput->mouseDy() / (-13.0f / mSensitivity);
-	mYaw += gInput->mouseDx() / (13.0f / mSensitivity);
+	mPitch += gInput->MouseDy() / (-13.0f / mSensitivity);
+	mYaw += gInput->MouseDx() / (13.0f / mSensitivity);
 
 	// Limit to PI/2 radians.
 	if(mPitch > 0)
