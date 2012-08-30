@@ -27,7 +27,7 @@ public:
 	EffectManager();
 	~EffectManager();
 
-	Effect* LoadEffect(string filename);
+	Effect* LoadEffect(string filename, string technique);
 private:
 	ID3DX11Effect* CreateFx(string filename);
 	map<string, EffectData> mEffectMap;

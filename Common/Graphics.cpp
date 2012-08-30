@@ -9,6 +9,7 @@
 #include "EffectManager.h"
 #include "../Primitive.h"
 #include "Camera.h"
+#include "LightHelper.h"
 
 //! Constructor. The Init() function handles the initialization.
 Graphics::Graphics()
@@ -45,7 +46,6 @@ bool Graphics::Init(int clientWidth, int clientHeight, HWND hwnd, bool fullscree
 
 	// Create the camera.
 	mCamera = new Camera();
-	//mCamera->setPosition(XMFLOAT3(15.0f, 6.0f, 0.0f));
 
 	// Initialize Direct3D.
 	if(!mD3DCore->Init(clientWidth, clientHeight, hwnd, fullscreen)) {
@@ -65,20 +65,15 @@ bool Graphics::Init(int clientWidth, int clientHeight, HWND hwnd, bool fullscree
 	XMMATRIX proj = XMMatrixPerspectiveFovLH(0.25f*3.14f, (float)clientWidth/(float)clientHeight, 1.0f, 1000.0f);
 	XMStoreFloat4x4(&mProj, proj);
 
-	// Font
-	D3DXFONT_DESC fontDesc;
-	fontDesc.Height          = 28;
-    fontDesc.Width           = 14;
-    fontDesc.Weight          = 7;
-    fontDesc.MipLevels       = 1;
-    fontDesc.Italic          = false;
-    fontDesc.CharSet         = DEFAULT_CHARSET;
-    fontDesc.OutputPrecision = OUT_DEFAULT_PRECIS;
-    fontDesc.Quality         = 10;
-    fontDesc.PitchAndFamily  = DEFAULT_PITCH | FF_DONTCARE;
-	 _tcscpy(fontDesc.FaceName, _T("Bitstream Vera Sans Mono"));
+	// Directional light.
+	mLight.Ambient  = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
+	mLight.Diffuse  = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	mLight.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+	mLight.Direction = XMFLOAT3(0.57735f, -0.57735f, 0.57735f);
 
-	// HR(D3DXCreateFontIndirect(gGame->GetD3D()->GetDevice(), &fontDesc, &mFont));
+	mMaterial.Ambient  = XMFLOAT4(1.0f, 0.42f, 0.556f, 1.0f);
+	mMaterial.Diffuse  = XMFLOAT4(1.0f, 0.42f, 0.556f, 1.0f);
+	mMaterial.Specular = XMFLOAT4(1.0f, 0.8f, 0.8f, 96.0f);
 }
 
 void Graphics::Update(float dt)
@@ -92,7 +87,7 @@ void Graphics::Update(float dt)
 @param worldMatrix the primitives world transform matrix
 @param effect the effect to use when rendering the primitive
 */
-void Graphics::DrawPrimitive(Primitive* primitive, CXMMATRIX worldMatrix, Effect* effect)
+void Graphics::DrawPrimitive(Primitive* primitive, CXMMATRIX worldMatrix, Material material, Effect* effect)
 {
 	ID3D11DeviceContext* context = GetD3D()->GetContext();
 
@@ -100,41 +95,32 @@ void Graphics::DrawPrimitive(Primitive* primitive, CXMMATRIX worldMatrix, Effect
 	context->IASetInputLayout(effect->GetInputLayout());
 	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	// Set the world matrix.
-	XMMATRIX view = XMLoadFloat4x4(&mCamera->GetViewMatrix());
-	XMMATRIX proj = XMLoadFloat4x4(&mCamera->GetProjectionMatrix());
-	effect->SetWorldViewProj(&(worldMatrix * view * proj));
-	effect->Apply();
+	// Set the effect parameters.
+	SetEffectParameters(effect, worldMatrix, mMaterial);
 
 	// Draw the primitive.
 	primitive->Draw(context);
+}
+
+void Graphics::SetEffectParameters(Effect* effect, CXMMATRIX worldMatrix, Material material)
+{
+	// Set the world * view * proj matrix.
+	XMMATRIX view = XMLoadFloat4x4(&mCamera->GetViewMatrix());
+	XMMATRIX proj = XMLoadFloat4x4(&mCamera->GetProjectionMatrix());
+	effect->SetWorldViewProj(worldMatrix * view * proj);
+	effect->SetWorld(worldMatrix);
+	effect->SetWorldInvTranspose(InverseTranspose(worldMatrix));
+	effect->SetEyePosition(XMLoadFloat3(&mCamera->GetPosition()));
+	effect->SetMaterial(material);
+	effect->SetDirectionalLight(mLight);
+
+	effect->Apply();
 }
 
 void Graphics::DrawText(string text, int x, int y, D3DXCOLOR textColor, int size)
 {
 	RECT pos = {x, y, 0, 0};
 	mFont->DrawText(0, text.c_str(), -1, &pos, DT_NOCLIP, textColor);
-
-	/*if(mFontList.find(size) != mFontList.end())
-		mFontList[size]->DrawText(0, text.c_str(), -1, &pos, DT_NOCLIP, textColor);
-	else {
-		ID3DXFont* font;
-		D3DXFONT_DESC fontDesc;
-		fontDesc.Height          = size;
-		fontDesc.Width           = size/2;
-		fontDesc.Weight          = 0;
-		fontDesc.MipLevels       = 1;
-		fontDesc.Italic          = false;
-		fontDesc.CharSet         = DEFAULT_CHARSET;
-		fontDesc.OutputPrecision = OUT_DEFAULT_PRECIS;
-		fontDesc.Quality         = 10;
-		fontDesc.PitchAndFamily  = DEFAULT_PITCH | FF_DONTCARE;
-			_tcscpy(fontDesc.FaceName, _T("Bitstream Vera Sans Mono"));
-
-		HR(D3DXCreateFontIndirect(gd3dDevice, &fontDesc, &font));
-		mFontList[size] = font;
-		//mFontList[size]->DrawText(0, text.c_str(), -1, &pos, DT_NOCLIP, textColor);
-	}*/
 }
 
 //! Clears the backbuffer with the color "color".
@@ -156,9 +142,9 @@ D3DCore* Graphics::GetD3D()
 	return mD3DCore; 
 }
 
-Effect* Graphics::LoadEffect(string filename)
+Effect* Graphics::LoadEffect(string filename, string technique)
 {
-	Effect* effect = mEffectManager->LoadEffect(filename);
+	Effect* effect = mEffectManager->LoadEffect(filename, technique);
 	effect->Init();
 	return effect;
 }

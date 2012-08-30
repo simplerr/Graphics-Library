@@ -20,7 +20,7 @@ EffectManager::~EffectManager()
 /**
 @param filename the effect file to load, ex "color.fx"
 */
-Effect* EffectManager::LoadEffect(string filename)
+Effect* EffectManager::LoadEffect(string filename, string technique)
 {
 	// Effect already loaded.
 	if(mEffectMap.find(filename) != mEffectMap.end())
@@ -38,7 +38,7 @@ Effect* EffectManager::LoadEffect(string filename)
 		// Create the FX.
 		EffectData data;
 		data.effect	= CreateFx(filename);
-		data.tech   = data.effect->GetTechniqueByName("ColorTech");
+		data.tech   = data.effect->GetTechniqueByName(technique.c_str());
 
 		// Crate the effect and set values.
 		Effect* effect = new Effect();
@@ -62,7 +62,7 @@ ID3DX11Effect* EffectManager::CreateFx(string filename)
 	ID3DX11Effect* effect;
 
 	// Create the effect from memory.
-	std::ifstream fin("Common/color.fxo", std::ios::binary);
+	std::ifstream fin("Common/" + filename + "o", std::ios::binary);
 
 	fin.seekg(0, std::ios_base::end);
 	int size = (int)fin.tellg();

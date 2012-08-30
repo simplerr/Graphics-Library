@@ -114,7 +114,8 @@ Primitive* PrimitiveFactory::CreateGrid(float width, float depth, UINT m, UINT n
 			float x = -halfWidth + j*dx;
 
 			vertices[i*n+j].Pos		= XMFLOAT3(x, 0.0f, z);
-			vertices[i*n+j].Color   = (const float*)&Colors::Black;
+			vertices[i*n+j].Pos.y	= GetHeight(x, z);
+			vertices[i*n+j].Normal	= GetHillNormal(x, z);
 
 			// Stretch texture over grid.
 			//meshData.Vertices[i*n+j].TexC.x = j*du;
@@ -150,4 +151,23 @@ Primitive* PrimitiveFactory::CreateGrid(float width, float depth, UINT m, UINT n
 
 	mPrimitiveMap["grid"] = primitive;
 	return &mPrimitiveMap["grid"];
+}
+
+float PrimitiveFactory::GetHeight(float x, float z)
+{
+	return 0.3f*(z*sinf(0.1f*x) + x*cosf(0.1f*z));
+}
+
+XMFLOAT3 PrimitiveFactory::GetHillNormal(float x, float z)
+{
+	// n = (-df/dx, 1, -df/dz)
+	XMFLOAT3 n(
+		-0.03f*z*cosf(0.1f*x) - 0.3f*cosf(0.1f*z),
+		1.0f,
+		-0.3f*sinf(0.1f*x) + 0.03f*x*sinf(0.1f*z));
+	
+	XMVECTOR unitNormal = XMVector3Normalize(XMLoadFloat3(&n));
+	XMStoreFloat3(&n, unitNormal);
+
+	return n;
 }

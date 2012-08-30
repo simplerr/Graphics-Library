@@ -29,7 +29,7 @@ void Object3D::Update(float dt)
 void Object3D::Draw(Graphics* pGraphics)
 {
 	// Draw the primitive.
-	pGraphics->DrawPrimitive(mPrimitive, GetWorldMatrix(), mEffect);
+	pGraphics->DrawPrimitive(mPrimitive, GetWorldMatrix(), Material(), mEffect);
 }
 
 //! Set the effect to use when drawing.

@@ -4,6 +4,7 @@
 #include <string>
 #include <xnamath.h>
 #include <d3dx9.h>
+#include "LightHelper.h"
 
 using namespace std;
 
@@ -13,6 +14,8 @@ class Primitive;
 class EffectManager;
 class Camera;
 struct D3DXCOLOR;
+struct Material;
+struct DirectionalLight;
 
 /**
 	The user interface to the graphical components.
@@ -27,10 +30,11 @@ public:
 
 	bool Init(int clientWidth, int clientHeight, HWND hwnd, bool fullscreen = false);
 	void Update(float dt);
-	Effect* LoadEffect(string filename);
+	Effect* LoadEffect(string filename, string technique);
 
-	void DrawPrimitive(Primitive* primitive, CXMMATRIX worldMatrix, Effect* effect);
+	void DrawPrimitive(Primitive* primitive, CXMMATRIX worldMatrix, Material material, Effect* effect);
 	void DrawText(string text, int x, int y, D3DXCOLOR textColor, int size);
+	void SetEffectParameters(Effect* effect, CXMMATRIX worldMatrix, Material material);
 
 	void ClearScene();
 	void Present();
@@ -48,4 +52,8 @@ private:
 	// [NOTE] Never store XMMATRIX as a member because of alignment problems.
 	XMFLOAT4X4 mView;
 	XMFLOAT4X4 mProj;
+
+	// TMP
+	DirectionalLight mLight;
+	Material mMaterial;
 };	// Class

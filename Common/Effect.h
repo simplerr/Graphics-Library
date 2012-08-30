@@ -4,6 +4,9 @@
 #include <Windows.h>
 #include <xnamath.h>
 
+struct Material;
+struct DirectionalLight;
+
 /**
 	Wrapper for the effect interface.
 	Extend this class to use custom effects.
@@ -22,16 +25,30 @@ public:
 	ID3DX11EffectTechnique* GetTech();
 	ID3D11InputLayout*		GetInputLayout();
 
-	void SetWorldViewProj(XMMATRIX* matrix);
+	// Used by the effect manager.
 	void SetEffect(ID3DX11Effect* effect);
 	void SetTech(ID3DX11EffectTechnique* tech);
 	void SetInputLayout(ID3D11InputLayout* inputLayout);
+
+	// Setters to effect variables.
+	void SetWorldViewProj(CXMMATRIX matrix);
+	void SetWorld(CXMMATRIX matrix);
+	void SetWorldInvTranspose(CXMMATRIX matrix);
+	void SetEyePosition(FXMVECTOR eyePos);
+	void SetMaterial(Material material);
+	void SetDirectionalLight(DirectionalLight light);
+	
 private:
 	// These 3 members gets loaded by EffectManager::LoadEffect().
 	ID3DX11Effect*			mEffect;
 	ID3DX11EffectTechnique* mTech;
 	ID3D11InputLayout*		mInputLayout; 
 
-	// Load these in the Init() function.
+	// Handles to effect variables.
 	ID3DX11EffectMatrixVariable* mfxWVP;
+	ID3DX11EffectMatrixVariable* mfxWorld;
+	ID3DX11EffectMatrixVariable* mfxWorldInvTranspose;
+	ID3DX11EffectVectorVariable* mfxEyePosW;
+	ID3DX11EffectVariable* mfxDirLight;
+	ID3DX11EffectVariable* mfxMaterial;
 };

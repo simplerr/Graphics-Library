@@ -1,5 +1,18 @@
 #include "d3dUtil.h"
 
+// Returns the inverse transpose.
+XMMATRIX InverseTranspose(CXMMATRIX M)
+{
+	// Inverse-transpose is just applied to normals.  So zero out 
+	// translation row so that it doesn't get into our inverse-transpose
+	// calculation--we don't want the inverse-transpose of the translation.
+	XMMATRIX A = M;
+	A.r[3] = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
+
+	XMVECTOR det = XMMatrixDeterminant(A);
+	return XMMatrixTranspose(XMMatrixInverse(&det, A));
+}
+
 XMFLOAT3 operator+(const XMFLOAT3 a, const XMFLOAT3 b)
 {
 	XMVECTOR first = XMLoadFloat3(&a);
