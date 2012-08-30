@@ -8,10 +8,9 @@
  
 cbuffer cbPerFrame
 {
-	DirectionalLight gDirLight;
-	PointLight gPointLight;
-	SpotLight gSpotLight;
-	float3 gEyePosW;
+	Light	gLights[10];
+	float3	gEyePosW;
+	float	gNumLights;
 };
 
 cbuffer cbPerObject
@@ -61,28 +60,28 @@ float4 PS(VertexOut pin) : SV_Target
 	float4 diffuse = float4(0.0f, 0.0f, 0.0f, 0.0f);
 	float4 spec    = float4(0.0f, 0.0f, 0.0f, 0.0f);
 
-	// Sum the light contribution from each light source.
-	float4 A, D, S;
+	// Loop through all lights
+	for(int i = 0; i < gNumLights; i++)
+	{
+		// Sum the light contribution from each light source.
+		float4 A, D, S;
 
-	ComputeDirectionalLight(gMaterial, gDirLight, pin.NormalW, toEyeW, A, D, S);
-	ambient += A;  
-	diffuse += D;
-	spec    += S;
+		if(gLights[i].type == 0)		// Directional light
+			ComputeDirectionalLight(gMaterial, gLights[i], pin.NormalW, toEyeW, A, D, S);
+		else if(gLights[i].type == 1)	// Point light.
+			ComputePointLight(gMaterial, gLights[i], pin.PosW, pin.NormalW, toEyeW, A, D, S);
+		else if(gLights[i].type == 2)	// Spot light.
+			ComputeSpotLight(gMaterial, gLights[i], pin.PosW, pin.NormalW, toEyeW, A, D, S);
 
-	/*ComputePointLight(gMaterial, gPointLight, pin.PosW, pin.NormalW, toEyeW, A, D, S);
-	ambient += A;
-	diffuse += D;
-	spec    += S;
-
-	ComputeSpotLight(gMaterial, gSpotLight, pin.PosW, pin.NormalW, toEyeW, A, D, S);
-	ambient += A;
-	diffuse += D;
-	spec    += S;*/
+		ambient += A;  
+		diffuse += D;
+		spec    += S;
+	}
 	   
 	float4 litColor = ambient + diffuse + spec;
 
 	// Common to take alpha from diffuse material.
-	litColor.a = gMaterial.Diffuse.a;
+	litColor.a = gMaterial.diffuse.a;
 
     return litColor;
 }

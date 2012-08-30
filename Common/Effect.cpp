@@ -22,8 +22,9 @@ void Effect::Init()
 	mfxWorld = mEffect->GetVariableByName("gWorld")->AsMatrix();
 	mfxWorldInvTranspose = mEffect->GetVariableByName("gWorldInvTranspose")->AsMatrix();
 	mfxEyePosW = mEffect->GetVariableByName("gEyePosW")->AsVector();
-	mfxDirLight = mEffect->GetVariableByName("gDirLight");
+	mfxLights = mEffect->GetVariableByName("gLights");
 	mfxMaterial = mEffect->GetVariableByName("gMaterial");
+	mfxNumLights = mEffect->GetVariableByName("gNumLights");
 }
 
 //! Creates the input layout that will get set before the Input-Assembler state.
@@ -97,9 +98,11 @@ void Effect::SetMaterial(Material material)
 	mfxMaterial->SetRawValue(&material, 0, sizeof(material));
 }
 
-void Effect::SetDirectionalLight(DirectionalLight light)
+void Effect::SetLights(vector<Light> lights)
 {
-	mfxDirLight->SetRawValue(&light, 0, sizeof(light));
+	mfxLights->SetRawValue(&lights[0], 0, sizeof(Light) * lights.size());
+	float size = lights.size();
+	mfxNumLights->SetRawValue(&size, 0, sizeof(float));
 }
 
 void Effect::SetEffect(ID3DX11Effect* effect)

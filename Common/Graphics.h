@@ -3,6 +3,7 @@
 #include <Windows.h>
 #include <string>
 #include <xnamath.h>
+#include <vector>
 #include <d3dx9.h>
 #include "LightHelper.h"
 
@@ -54,6 +55,6 @@ private:
 	XMFLOAT4X4 mProj;
 
 	// TMP
-	DirectionalLight mLight;
+	vector<Light> mLightList;
 	Material mMaterial;
 };	// Class

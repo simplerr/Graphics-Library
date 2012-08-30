@@ -66,14 +66,35 @@ bool Graphics::Init(int clientWidth, int clientHeight, HWND hwnd, bool fullscree
 	XMStoreFloat4x4(&mProj, proj);
 
 	// Directional light.
-	mLight.Ambient  = XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
-	mLight.Diffuse  = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	mLight.Specular = XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
-	mLight.Direction = XMFLOAT3(0.57735f, -0.57735f, 0.57735f);
+	Light light;
+	light.material.ambient  = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+	light.material.diffuse  = XMFLOAT4(0.0f, 0.5f, 0.0f, 1.0f);
+	light.material.specular = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
+	light.direction = XMFLOAT3(0.0f, -1.0f, 0.0f);
+	light.type = 2;
+	light.position = XMFLOAT3(0, 10, 0);
+	light.att = XMFLOAT3(1.0f/2.0f, 0.0f, 0.0f);
+	light.range = 2500.0f;
+	light.spot = 5;
+	mLightList.push_back(light);
 
-	mMaterial.Ambient  = XMFLOAT4(1.0f, 0.42f, 0.556f, 1.0f);
-	mMaterial.Diffuse  = XMFLOAT4(1.0f, 0.42f, 0.556f, 1.0f);
-	mMaterial.Specular = XMFLOAT4(1.0f, 0.8f, 0.8f, 96.0f);
+	/*Light light2;
+	light2.material.ambient  = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+	light2.material.diffuse  = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+	light2.material.specular = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
+	light2.direction = XMFLOAT3(-0.57735f, -0.57735f, 0.0f);
+	mLightList.push_back(light2);
+
+	Light light3;
+	light3.material.ambient  = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+	light3.material.diffuse  = XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
+	light3.material.specular = XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
+	light3.direction = XMFLOAT3(0.0f, -0.57735f, 0.57735f);
+	mLightList.push_back(light3);*/
+
+	mMaterial.ambient  = XMFLOAT4(1.0f, 0.42f, 0.556f, 1.0f);
+	mMaterial.diffuse  = XMFLOAT4(1.0f, 0.42f, 0.556f, 1.0f);
+	mMaterial.specular = XMFLOAT4(1.0f, 0.8f, 0.8f, 96.0f);
 }
 
 void Graphics::Update(float dt)
@@ -112,7 +133,7 @@ void Graphics::SetEffectParameters(Effect* effect, CXMMATRIX worldMatrix, Materi
 	effect->SetWorldInvTranspose(InverseTranspose(worldMatrix));
 	effect->SetEyePosition(XMLoadFloat3(&mCamera->GetPosition()));
 	effect->SetMaterial(material);
-	effect->SetDirectionalLight(mLight);
+	effect->SetLights(mLightList);
 
 	effect->Apply();
 }

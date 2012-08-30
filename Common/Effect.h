@@ -3,9 +3,12 @@
 #include "d3dx11Effect.h"
 #include <Windows.h>
 #include <xnamath.h>
+#include <vector>
+
+using namespace std;
 
 struct Material;
-struct DirectionalLight;
+class Light;
 
 /**
 	Wrapper for the effect interface.
@@ -36,7 +39,7 @@ public:
 	void SetWorldInvTranspose(CXMMATRIX matrix);
 	void SetEyePosition(FXMVECTOR eyePos);
 	void SetMaterial(Material material);
-	void SetDirectionalLight(DirectionalLight light);
+	void SetLights(vector<Light> lights);
 	
 private:
 	// These 3 members gets loaded by EffectManager::LoadEffect().
@@ -49,6 +52,7 @@ private:
 	ID3DX11EffectMatrixVariable* mfxWorld;
 	ID3DX11EffectMatrixVariable* mfxWorldInvTranspose;
 	ID3DX11EffectVectorVariable* mfxEyePosW;
-	ID3DX11EffectVariable* mfxDirLight;
+	ID3DX11EffectVariable* mfxLights;
 	ID3DX11EffectVariable* mfxMaterial;
+	ID3DX11EffectVariable* mfxNumLights;
 };
