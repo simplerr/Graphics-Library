@@ -76,7 +76,7 @@ void Game::Init()
 
 	object->SetEffect(gGame->GetGraphics()->LoadEffect("Base.fx", "BaseTech"));
 	object->SetPrimitive(gPrimitiveFactory->CreateGrid(160.0f, 160.0f, 50, 50));
-	object->SetTexture("textures/crate.dds");
+	object->SetTexture("textures/grass.png", 15.0f);
 
 	mWorld->AddObject(object);
 
@@ -92,8 +92,8 @@ void Game::Init()
 	mWorld->AddLight(mLight);
 
 	mLight2 = new Light;
-	mLight2->SetMaterials(Colors::White*0.4f, Colors::White*0.5f, Colors::White*0.2f);
-	mLight2->SetDirection(0.0f, -1.0f, 0.0f);
+	mLight2->SetMaterials(Colors::White*0.1f, Colors::White*0.7f, Colors::White*0.0f);
+	mLight2->SetDirection(0.5f, -0.5f, 0.5f);
 	mLight2->SetType(DIRECTIONAL_LIGHT);
 	mWorld->AddLight(mLight2);
 }

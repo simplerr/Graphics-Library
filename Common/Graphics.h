@@ -17,6 +17,15 @@ class Primitive;
 class EffectManager;
 class Camera;
 struct Material;
+struct Texture2D;
+
+
+//! Represents a 2D texture.
+struct Texture2D
+{
+	ID3D11ShaderResourceView* texture;
+	float scale;
+};
 
 /**
 	The user interface to the graphical components.
@@ -33,15 +42,15 @@ public:
 	void Update(float dt);
 	Effect* LoadEffect(string filename, string technique);
 
-	void DrawPrimitive(Primitive* primitive, CXMMATRIX worldMatrix, ID3D11ShaderResourceView* texture, Material material, Effect* effect);
+	void DrawPrimitive(Primitive* primitive, CXMMATRIX worldMatrix, Texture2D* texture, Material material, Effect* effect);
 	void DrawText(string text, int x, int y, D3DXCOLOR textColor, int size);
 
-	ID3D11ShaderResourceView* LoadTexture(string filename);
+	Texture2D* LoadTexture(string filename, float scale = 1.0f);
 
 	void ClearScene();
 	void Present();
 
-	void SetEffectParameters(Effect* effect, CXMMATRIX worldMatrix, ID3D11ShaderResourceView* texture, Material material);
+	void SetEffectParameters(Effect* effect, CXMMATRIX worldMatrix, Texture2D* texture, Material material);
 	void SetLightList(LightList* lightList);
 
 	D3DCore* GetD3D();
@@ -49,7 +58,7 @@ private:
 	D3DCore*		mD3DCore;
 	EffectManager*	mEffectManager;
 	Camera*			mCamera;
-	map<string, ID3D11ShaderResourceView*> mTextureMap;
+	map<string, Texture2D*> mTextureMap;
 
 	// TMP
 	LightList* mLightList;

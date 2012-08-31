@@ -35,9 +35,9 @@ void Object3D::Draw(Graphics* pGraphics)
 }
 
 //! Sets the texture to pass to the shader.
-void Object3D::SetTexture(string filename)
+void Object3D::SetTexture(string filename, float scale)
 {
-	mTexture = gGame->GetGraphics()->LoadTexture(filename);
+	mTexture = gGame->GetGraphics()->LoadTexture(filename, scale);
 }
 
 //! Sets the objects material.

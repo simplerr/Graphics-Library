@@ -27,6 +27,13 @@ Graphics::~Graphics()
 	delete mD3DCore;
 	delete mEffectManager;
 	delete mCamera;
+
+	// Release and delete the textures.
+	for(auto iter = mTextureMap.begin(); iter != mTextureMap.end(); iter++)
+	{
+		ReleaseCOM((*iter).second->texture);
+		delete (*iter).second;
+	}
 }
 
 //! Initializes Direct3D by calling D3DCore::Init(...).
@@ -56,18 +63,25 @@ bool Graphics::Init(int clientWidth, int clientHeight, HWND hwnd, bool fullscree
 	mMaterial = Material(Colors::LightSteelBlue);
 }
 
-//! Returns the created texture.
-ID3D11ShaderResourceView* Graphics::LoadTexture(string filename)
+//! Returns the created texture. The Graphics class handles cleanup.
+Texture2D* Graphics::LoadTexture(string filename, float scale)
 {
+	// A bit of a hax... [NOTE][TODO][HAX]
+	char buffer[256];
+	sprintf(buffer, "%s - %f", filename.c_str(), scale);
+	string textureId = buffer;
+
 	// Is the texture already loaded?
-	if(mTextureMap.find(filename) != mTextureMap.end())
-		return mTextureMap[filename];
+	if(mTextureMap.find(textureId) != mTextureMap.end()) {
+		return mTextureMap[textureId];
+	}
 	else
 	{
-		ID3D11ShaderResourceView* texture;
-		HR(D3DX11CreateShaderResourceViewFromFile(GetD3D()->GetDevice(), filename.c_str(), 0, 0, &texture, 0));
-		mTextureMap[filename] = texture;
-		return mTextureMap[filename];
+		Texture2D* texture2d = new Texture2D();
+		HR(D3DX11CreateShaderResourceViewFromFile(GetD3D()->GetDevice(), filename.c_str(), 0, 0, &texture2d->texture, 0));
+		texture2d->scale = scale;
+		mTextureMap[textureId] = texture2d;
+		return mTextureMap[textureId];
 	}
 }
 
@@ -82,7 +96,7 @@ void Graphics::Update(float dt)
 @param worldMatrix the primitives world transform matrix
 @param effect the effect to use when rendering the primitive
 */
-void Graphics::DrawPrimitive(Primitive* primitive, CXMMATRIX worldMatrix, ID3D11ShaderResourceView* texture, Material material, Effect* effect)
+void Graphics::DrawPrimitive(Primitive* primitive, CXMMATRIX worldMatrix, Texture2D* texture, Material material, Effect* effect)
 {
 	ID3D11DeviceContext* context = GetD3D()->GetContext();
 
@@ -97,7 +111,7 @@ void Graphics::DrawPrimitive(Primitive* primitive, CXMMATRIX worldMatrix, ID3D11
 	primitive->Draw(context);
 }
 
-void Graphics::SetEffectParameters(Effect* effect, CXMMATRIX worldMatrix, ID3D11ShaderResourceView* texture, Material material)
+void Graphics::SetEffectParameters(Effect* effect, CXMMATRIX worldMatrix, Texture2D* texture, Material material)
 {
 	// Set the world * view * proj matrix.
 	XMMATRIX view = XMLoadFloat4x4(&mCamera->GetViewMatrix());

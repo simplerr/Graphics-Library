@@ -12,6 +12,7 @@ cbuffer cbPerObject
 	float4x4 gWorld;
 	float4x4 gWorldInvTranspose;
 	float4x4 gWorldViewProj;
+	float4x4 gTexTransform;
 	Material gMaterial;
 	bool	 gUseTexture;
 };
@@ -53,7 +54,7 @@ VertexOut VS(VertexIn vin)
 	vout.PosH = mul(float4(vin.PosL, 1.0f), gWorldViewProj);
 
 	// Pass on the texture.
-	vout.Tex = vin.Tex;
+	vout.Tex = mul(float4(vin.Tex, 0.0f, 1.0f), gTexTransform).xy;
 	
 	return vout;
 }

@@ -3,6 +3,7 @@
 #include "D3DCore.h"
 #include "d3dUtil.h"
 #include "Light.h"
+#include "Graphics.h"
 
 
 Effect::Effect()
@@ -21,6 +22,7 @@ void Effect::Init()
 	mfxWVP				 = mEffect->GetVariableByName("gWorldViewProj")->AsMatrix();
 	mfxWorld			 = mEffect->GetVariableByName("gWorld")->AsMatrix();
 	mfxWorldInvTranspose = mEffect->GetVariableByName("gWorldInvTranspose")->AsMatrix();
+	mfxTexTransform		 = mEffect->GetVariableByName("gTexTransform")->AsMatrix();
 	mfxEyePosW			 = mEffect->GetVariableByName("gEyePosW")->AsVector();
 	mfxLights			 = mEffect->GetVariableByName("gLights");
 	mfxMaterial			 = mEffect->GetVariableByName("gMaterial");
@@ -118,10 +120,12 @@ void Effect::SetUseTexture(bool use)
 	mfxUseTexture->SetRawValue(&use, 0, sizeof(bool));
 }
 
-void Effect::SetTexture(ID3D11ShaderResourceView* texture)
+void Effect::SetTexture(Texture2D* texture)
 {
 	SetUseTexture(texture == nullptr ? false : true);
-	mfxTexture->SetResource(texture);
+	mfxTexture->SetResource(texture->texture);
+	XMMATRIX transform = XMMatrixScaling(texture->scale, texture->scale, 0);
+	mfxTexTransform->SetMatrix((const float*)&transform);
 }
 
 void Effect::SetEffect(ID3DX11Effect* effect)

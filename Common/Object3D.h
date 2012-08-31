@@ -8,6 +8,7 @@
 class Graphics;
 class Effect;
 class Primitive;
+struct Texture2D;
 
 /**
 	Base class for all objects.
@@ -29,7 +30,7 @@ public:
 	XMFLOAT3 GetScale();
 	Material GetMaterial();
 
-	void SetTexture(string filename);
+	void SetTexture(string filename, float scale = 1.0f);
 	void SetEffect(Effect* effect);
 	void SetPrimitive(Primitive* primitive);
 	void SetPosition(XMFLOAT3 position);
@@ -38,7 +39,7 @@ public:
 	void SetMaterial(Material material);
 	
 private:
-	ID3D11ShaderResourceView* mTexture;
+	Texture2D*	mTexture;
 	Primitive*	mPrimitive;
 	Effect*		mEffect;
 	Material	mMaterial;

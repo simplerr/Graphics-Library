@@ -9,6 +9,7 @@
 using namespace std;
 
 struct Material;
+struct Texture2D;
 class Light;
 
 /**
@@ -42,7 +43,7 @@ public:
 	void SetMaterial(Material material);
 	void SetLights(LightList* lights);
 	void SetUseTexture(bool use);
-	void SetTexture(ID3D11ShaderResourceView* texture);
+	void SetTexture(Texture2D* texture);
 
 private:
 	// These 3 members gets loaded by EffectManager::LoadEffect().
@@ -54,6 +55,7 @@ private:
 	ID3DX11EffectMatrixVariable* mfxWVP;
 	ID3DX11EffectMatrixVariable* mfxWorld;
 	ID3DX11EffectMatrixVariable* mfxWorldInvTranspose;
+	ID3DX11EffectMatrixVariable* mfxTexTransform;
 	ID3DX11EffectVectorVariable* mfxEyePosW;
 	ID3DX11EffectVariable* mfxLights;
 	ID3DX11EffectVariable* mfxMaterial;
