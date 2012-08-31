@@ -41,7 +41,9 @@ public:
 	void SetEyePosition(FXMVECTOR eyePos);
 	void SetMaterial(Material material);
 	void SetLights(LightList* lights);
-	
+	void SetUseTexture(bool use);
+	void SetTexture(ID3D11ShaderResourceView* texture);
+
 private:
 	// These 3 members gets loaded by EffectManager::LoadEffect().
 	ID3DX11Effect*			mEffect;
@@ -56,4 +58,6 @@ private:
 	ID3DX11EffectVariable* mfxLights;
 	ID3DX11EffectVariable* mfxMaterial;
 	ID3DX11EffectVariable* mfxNumLights;
+	ID3DX11EffectVariable* mfxUseTexture;
+	ID3DX11EffectShaderResourceVariable* mfxTexture;
 };

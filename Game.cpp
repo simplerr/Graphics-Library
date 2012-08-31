@@ -65,16 +65,18 @@ void Game::Init()
 	Object3D* object = new Object3D();
 
 	// Load the effect and the primitive.
-	object->SetEffect(gGame->GetGraphics()->LoadEffect("Lighting.fx", "LightTech"));
+	object->SetEffect(gGame->GetGraphics()->LoadEffect("Base.fx", "BaseTech"));
 	object->SetPrimitive(gPrimitiveFactory->CreateBox());
+	object->SetTexture("textures/crate.dds");
 	object->SetPosition(XMFLOAT3(0, 3, 0));
 
 	mWorld->AddObject(object);
 
 	object = new Object3D();
 
-	object->SetEffect(gGame->GetGraphics()->LoadEffect("Lighting.fx", "LightTech"));
+	object->SetEffect(gGame->GetGraphics()->LoadEffect("Base.fx", "BaseTech"));
 	object->SetPrimitive(gPrimitiveFactory->CreateGrid(160.0f, 160.0f, 50, 50));
+	object->SetTexture("textures/crate.dds");
 
 	mWorld->AddObject(object);
 

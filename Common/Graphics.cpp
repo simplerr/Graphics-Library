@@ -56,6 +56,21 @@ bool Graphics::Init(int clientWidth, int clientHeight, HWND hwnd, bool fullscree
 	mMaterial = Material(Colors::LightSteelBlue);
 }
 
+//! Returns the created texture.
+ID3D11ShaderResourceView* Graphics::LoadTexture(string filename)
+{
+	// Is the texture already loaded?
+	if(mTextureMap.find(filename) != mTextureMap.end())
+		return mTextureMap[filename];
+	else
+	{
+		ID3D11ShaderResourceView* texture;
+		HR(D3DX11CreateShaderResourceViewFromFile(GetD3D()->GetDevice(), filename.c_str(), 0, 0, &texture, 0));
+		mTextureMap[filename] = texture;
+		return mTextureMap[filename];
+	}
+}
+
 void Graphics::Update(float dt)
 {
 	mCamera->Update(dt);
@@ -67,7 +82,7 @@ void Graphics::Update(float dt)
 @param worldMatrix the primitives world transform matrix
 @param effect the effect to use when rendering the primitive
 */
-void Graphics::DrawPrimitive(Primitive* primitive, CXMMATRIX worldMatrix, Material material, Effect* effect)
+void Graphics::DrawPrimitive(Primitive* primitive, CXMMATRIX worldMatrix, ID3D11ShaderResourceView* texture, Material material, Effect* effect)
 {
 	ID3D11DeviceContext* context = GetD3D()->GetContext();
 
@@ -76,13 +91,13 @@ void Graphics::DrawPrimitive(Primitive* primitive, CXMMATRIX worldMatrix, Materi
 	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	// Set the effect parameters.
-	SetEffectParameters(effect, worldMatrix, mMaterial);
+	SetEffectParameters(effect, worldMatrix, texture, material);
 
 	// Draw the primitive.
 	primitive->Draw(context);
 }
 
-void Graphics::SetEffectParameters(Effect* effect, CXMMATRIX worldMatrix, Material material)
+void Graphics::SetEffectParameters(Effect* effect, CXMMATRIX worldMatrix, ID3D11ShaderResourceView* texture, Material material)
 {
 	// Set the world * view * proj matrix.
 	XMMATRIX view = XMLoadFloat4x4(&mCamera->GetViewMatrix());
@@ -93,6 +108,7 @@ void Graphics::SetEffectParameters(Effect* effect, CXMMATRIX worldMatrix, Materi
 	effect->SetEyePosition(XMLoadFloat3(&mCamera->GetPosition()));
 	effect->SetMaterial(material);
 	effect->SetLights(mLightList);
+	effect->SetTexture(texture);
 
 	effect->Apply();
 }

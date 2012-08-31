@@ -15,7 +15,8 @@ void World::Init()
 {
 	mDebugObject = new Object3D();
 	mDebugObject->SetPrimitive(gPrimitiveFactory->CreateBox());
-	mDebugObject->SetEffect(gGame->GetGraphics()->LoadEffect("Lighting.fx", "LightTech"));
+	mDebugObject->SetEffect(gGame->GetGraphics()->LoadEffect("Base.fx", "BaseTech"));
+	mDebugObject->SetTexture("textures/crate.dds");
 }
 
 //! Cleanup the object and light lists.

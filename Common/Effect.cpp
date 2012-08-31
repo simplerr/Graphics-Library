@@ -18,13 +18,15 @@ Effect::~Effect()
 void Effect::Init()
 {
 	// Connect handles to the effect variables.
-	mfxWVP = mEffect->GetVariableByName("gWorldViewProj")->AsMatrix();
-	mfxWorld = mEffect->GetVariableByName("gWorld")->AsMatrix();
+	mfxWVP				 = mEffect->GetVariableByName("gWorldViewProj")->AsMatrix();
+	mfxWorld			 = mEffect->GetVariableByName("gWorld")->AsMatrix();
 	mfxWorldInvTranspose = mEffect->GetVariableByName("gWorldInvTranspose")->AsMatrix();
-	mfxEyePosW = mEffect->GetVariableByName("gEyePosW")->AsVector();
-	mfxLights = mEffect->GetVariableByName("gLights");
-	mfxMaterial = mEffect->GetVariableByName("gMaterial");
-	mfxNumLights = mEffect->GetVariableByName("gNumLights");
+	mfxEyePosW			 = mEffect->GetVariableByName("gEyePosW")->AsVector();
+	mfxLights			 = mEffect->GetVariableByName("gLights");
+	mfxMaterial			 = mEffect->GetVariableByName("gMaterial");
+	mfxNumLights		 = mEffect->GetVariableByName("gNumLights");
+	mfxUseTexture		 = mEffect->GetVariableByName("gUseTexture");
+	mfxTexture			 = mEffect->GetVariableByName("gTexture")->AsShaderResource();
 }
 
 //! Creates the input layout that will get set before the Input-Assembler state.
@@ -37,7 +39,8 @@ ID3D11InputLayout* Effect::CreateInputLayout()
 	D3D11_INPUT_ELEMENT_DESC vertexDesc[] =
 	{
 		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"NORMAL",    0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0}
+		{"NORMAL",   0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0}
 	};
 
 	ID3D11InputLayout* inputLayout;
@@ -45,7 +48,7 @@ ID3D11InputLayout* Effect::CreateInputLayout()
 	// Create the input layout
     D3DX11_PASS_DESC passDesc;
     mTech->GetPassByIndex(0)->GetDesc(&passDesc);
-	HR(gGame->GetD3D()->GetDevice()->CreateInputLayout(vertexDesc, 2, passDesc.pIAInputSignature, 
+	HR(gGame->GetD3D()->GetDevice()->CreateInputLayout(vertexDesc, 3, passDesc.pIAInputSignature, 
 		passDesc.IAInputSignatureSize, &inputLayout));
 
 	return inputLayout;
@@ -108,6 +111,17 @@ void Effect::SetLights(LightList* lights)
 	mfxLights->SetRawValue((void*)lightArray, 0, sizeof(Light) * lights->size());
 	float size = lights->size();
 	mfxNumLights->SetRawValue(&size, 0, sizeof(float));
+}
+
+void Effect::SetUseTexture(bool use)
+{
+	mfxUseTexture->SetRawValue(&use, 0, sizeof(bool));
+}
+
+void Effect::SetTexture(ID3D11ShaderResourceView* texture)
+{
+	SetUseTexture(texture == nullptr ? false : true);
+	mfxTexture->SetResource(texture);
 }
 
 void Effect::SetEffect(ID3DX11Effect* effect)

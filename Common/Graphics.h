@@ -4,6 +4,7 @@
 #include <string>
 #include <xnamath.h>
 #include <vector>
+#include <map>
 #include <d3dx9.h>
 #include "Light.h"
 #include "d3dUtil.h"
@@ -32,21 +33,23 @@ public:
 	void Update(float dt);
 	Effect* LoadEffect(string filename, string technique);
 
-	void DrawPrimitive(Primitive* primitive, CXMMATRIX worldMatrix, Material material, Effect* effect);
+	void DrawPrimitive(Primitive* primitive, CXMMATRIX worldMatrix, ID3D11ShaderResourceView* texture, Material material, Effect* effect);
 	void DrawText(string text, int x, int y, D3DXCOLOR textColor, int size);
-	void SetEffectParameters(Effect* effect, CXMMATRIX worldMatrix, Material material);
-	void SetLightList(LightList* lightList);
+
+	ID3D11ShaderResourceView* LoadTexture(string filename);
 
 	void ClearScene();
 	void Present();
 
-	void BuildVertexLayout();
+	void SetEffectParameters(Effect* effect, CXMMATRIX worldMatrix, ID3D11ShaderResourceView* texture, Material material);
+	void SetLightList(LightList* lightList);
 
 	D3DCore* GetD3D();
 private:
 	D3DCore*		mD3DCore;
 	EffectManager*	mEffectManager;
 	Camera*			mCamera;
+	map<string, ID3D11ShaderResourceView*> mTextureMap;
 
 	// TMP
 	LightList* mLightList;

@@ -1,9 +1,3 @@
-//=============================================================================
-// Lighting.fx by Frank Luna (C) 2011 All Rights Reserved.
-//
-// Transforms and lights geometry.
-//=============================================================================
-
 #include "LightHelper.fx"
  
 cbuffer cbPerFrame
@@ -19,19 +13,32 @@ cbuffer cbPerObject
 	float4x4 gWorldInvTranspose;
 	float4x4 gWorldViewProj;
 	Material gMaterial;
+	bool	 gUseTexture;
+};
+
+Texture2D gTexture;
+
+SamplerState textureSampler
+{
+	Filter = ANISOTROPIC;
+	MaxAnisotropy = 4;
+	AddressU = WRAP;
+	AddressV = WRAP;
 };
 
 struct VertexIn
 {
-	float3 PosL    : POSITION;
-	float3 NormalL : NORMAL;
+	float3 PosL		: POSITION;
+	float3 NormalL	: NORMAL;
+	float2 Tex		: TEXCOORD;
 };
 
 struct VertexOut
 {
-	float4 PosH    : SV_POSITION;
-    float3 PosW    : POSITION;
-    float3 NormalW : NORMAL;
+	float4 PosH		: SV_POSITION;
+    float3 PosW		: POSITION;
+    float3 NormalW	: NORMAL;
+	float2 Tex		: TEXCOORD;
 };
 
 VertexOut VS(VertexIn vin)
@@ -44,6 +51,9 @@ VertexOut VS(VertexIn vin)
 		
 	// Transform to homogeneous clip space.
 	vout.PosH = mul(float4(vin.PosL, 1.0f), gWorldViewProj);
+
+	// Pass on the texture.
+	vout.Tex = vin.Tex;
 	
 	return vout;
 }
@@ -54,6 +64,11 @@ float4 PS(VertexOut pin) : SV_Target
     pin.NormalW = normalize(pin.NormalW); 
 
 	float3 toEyeW = normalize(gEyePosW - pin.PosW);
+
+	// Identity as default.
+	float4 texColor = float4(1, 1, 1, 1);
+	if(gUseTexture)
+		texColor = gTexture.Sample(textureSampler, pin.Tex);
 
 	// Start with a sum of zero. 
 	float4 ambient = float4(0.0f, 0.0f, 0.0f, 0.0f);
@@ -78,15 +93,15 @@ float4 PS(VertexOut pin) : SV_Target
 		spec    += S;
 	}
 	   
-	float4 litColor = ambient + diffuse + spec;
+	float4 litColor = texColor*(ambient + diffuse) + spec;
 
 	// Common to take alpha from diffuse material.
-	litColor.a = gMaterial.diffuse.a;
+	litColor.a = gMaterial.diffuse.a * texColor.a;
 
     return litColor;
 }
 
-technique11 LightTech
+technique11 BaseTech
 {
     pass P0
     {
