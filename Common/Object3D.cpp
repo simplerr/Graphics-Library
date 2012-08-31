@@ -2,7 +2,7 @@
 #include "Graphics.h"
 #include "Effect.h"
 #include "Runnable.h"
-#include "../Primitive.h"
+#include "Primitive.h"
 #include "PrimitiveFactory.h"
 #include "D3DCore.h"
 

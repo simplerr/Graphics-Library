@@ -4,6 +4,7 @@
 #include <Windows.h>
 #include <xnamath.h>
 #include <vector>
+#include "d3dUtil.h"
 
 using namespace std;
 
@@ -39,7 +40,7 @@ public:
 	void SetWorldInvTranspose(CXMMATRIX matrix);
 	void SetEyePosition(FXMVECTOR eyePos);
 	void SetMaterial(Material material);
-	void SetLights(vector<Light*>* lights);
+	void SetLights(LightList* lights);
 	
 private:
 	// These 3 members gets loaded by EffectManager::LoadEffect().

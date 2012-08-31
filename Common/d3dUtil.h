@@ -4,8 +4,14 @@
 #include <dxerr.h>
 #include <assert.h>
 #include <Windows.h>
+#include <vector>
 #include <xnamath.h>
 #include <D3DX10math.h>
+
+class Light;
+
+// Typedef for convenience
+typedef std::vector<Light*> LightList;
 
 // Overloaded operators to make things smoother.
 XMFLOAT3 operator+(const XMFLOAT3 a, const XMFLOAT3 b);

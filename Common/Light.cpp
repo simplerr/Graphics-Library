@@ -7,19 +7,19 @@
 Light::Light() 
 {
 	ZeroMemory(this, sizeof(this));
-	type = 0;
+	mType = 0;
 }
 
 void Light::SetMaterials(XMFLOAT4 ambient, XMFLOAT4 diffuse, XMFLOAT4 specular)
 {
-	this->material.ambient  = ambient;
-	this->material.diffuse  = diffuse;
-	this->material.specular	= specular;
+	mMaterial.ambient  = ambient;
+	mMaterial.diffuse  = diffuse;
+	mMaterial.specular	= specular;
 }
 	
 void Light::SetPosition(XMFLOAT3 position)
 {
-	this->position = position;
+	mPosition = position;
 }
 	
 void Light::SetPosition(float x, float y, float z)
@@ -29,12 +29,12 @@ void Light::SetPosition(float x, float y, float z)
 
 void Light::SetRange(float range)
 {
-	this->range = range;
+	mRange = range;
 }
 
 void Light::SetDirection(XMFLOAT3 direction)
 {
-	this->direction = direction;
+	mDirection = direction;
 }
 	
 void Light::SetDirection(float x, float y, float z)
@@ -44,17 +44,36 @@ void Light::SetDirection(float x, float y, float z)
 
 void Light::SetSpot(float spot)
 {
-	this->spot = spot;
+	mSpot = spot;
 }
 	
 void Light::SetAtt(float a0, float a1, float a2)
 {
-	this->att = XMFLOAT3(a0, a1, a2);
+	mAtt = XMFLOAT3(a0, a1, a2);
 }
 	
 void Light::SetType(LightType type)
 {
-	this->type = type;
+	mType = type;
 }
  
+XMFLOAT3 Light::GetPosition()
+{
+	return mPosition;
+}
+	
+XMFLOAT3 Light::GetDirection()
+{
+	return mDirection;
+}
+	
+XMFLOAT3 Light::GetAtt()
+{
+	return mAtt;
+}
+	
+float Light::GetSpot()
+{
+	return mSpot;
+}
  

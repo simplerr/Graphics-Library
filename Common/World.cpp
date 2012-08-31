@@ -1,6 +1,10 @@
 #include "World.h"
-#include "Common\Object3D.h"
-#include "Common\Light.h"
+#include "Object3D.h"
+#include "Light.h"
+#include "PrimitiveFactory.h"
+#include "Runnable.h"
+#include "Effect.h"
+#include "Graphics.h"
 
 World::World()
 {
@@ -9,7 +13,9 @@ World::World()
 
 void World::Init()
 {
-
+	mDebugObject = new Object3D();
+	mDebugObject->SetPrimitive(gPrimitiveFactory->CreateBox());
+	mDebugObject->SetEffect(gGame->GetGraphics()->LoadEffect("Lighting.fx", "LightTech"));
 }
 
 //! Cleanup the object and light lists.
@@ -40,6 +46,13 @@ void World::Draw(Graphics* pGraphics)
 	{
 		mObjectList[i]->Draw(pGraphics);
 	}
+
+	for(int i = 0; i < mLightList.size(); i++)
+	{
+		mDebugObject->SetPosition(mLightList[i]->GetPosition());
+		mDebugObject->SetRotation(mLightList[i]->GetDirection());
+		mDebugObject->Draw(pGraphics);
+	}
 }
 	
 //! Adds a object to the object list.
@@ -56,7 +69,7 @@ void World::AddLight(Light* light)
 }
 
 //! Returns the address to the light list.
-vector<Light*>* World::GetLights()
+LightList* World::GetLights()
 {
 	return &mLightList;
 }

@@ -98,7 +98,7 @@ void Effect::SetMaterial(Material material)
 	mfxMaterial->SetRawValue(&material, 0, sizeof(material));
 }
 
-void Effect::SetLights(vector<Light*>* lights)
+void Effect::SetLights(LightList* lights)
 {
 	Light lightArray[10];
 	for(int i = 0; i < lights->size(); i++)

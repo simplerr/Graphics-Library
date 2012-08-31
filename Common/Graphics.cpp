@@ -7,7 +7,7 @@
 #include "d3dx11effect.h"
 #include "Effect.h"
 #include "EffectManager.h"
-#include "../Primitive.h"
+#include "Primitive.h"
 #include "Camera.h"
 #include "Light.h"
 
@@ -128,7 +128,7 @@ Effect* Graphics::LoadEffect(string filename, string technique)
 	return effect;
 }
 
-void Graphics::SetLightList(vector<Light*>* lightList)
+void Graphics::SetLightList(LightList* lightList)
 {
 	mLightList = lightList;
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include "d3dUtil.h"
 using namespace std;
 
 class Graphics;
@@ -18,8 +19,9 @@ public:
 	void Init();
 	void AddObject(Object3D* object);
 	void AddLight(Light* light);
-	vector<Light*>* GetLights();
+	LightList* GetLights();
 private:
 	vector<Object3D*> mObjectList;
-	vector<Light*> mLightList;
+	LightList mLightList;//LightList mLightList;	
+	Object3D* mDebugObject;
 };

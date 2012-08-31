@@ -7,7 +7,7 @@
 #include "Common\PrimitiveFactory.h"
 #include "Common\Object3D.h"
 #include "Common\Input.h"
-#include "World.h"
+#include "Common\World.h"
 #include "Common\Light.h"
 
 // Set globals to nullptrs
@@ -56,6 +56,7 @@ void Game::Init()
 
 	// Create the world.
 	mWorld = new World();
+	mWorld->Init();
 
 	// Connect the graphics light list to the one in World.
 	GetGraphics()->SetLightList(mWorld->GetLights());
@@ -79,20 +80,45 @@ void Game::Init()
 
 	// Add some lights.
 	mLight = new Light();
-	mLight->SetMaterials(Colors::White*0.3f, Colors::White*0.5f, Colors::White*0.2f);
+	mLight->SetMaterials(Colors::Red*0.2f, Colors::Red*0.8f, Colors::Red*0.8f);
 	mLight->SetDirection(0.7f, -1.0f, 0.7);
-	mLight->SetType(POINT_LIGHT);
+	mLight->SetType(SPOT_LIGHT);
 	mLight->SetPosition(0, 10, 0);
-	mLight->SetAtt(1.0f/2.0f, 0.0f, 0.0f);
-	mLight->SetRange(2500.0f);
+	mLight->SetAtt(0.0f, 1.0f/20, 0.0f);
+	mLight->SetRange(250.0f);
 	mLight->SetSpot(5.0f);
 	mWorld->AddLight(mLight);
+
+	mLight2 = new Light;
+	mLight2->SetMaterials(Colors::White*0.4f, Colors::White*0.5f, Colors::White*0.2f);
+	mLight2->SetDirection(0.0f, -1.0f, 0.0f);
+	mLight2->SetType(DIRECTIONAL_LIGHT);
+	mWorld->AddLight(mLight2);
 }
 	
 void Game::Update(float dt)
 {
 	gInput->Update(dt);
 	GetGraphics()->Update(dt);
+
+	static float speed = 0.005;
+	if(gInput->KeyDown('1'))
+		mLight->SetPosition(mLight->GetPosition() + XMFLOAT3(speed, 0, 0));
+	else if(gInput->KeyDown('2'))
+		mLight->SetPosition(mLight->GetPosition() + XMFLOAT3(-speed, 0, 0));
+	if(gInput->KeyDown('3'))
+		mLight->SetPosition(mLight->GetPosition() + XMFLOAT3(0, 0, speed));
+	else if(gInput->KeyDown('4'))
+		mLight->SetPosition(mLight->GetPosition() + XMFLOAT3(0, 0, -speed));
+	if(gInput->KeyDown('5'))
+		mLight->SetPosition(mLight->GetPosition() + XMFLOAT3(0, speed, 0));
+	else if(gInput->KeyDown('6'))
+		mLight->SetPosition(mLight->GetPosition() + XMFLOAT3(0, -speed, 0));
+
+	if(gInput->KeyDown('Z'))
+		mLight2->SetDirection(mLight2->GetDirection() + XMFLOAT3(0, 0, 0.001));
+	else if(gInput->KeyDown('X'))
+		mLight2->SetDirection(mLight2->GetDirection() + XMFLOAT3(0, -0, -0.001));
 }
 	
 void Game::Draw(Graphics* pGraphics)

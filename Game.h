@@ -20,4 +20,5 @@ public:
 private:
 	World* mWorld;
 	Light* mLight;
+	Light* mLight2;
 };

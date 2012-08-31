@@ -6,6 +6,7 @@
 #include <vector>
 #include <d3dx9.h>
 #include "Light.h"
+#include "d3dUtil.h"
 
 using namespace std;
 
@@ -14,9 +15,7 @@ class Effect;
 class Primitive;
 class EffectManager;
 class Camera;
-struct D3DXCOLOR;
 struct Material;
-struct DirectionalLight;
 
 /**
 	The user interface to the graphical components.
@@ -36,7 +35,7 @@ public:
 	void DrawPrimitive(Primitive* primitive, CXMMATRIX worldMatrix, Material material, Effect* effect);
 	void DrawText(string text, int x, int y, D3DXCOLOR textColor, int size);
 	void SetEffectParameters(Effect* effect, CXMMATRIX worldMatrix, Material material);
-	void SetLightList(vector<Light*>* lightList);
+	void SetLightList(LightList* lightList);
 
 	void ClearScene();
 	void Present();
@@ -50,6 +49,6 @@ private:
 	Camera*			mCamera;
 
 	// TMP
-	vector<Light*>* mLightList;
+	LightList* mLightList;
 	Material mMaterial;
 };	// Class

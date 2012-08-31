@@ -4,8 +4,8 @@
 #include "D3DCore.h"
 #include <D3DX11.h>
 #include <vector>
-#include "../Primitive.h"
-#include "../Vertex.h"
+#include "Primitive.h"
+#include "Vertex.h"
 
 PrimitiveFactory::PrimitiveFactory()
 {
