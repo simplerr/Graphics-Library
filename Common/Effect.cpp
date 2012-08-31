@@ -2,7 +2,7 @@
 #include "Runnable.h"
 #include "D3DCore.h"
 #include "d3dUtil.h"
-#include "LightHelper.h"
+#include "Light.h"
 
 
 Effect::Effect()
@@ -98,10 +98,15 @@ void Effect::SetMaterial(Material material)
 	mfxMaterial->SetRawValue(&material, 0, sizeof(material));
 }
 
-void Effect::SetLights(vector<Light> lights)
+void Effect::SetLights(vector<Light*>* lights)
 {
-	mfxLights->SetRawValue(&lights[0], 0, sizeof(Light) * lights.size());
-	float size = lights.size();
+	Light lightArray[10];
+	for(int i = 0; i < lights->size(); i++)
+		lightArray[i] = *lights->operator[](i);
+
+	// Sets the light list in the effect file.
+	mfxLights->SetRawValue((void*)lightArray, 0, sizeof(Light) * lights->size());
+	float size = lights->size();
 	mfxNumLights->SetRawValue(&size, 0, sizeof(float));
 }
 

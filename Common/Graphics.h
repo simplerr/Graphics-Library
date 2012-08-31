@@ -5,7 +5,7 @@
 #include <xnamath.h>
 #include <vector>
 #include <d3dx9.h>
-#include "LightHelper.h"
+#include "Light.h"
 
 using namespace std;
 
@@ -36,6 +36,7 @@ public:
 	void DrawPrimitive(Primitive* primitive, CXMMATRIX worldMatrix, Material material, Effect* effect);
 	void DrawText(string text, int x, int y, D3DXCOLOR textColor, int size);
 	void SetEffectParameters(Effect* effect, CXMMATRIX worldMatrix, Material material);
+	void SetLightList(vector<Light*>* lightList);
 
 	void ClearScene();
 	void Present();
@@ -44,17 +45,11 @@ public:
 
 	D3DCore* GetD3D();
 private:
-	D3DCore* mD3DCore;
-	EffectManager* mEffectManager;
-	Camera*	mCamera;
-	ID3DXFont* mFont;
-
-	// Move these to the camera class later
-	// [NOTE] Never store XMMATRIX as a member because of alignment problems.
-	XMFLOAT4X4 mView;
-	XMFLOAT4X4 mProj;
+	D3DCore*		mD3DCore;
+	EffectManager*	mEffectManager;
+	Camera*			mCamera;
 
 	// TMP
-	vector<Light> mLightList;
+	vector<Light*>* mLightList;
 	Material mMaterial;
 };	// Class

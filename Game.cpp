@@ -7,6 +7,8 @@
 #include "Common\PrimitiveFactory.h"
 #include "Common\Object3D.h"
 #include "Common\Input.h"
+#include "World.h"
+#include "Common\Light.h"
 
 // Set globals to nullptrs
 Runnable*			gGame				= nullptr;
@@ -41,6 +43,7 @@ Game::~Game()
 {
 	delete gPrimitiveFactory;
 	delete gInput;
+	delete mWorld;
 }
 
 void Game::Init()
@@ -48,19 +51,42 @@ void Game::Init()
 	// Important to run Systems Init() function.
 	Runnable::Init();
 
+	// Create the primitive factory.
 	gPrimitiveFactory = new PrimitiveFactory();
 
-	// Test object.
-	mObject = new Object3D();
-	mObject2 = new Object3D();
+	// Create the world.
+	mWorld = new World();
+
+	// Connect the graphics light list to the one in World.
+	GetGraphics()->SetLightList(mWorld->GetLights());
+
+	// Add some objects.
+	Object3D* object = new Object3D();
 
 	// Load the effect and the primitive.
-	mObject->SetEffect(gGame->GetGraphics()->LoadEffect("Lighting.fx", "LightTech"));
-	mObject->SetPrimitive(gPrimitiveFactory->CreateBox());
-	mObject->SetPosition(XMFLOAT3(0, 3, 0));
+	object->SetEffect(gGame->GetGraphics()->LoadEffect("Lighting.fx", "LightTech"));
+	object->SetPrimitive(gPrimitiveFactory->CreateBox());
+	object->SetPosition(XMFLOAT3(0, 3, 0));
 
-	mObject2->SetEffect(gGame->GetGraphics()->LoadEffect("Lighting.fx", "LightTech"));
-	mObject2->SetPrimitive(gPrimitiveFactory->CreateGrid(160.0f, 160.0f, 50, 50));
+	mWorld->AddObject(object);
+
+	object = new Object3D();
+
+	object->SetEffect(gGame->GetGraphics()->LoadEffect("Lighting.fx", "LightTech"));
+	object->SetPrimitive(gPrimitiveFactory->CreateGrid(160.0f, 160.0f, 50, 50));
+
+	mWorld->AddObject(object);
+
+	// Add some lights.
+	mLight = new Light();
+	mLight->SetMaterials(Colors::White*0.3f, Colors::White*0.5f, Colors::White*0.2f);
+	mLight->SetDirection(0.7f, -1.0f, 0.7);
+	mLight->SetType(POINT_LIGHT);
+	mLight->SetPosition(0, 10, 0);
+	mLight->SetAtt(1.0f/2.0f, 0.0f, 0.0f);
+	mLight->SetRange(2500.0f);
+	mLight->SetSpot(5.0f);
+	mWorld->AddLight(mLight);
 }
 	
 void Game::Update(float dt)
@@ -73,8 +99,8 @@ void Game::Draw(Graphics* pGraphics)
 {
 	pGraphics->ClearScene();
 
-	mObject->Draw(pGraphics);
-	mObject2->Draw(pGraphics);
+	// Draw all objects.
+	mWorld->Draw(pGraphics);
 
 	pGraphics->Present();
 }
@@ -91,16 +117,12 @@ LRESULT Game::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		break;
 	case WM_LBUTTONDOWN:
 		{
-		XMFLOAT3 rotation = mObject->GetRotation();
-		rotation.x += 0.1;
-		mObject->SetRotation(rotation);
+		
 		break;
 		}
 	case WM_RBUTTONDOWN: 
 		{
-		XMFLOAT3 scale = mObject->GetScale();
-		scale.y += 0.1;
-		mObject->SetScale(scale);
+		
 		break;
 		}
 	};

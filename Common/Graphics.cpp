@@ -9,7 +9,7 @@
 #include "EffectManager.h"
 #include "../Primitive.h"
 #include "Camera.h"
-#include "LightHelper.h"
+#include "Light.h"
 
 //! Constructor. The Init() function handles the initialization.
 Graphics::Graphics()
@@ -53,48 +53,7 @@ bool Graphics::Init(int clientWidth, int clientHeight, HWND hwnd, bool fullscree
 		return false;
 	}
 
-	// Move to camera...
-	XMVECTOR pos    = XMVectorSet(6, 6, 6, 1.0f);
-	XMVECTOR target = XMVectorZero();
-	XMVECTOR up     = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-
-	XMMATRIX view = XMMatrixLookAtLH(pos, target, up);
-	XMStoreFloat4x4(&mView, view);
-
-	// The window resized, so update the aspect ratio and recompute the projection matrix.
-	XMMATRIX proj = XMMatrixPerspectiveFovLH(0.25f*3.14f, (float)clientWidth/(float)clientHeight, 1.0f, 1000.0f);
-	XMStoreFloat4x4(&mProj, proj);
-
-	// Directional light.
-	Light light;
-	light.material.ambient  = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
-	light.material.diffuse  = XMFLOAT4(0.0f, 0.5f, 0.0f, 1.0f);
-	light.material.specular = XMFLOAT4(0.0f, 1.0f, 0.0f, 1.0f);
-	light.direction = XMFLOAT3(0.0f, -1.0f, 0.0f);
-	light.type = 2;
-	light.position = XMFLOAT3(0, 10, 0);
-	light.att = XMFLOAT3(1.0f/2.0f, 0.0f, 0.0f);
-	light.range = 2500.0f;
-	light.spot = 5;
-	mLightList.push_back(light);
-
-	/*Light light2;
-	light2.material.ambient  = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
-	light2.material.diffuse  = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
-	light2.material.specular = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
-	light2.direction = XMFLOAT3(-0.57735f, -0.57735f, 0.0f);
-	mLightList.push_back(light2);
-
-	Light light3;
-	light3.material.ambient  = XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
-	light3.material.diffuse  = XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
-	light3.material.specular = XMFLOAT4(0.0f, 0.0f, 1.0f, 1.0f);
-	light3.direction = XMFLOAT3(0.0f, -0.57735f, 0.57735f);
-	mLightList.push_back(light3);*/
-
-	mMaterial.ambient  = XMFLOAT4(1.0f, 0.42f, 0.556f, 1.0f);
-	mMaterial.diffuse  = XMFLOAT4(1.0f, 0.42f, 0.556f, 1.0f);
-	mMaterial.specular = XMFLOAT4(1.0f, 0.8f, 0.8f, 96.0f);
+	mMaterial = Material(Colors::LightSteelBlue);
 }
 
 void Graphics::Update(float dt)
@@ -140,8 +99,7 @@ void Graphics::SetEffectParameters(Effect* effect, CXMMATRIX worldMatrix, Materi
 
 void Graphics::DrawText(string text, int x, int y, D3DXCOLOR textColor, int size)
 {
-	RECT pos = {x, y, 0, 0};
-	mFont->DrawText(0, text.c_str(), -1, &pos, DT_NOCLIP, textColor);
+
 }
 
 //! Clears the backbuffer with the color "color".
@@ -168,4 +126,9 @@ Effect* Graphics::LoadEffect(string filename, string technique)
 	Effect* effect = mEffectManager->LoadEffect(filename, technique);
 	effect->Init();
 	return effect;
+}
+
+void Graphics::SetLightList(vector<Light*>* lightList)
+{
+	mLightList = lightList;
 }

@@ -39,7 +39,7 @@ public:
 	void SetWorldInvTranspose(CXMMATRIX matrix);
 	void SetEyePosition(FXMVECTOR eyePos);
 	void SetMaterial(Material material);
-	void SetLights(vector<Light> lights);
+	void SetLights(vector<Light*>* lights);
 	
 private:
 	// These 3 members gets loaded by EffectManager::LoadEffect().

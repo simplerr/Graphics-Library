@@ -14,6 +14,8 @@ XMFLOAT3 operator-(const XMFLOAT3 a, const XMFLOAT3 b);
 XMFLOAT3 operator+=(const XMFLOAT3 a, const XMVECTOR b);
 XMFLOAT3 operator-=(const XMFLOAT3 a, const XMVECTOR b);
 
+XMFLOAT4 operator*(const XMFLOAT4 a, const float b);
+
 // Returns the inverse transpose.
 XMMATRIX InverseTranspose(CXMMATRIX M);
 
@@ -45,14 +47,14 @@ XMMATRIX InverseTranspose(CXMMATRIX M);
 // Convenient storage of often used colors.
 namespace Colors
 {
-	GLOBALCONST XMVECTORF32 White     = {1.0f, 1.0f, 1.0f, 1.0f};
-	GLOBALCONST XMVECTORF32 Black     = {0.0f, 0.0f, 0.0f, 1.0f};
-	GLOBALCONST XMVECTORF32 Red       = {1.0f, 0.0f, 0.0f, 1.0f};
-	GLOBALCONST XMVECTORF32 Green     = {0.0f, 1.0f, 0.0f, 1.0f};
-	GLOBALCONST XMVECTORF32 Blue      = {0.0f, 0.0f, 1.0f, 1.0f};
-	GLOBALCONST XMVECTORF32 Yellow    = {1.0f, 1.0f, 0.0f, 1.0f};
-	GLOBALCONST XMVECTORF32 Cyan      = {0.0f, 1.0f, 1.0f, 1.0f};
-	GLOBALCONST XMVECTORF32 Magenta   = {1.0f, 0.0f, 1.0f, 1.0f};
-	GLOBALCONST XMVECTORF32 Silver    = {0.75f, 0.75f, 0.75f, 1.0f};
-	GLOBALCONST XMVECTORF32 LightSteelBlue = {0.69f, 0.77f, 0.87f, 1.0f};
+	GLOBALCONST XMFLOAT4 White(1.0f, 1.0f, 1.0f, 1.0f);
+	GLOBALCONST XMFLOAT4 Black(0.0f, 0.0f, 0.0f, 1.0f);
+	GLOBALCONST XMFLOAT4 Red(1.0f, 0.0f, 0.0f, 1.0f);
+	GLOBALCONST XMFLOAT4 Green(0.0f, 1.0f, 0.0f, 1.0f);
+	GLOBALCONST XMFLOAT4 Blue(0.0f, 0.0f, 1.0f, 1.0f);
+	GLOBALCONST XMFLOAT4 Yellow(1.0f, 1.0f, 0.0f, 1.0f);
+	GLOBALCONST XMFLOAT4 Cyan(0.0f, 1.0f, 1.0f, 1.0f);
+	GLOBALCONST XMFLOAT4 Magenta(1.0f, 0.0f, 1.0f, 1.0f);
+	GLOBALCONST XMFLOAT4 Silver(0.75f, 0.75f, 0.75f, 1.0f);
+	GLOBALCONST XMFLOAT4 LightSteelBlue(0.69f, 0.77f, 0.87f, 1.0f);
 }

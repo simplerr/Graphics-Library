@@ -46,3 +46,8 @@ XMFLOAT3 operator-=(const XMFLOAT3 a, const XMVECTOR b)
 	XMStoreFloat3(&result, XMLoadFloat3(&a) - b);
 	return result;
 }
+
+XMFLOAT4 operator*(const XMFLOAT4 a, const float b)
+{
+	return XMFLOAT4(a.x * b, a.y * b, a.z * b, a.w * b);
+}
