@@ -2,9 +2,17 @@
  
 cbuffer cbPerFrame
 {
+	// Lights & num lights.
 	Light	gLights[10];
-	float3	gEyePosW;
 	float	gNumLights;
+
+	// Eye position (world space).
+	float3	gEyePosW;
+
+	// Fog.
+	float	gFogStart;
+	float	gFogRange;
+	float4	gFogColor;
 };
 
 cbuffer cbPerObject
@@ -71,6 +79,10 @@ float4 PS(VertexOut pin) : SV_Target
 	if(gUseTexture)
 		texColor = gTexture.Sample(textureSampler, pin.Tex);
 
+	/**
+		Lighting.
+	*/
+
 	// Start with a sum of zero. 
 	float4 ambient = float4(0.0f, 0.0f, 0.0f, 0.0f);
 	float4 diffuse = float4(0.0f, 0.0f, 0.0f, 0.0f);
@@ -95,6 +107,15 @@ float4 PS(VertexOut pin) : SV_Target
 	}
 	   
 	float4 litColor = texColor*(ambient + diffuse) + spec;
+
+	/**
+		Fogging.
+	*/
+	float distToEye = length(gEyePosW - pin.PosW);
+	float fogLerp = saturate( (distToEye - gFogStart) / gFogRange ); 
+
+	// Blend the fog color and the lit color.
+	litColor = lerp(litColor, gFogColor, fogLerp);
 
 	// Common to take alpha from diffuse material.
 	litColor.a = gMaterial.diffuse.a * texColor.a;

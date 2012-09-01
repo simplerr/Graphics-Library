@@ -52,6 +52,7 @@ public:
 
 	void SetEffectParameters(Effect* effect, CXMMATRIX worldMatrix, Texture2D* texture, Material material);
 	void SetLightList(LightList* lightList);
+	void SetFogColor(XMFLOAT4 color);
 
 	D3DCore* GetD3D();
 private:
@@ -59,6 +60,7 @@ private:
 	EffectManager*	mEffectManager;
 	Camera*			mCamera;
 	map<string, Texture2D*> mTextureMap;
+	XMFLOAT4		mFogColor;
 
 	// TMP
 	LightList* mLightList;

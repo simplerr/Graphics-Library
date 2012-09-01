@@ -92,10 +92,12 @@ void Game::Init()
 	mWorld->AddLight(mLight);
 
 	mLight2 = new Light;
-	mLight2->SetMaterials(Colors::White*0.1f, Colors::White*0.7f, Colors::White*0.0f);
+	mLight2->SetMaterials(Colors::White*0.3f, Colors::White*0.8f, Colors::White*0.0f);
 	mLight2->SetDirection(0.5f, -0.5f, 0.5f);
 	mLight2->SetType(DIRECTIONAL_LIGHT);
 	mWorld->AddLight(mLight2);
+
+	GetGraphics()->SetFogColor(XMFLOAT4(1.0f, 0.2f, 0.8, 1.0f));
 }
 	
 void Game::Update(float dt)

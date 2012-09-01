@@ -10,6 +10,7 @@
 #include "Primitive.h"
 #include "Camera.h"
 #include "Light.h"
+#include "Input.h"
 
 //! Constructor. The Init() function handles the initialization.
 Graphics::Graphics()
@@ -18,6 +19,9 @@ Graphics::Graphics()
 	mD3DCore = nullptr;
 	mEffectManager = nullptr;
 	mCamera = nullptr;
+
+	// Used for clear scene and fog.
+	SetFogColor(Colors::Silver);
 }
 	
 //! Cleans up and frees all pointers.
@@ -119,10 +123,22 @@ void Graphics::SetEffectParameters(Effect* effect, CXMMATRIX worldMatrix, Textur
 	effect->SetWorldViewProj(worldMatrix * view * proj);
 	effect->SetWorld(worldMatrix);
 	effect->SetWorldInvTranspose(InverseTranspose(worldMatrix));
-	effect->SetEyePosition(XMLoadFloat3(&mCamera->GetPosition()));
+	effect->SetEyePosition(mCamera->GetPosition());
 	effect->SetMaterial(material);
 	effect->SetLights(mLightList);
 	effect->SetTexture(texture);
+	
+	if(gInput->KeyPressed('C')) {
+	XMFLOAT3 pos = mCamera->GetPosition();
+	char buffer[256];
+	sprintf(buffer, "x: %f\n, y: %f\n, z: %f\n", pos.x, pos.y, pos.z);
+	OutputDebugString(buffer);
+	}
+
+	// Fog
+	effect->SetFogColor(mFogColor);
+	effect->SetFogStart(100.0f);
+	effect->SetFogRange(50.0f);
 
 	effect->Apply();
 }
@@ -135,7 +151,7 @@ void Graphics::DrawText(string text, int x, int y, D3DXCOLOR textColor, int size
 //! Clears the backbuffer with the color "color".
 void Graphics::ClearScene()
 {
-	GetD3D()->GetContext()->ClearRenderTargetView(GetD3D()->GetRenderTargetView(), reinterpret_cast<const float*>(&Colors::White));
+	GetD3D()->GetContext()->ClearRenderTargetView(GetD3D()->GetRenderTargetView(), reinterpret_cast<const float*>(&mFogColor));
 	GetD3D()->GetContext()->ClearDepthStencilView(GetD3D()->GetDepthStencilView(), D3D11_CLEAR_DEPTH|D3D11_CLEAR_STENCIL, 1.0f, 0);
 }
 
@@ -161,4 +177,9 @@ Effect* Graphics::LoadEffect(string filename, string technique)
 void Graphics::SetLightList(LightList* lightList)
 {
 	mLightList = lightList;
+}
+
+void Graphics::SetFogColor(XMFLOAT4 color)
+{
+	mFogColor = color;
 }

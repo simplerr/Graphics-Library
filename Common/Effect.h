@@ -39,11 +39,14 @@ public:
 	void SetWorldViewProj(CXMMATRIX matrix);
 	void SetWorld(CXMMATRIX matrix);
 	void SetWorldInvTranspose(CXMMATRIX matrix);
-	void SetEyePosition(FXMVECTOR eyePos);
+	void SetEyePosition(XMFLOAT3 eyePos);
 	void SetMaterial(Material material);
 	void SetLights(LightList* lights);
 	void SetUseTexture(bool use);
 	void SetTexture(Texture2D* texture);
+	void SetFogRange(float range);
+	void SetFogStart(float start);
+	void SetFogColor(XMFLOAT4 color);
 
 private:
 	// These 3 members gets loaded by EffectManager::LoadEffect().
@@ -62,4 +65,9 @@ private:
 	ID3DX11EffectVariable* mfxNumLights;
 	ID3DX11EffectVariable* mfxUseTexture;
 	ID3DX11EffectShaderResourceVariable* mfxTexture;
+
+	// Fog.
+	ID3DX11EffectScalarVariable* mfxFogStart;
+	ID3DX11EffectScalarVariable* mfxFogRange;
+	ID3DX11EffectVectorVariable* mfxFogColor;
 };

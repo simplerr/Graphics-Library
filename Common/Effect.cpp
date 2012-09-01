@@ -29,6 +29,9 @@ void Effect::Init()
 	mfxNumLights		 = mEffect->GetVariableByName("gNumLights");
 	mfxUseTexture		 = mEffect->GetVariableByName("gUseTexture");
 	mfxTexture			 = mEffect->GetVariableByName("gTexture")->AsShaderResource();
+	mfxFogStart			 = mEffect->GetVariableByName("gFogStart")->AsScalar();
+	mfxFogRange			 = mEffect->GetVariableByName("gFogRange")->AsScalar();
+	mfxFogColor			 = mEffect->GetVariableByName("gFogColor")->AsVector();
 }
 
 //! Creates the input layout that will get set before the Input-Assembler state.
@@ -93,9 +96,9 @@ void Effect::SetWorldInvTranspose(CXMMATRIX matrix)
 	mfxWorldInvTranspose->SetMatrix(reinterpret_cast<const float*>(&matrix));
 }
 	
-void Effect::SetEyePosition(FXMVECTOR eyePos)
+void Effect::SetEyePosition(XMFLOAT3 eyePos)
 {
-	mfxEyePosW->SetRawValue(&eyePos, 0, sizeof(eyePos));
+	mfxEyePosW->SetRawValue(&eyePos, 0, sizeof(XMFLOAT3));
 }
 	
 void Effect::SetMaterial(Material material)
@@ -126,6 +129,21 @@ void Effect::SetTexture(Texture2D* texture)
 	mfxTexture->SetResource(texture->texture);
 	XMMATRIX transform = XMMatrixScaling(texture->scale, texture->scale, 0);
 	mfxTexTransform->SetMatrix((const float*)&transform);
+}
+
+void Effect::SetFogRange(float range)
+{
+	mfxFogRange->SetFloat(range);
+}
+	
+void Effect::SetFogStart(float start)
+{
+	mfxFogStart->SetFloat(start);
+}
+
+void Effect::SetFogColor(XMFLOAT4 color)
+{
+	mfxFogColor->SetFloatVector((const float*)&color);
 }
 
 void Effect::SetEffect(ID3DX11Effect* effect)
