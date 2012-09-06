@@ -2,6 +2,8 @@
 #include <Windows.h>
 #include <xnamath.h>
 
+class BillboardManager;
+
 //! Basic vertex.
 struct Vertex
 {
@@ -20,6 +22,10 @@ struct BillboardVertex
 	BillboardVertex(XMFLOAT3 pos, XMFLOAT2 size) 
 		: Pos(pos), Size(size) {}	
 
+	void SetPos(XMFLOAT3 pos);
+	void SetSize(XMFLOAT2 size);
+
 	XMFLOAT3 Pos;
 	XMFLOAT2 Size;
+	BillboardManager* Manager;
 };

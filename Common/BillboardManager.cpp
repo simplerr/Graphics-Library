@@ -7,7 +7,7 @@
 
 BillboardManager::BillboardManager(string texture)
 {
-	mBuildVertexBuffer = false;
+	mRebuild = false;
 	mTexture = gGame->GetGraphics()->LoadTexture(texture);
 }
 	
@@ -42,7 +42,7 @@ void BillboardManager::BuildVertexBuffer(ID3D11Device* device)
 	// Fill out the D3D11_BUFFER_DESC struct.
 	D3D11_BUFFER_DESC vbd;
     vbd.Usage = D3D11_USAGE_IMMUTABLE;
-	vbd.ByteWidth = sizeof(BillboardVertex) * mBillboardList.size();
+	vbd.ByteWidth = sizeof(BillboardVertex) * mBillboardList.size() - sizeof(BillboardManager*) * mBillboardList.size();
     vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
     vbd.CPUAccessFlags = 0;
     vbd.MiscFlags = 0;
@@ -60,9 +60,9 @@ void BillboardManager::BuildVertexBuffer(ID3D11Device* device)
 }
 
 //! Called when a billboard has moved in order to update it's position.
-void BillboardManager::RebuildVertexBuffer()
+void BillboardManager::SetRebuild(bool rebuild)
 {
-	mBuildVertexBuffer = true;
+	mRebuild = rebuild;
 }
 
 ID3D11Buffer* BillboardManager::GetVertexBuffer()
@@ -78,4 +78,9 @@ int BillboardManager::GetNumVertices()
 Texture2D* BillboardManager::GetTexture()
 {
 	return mTexture;
+}
+
+bool BillboardManager::GetRebuild()
+{
+	return mRebuild;
 }

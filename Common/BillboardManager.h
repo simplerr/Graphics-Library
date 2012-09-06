@@ -20,14 +20,15 @@ public:
 
 	void AddBillboard(BillboardVertex* billboard);
 	void BuildVertexBuffer(ID3D11Device* device);
-	void RebuildVertexBuffer();
+	void SetRebuild(bool rebuild);
 
 	ID3D11Buffer*	GetVertexBuffer();
 	Texture2D*		GetTexture();
 	int				GetNumVertices();
+	bool			GetRebuild();
 private:
 	vector<BillboardVertex*>	mBillboardList;
 	ID3D11Buffer*		mVB;
 	Texture2D*			mTexture;
-	bool				mBuildVertexBuffer;
+	bool				mRebuild;
 };

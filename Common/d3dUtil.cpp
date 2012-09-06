@@ -51,3 +51,23 @@ XMFLOAT4 operator*(const XMFLOAT4 a, const float b)
 {
 	return XMFLOAT4(a.x * b, a.y * b, a.z * b, a.w * b);
 }
+
+XMFLOAT2 operator+(const XMFLOAT2 a, const XMFLOAT2 b)
+{
+	XMVECTOR first = XMLoadFloat2(&a);
+	XMVECTOR second = XMLoadFloat2(&b);
+
+	XMFLOAT2 result;
+	XMStoreFloat2(&result, first + second);
+	return result;
+}
+
+XMFLOAT2 operator-(const XMFLOAT2 a, const XMFLOAT2 b)
+{
+	XMVECTOR first = XMLoadFloat2(&a);
+	XMVECTOR second = XMLoadFloat2(&b);
+
+	XMFLOAT2 result;
+	XMStoreFloat2(&result, first - second);
+	return result;
+}

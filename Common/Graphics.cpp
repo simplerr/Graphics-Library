@@ -130,7 +130,13 @@ void Graphics::DrawBillboards()
 	// Loop through all billboard managers.
 	for(auto iter = mBillboardManagerMap.begin(); iter != mBillboardManagerMap.end(); iter++)
 	{
+		// Rebuild the vertex buffer if a billboard has moved or changed size.
 		BillboardManager* manager = (*iter).second;
+		if(manager->GetRebuild())
+			manager->BuildVertexBuffer(GetD3D()->GetDevice());
+
+		manager->SetRebuild(false);
+
 		ID3D11Buffer* vb = manager->GetVertexBuffer();
 		// Set the vertex buffer.
 		UINT stride = sizeof(BillboardVertex);
@@ -188,18 +194,24 @@ void Graphics::DrawText(string text, int x, int y, D3DXCOLOR textColor, int size
 }
 
 //! Adds a billboard to the scene.
-void Graphics::AddBillboard(XMFLOAT3 position, XMFLOAT2 size, string texture)
+BillboardVertex* Graphics::AddBillboard(XMFLOAT3 position, XMFLOAT2 size, string texture)
 {
 	// A billboard manager for the texture already exists.
 	if(mBillboardManagerMap.find(texture) != mBillboardManagerMap.end()) {
 		BillboardVertex* billboard = new BillboardVertex(position, size);
+		billboard->Manager = mBillboardManagerMap[texture];
 		mBillboardManagerMap[texture]->AddBillboard(billboard);
+		return billboard;
 	}
 	else {
 		mBillboardManagerMap[texture] = new BillboardManager(texture);
 		BillboardVertex* billboard = new BillboardVertex(position, size);
+		billboard->Manager = mBillboardManagerMap[texture];
 		mBillboardManagerMap[texture]->AddBillboard(billboard);
+		return billboard;
 	}
+
+	return nullptr;
 }
 
 //! Clears the backbuffer with the color "color".

@@ -16,6 +16,7 @@ class BasicEffect;
 class Primitive;
 class EffectManager;
 class BillboardManager;
+struct BillboardVertex;
 class Camera;
 struct Material;
 struct Texture2D;
@@ -47,7 +48,7 @@ public:
 	void DrawText(string text, int x, int y, D3DXCOLOR textColor, int size);
 
 	Texture2D* LoadTexture(string filename, float scale = 1.0f);
-	void AddBillboard(XMFLOAT3 position, XMFLOAT2 size, string texture);
+	BillboardVertex* AddBillboard(XMFLOAT3 position, XMFLOAT2 size, string texture);
 
 	void ClearScene();
 	void Present();

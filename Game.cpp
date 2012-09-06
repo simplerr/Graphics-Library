@@ -18,6 +18,8 @@ Runnable*			gGame				= nullptr;
 PrimitiveFactory*	gPrimitiveFactory	= nullptr;
 Input*				gInput				= nullptr;
 
+BillboardVertex* billboard;
+
 //! The program starts here.
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance, PSTR cmdLine, int showCmd)
 {
@@ -101,7 +103,7 @@ void Game::Init()
 	GetGraphics()->SetFogColor(XMFLOAT4(1.0f, 0.2f, 0.8, 1.0f));
 	
 	// Add test billboards.
-	BillboardVertex* billboard;
+	billboard = GetGraphics()->AddBillboard(XMFLOAT3(0, 10, 0), XMFLOAT2(5, 5), "textures\\crate.dds");
 	srand(time(0));
 	for(int i = 0; i < 500; i++) {
 		XMFLOAT3 pos(rand() % 50 - 20, rand() % 30, rand() % 50 - 25);
@@ -139,6 +141,15 @@ void Game::Update(float dt)
 		mLight2->SetDirection(mLight2->GetDirection() + XMFLOAT3(0, 0, 0.001));
 	else if(gInput->KeyDown('X'))
 		mLight2->SetDirection(mLight2->GetDirection() + XMFLOAT3(0, -0, -0.001));
+
+	if(gInput->KeyDown('R')) {
+		billboard->SetSize(billboard->Size + XMFLOAT2(0.01, 0.01)),
+		billboard->SetPos(billboard->Pos + XMFLOAT3(0.05, 0, 0));
+	}
+	else if(gInput->KeyDown('T')) {
+		billboard->SetPos(billboard->Pos - XMFLOAT3(0.05, 0, 0));
+		billboard->SetSize(billboard->Size - XMFLOAT2(0.01, 0));
+	}
 }
 	
 void Game::Draw(Graphics* pGraphics)
