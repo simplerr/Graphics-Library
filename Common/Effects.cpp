@@ -7,7 +7,8 @@
 #include "Graphics.h"
 
 //! Initialize the effects.
-BasicEffect*	Effects::BasicFX	= nullptr;
+BasicEffect*		Effects::BasicFX		= nullptr;
+BillboardEffect*	Effects::BillboardFX	= nullptr;
 
 #pragma region Code for the static effect handler Effects.
 
@@ -18,20 +19,22 @@ void Effects::InitAll()
 		Init the basic effect.
 	*/
 	BasicFX = new BasicEffect();
-	BasicFX->SetTech("BasicTech");
 	BasicFX->CreateInputLayout();
 	BasicFX->Init();
 
 	/**
 		Init the billboard effect.
 	*/
-
+	BillboardFX = new BillboardEffect();
+	BillboardFX->CreateInputLayout();
+	BillboardFX->Init();
 }
 
 //! Cleans up all effects.
 void Effects::DestroyAll()
 {
 	delete BasicFX;
+	delete BillboardFX;
 }
 
 #pragma endregion
@@ -119,7 +122,7 @@ BasicEffect::~BasicEffect()
 //! Inits all effect variable handles.
 void BasicEffect::Init()
 {
-	// Connect handles to the effect variables.
+	// Connect handlers to the effect variables.
 	mfxWVP				 = mEffect->GetVariableByName("gWorldViewProj")->AsMatrix();
 	mfxWorld			 = mEffect->GetVariableByName("gWorld")->AsMatrix();
 	mfxWorldInvTranspose = mEffect->GetVariableByName("gWorldInvTranspose")->AsMatrix();
@@ -175,4 +178,67 @@ void BasicEffect::SetTexture(Texture2D* texture)
 	mfxTexTransform->SetMatrix((const float*)&transform);
 }
 
+#pragma endregion
+
+#pragma region Code for the billboard effect class BillboardEffect.
+
+BillboardEffect::BillboardEffect()
+	: Effect("Billboard.fx", "BillboardTech")
+{
+
+}
+	
+BillboardEffect::~BillboardEffect()
+{
+
+}
+
+void BillboardEffect::Init()
+{
+	// Connect handles to the effect variables.
+	mfxViewProj		= mEffect->GetVariableByName("gViewProj")->AsMatrix();
+	mfxEyePosW		= mEffect->GetVariableByName("gEyePosW")->AsVector();
+	mfxFogColor		= mEffect->GetVariableByName("gFogColor")->AsVector();
+	mfxFogStart		= mEffect->GetVariableByName("gFogStart")->AsScalar();
+	mfxFogRange		= mEffect->GetVariableByName("gFogRange")->AsScalar();
+	mfxLights		= mEffect->GetVariableByName("gLights");
+	mfxMaterial		= mEffect->GetVariableByName("gMaterial");
+	mfxTexture		= mEffect->GetVariableByName("gTexture")->AsShaderResource();
+	mfxUseTexture	= mEffect->GetVariableByName("gUseTexture");
+	mfxNumLights	= mEffect->GetVariableByName("gNumLights");
+}
+	
+void BillboardEffect::CreateInputLayout()
+{
+	// Create the vertex input layout.
+	D3D11_INPUT_ELEMENT_DESC vertexDesc[] =
+	{
+		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"SIZE",   0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
+	};
+
+	// Create the input layout.
+    D3DX11_PASS_DESC passDesc;
+    mTech->GetPassByIndex(0)->GetDesc(&passDesc);
+	HR(gGame->GetD3D()->GetDevice()->CreateInputLayout(vertexDesc, 2, passDesc.pIAInputSignature, 
+		passDesc.IAInputSignatureSize, &mInputLayout));
+}
+
+void BillboardEffect::SetTexture(Texture2D* texture)
+{
+	SetUseTexture(texture == nullptr ? false : true);
+	mfxTexture->SetResource(texture->texture);
+}
+	
+void BillboardEffect::SetLights(LightList* lights)
+{
+	Light lightArray[10];
+	for(int i = 0; i < lights->size(); i++)
+		lightArray[i] = *lights->operator[](i);
+
+	// Sets the light list in the effect file.
+	mfxLights->SetRawValue((void*)lightArray, 0, sizeof(Light) * lights->size());
+	float size = lights->size();
+	mfxNumLights->SetRawValue(&size, 0, sizeof(float));
+}
 #pragma endregion

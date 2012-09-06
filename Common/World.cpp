@@ -5,6 +5,7 @@
 #include "Runnable.h"
 #include "Effects.h"
 #include "Graphics.h"
+#include "BillboardManager.h"
 
 World::World()
 {
@@ -13,6 +14,8 @@ World::World()
 
 void World::Init()
 {
+	mBillboardManager = new BillboardManager();
+
 	mDebugObject = new Object3D();
 	mDebugObject->SetPrimitive(gPrimitiveFactory->CreateBox());
 	mDebugObject->SetTexture("textures/crate.dds");
@@ -28,6 +31,8 @@ World::~World()
 	// Delete all lights.
 	for(int i = 0; i < mLightList.size(); i++)
 		delete mLightList[i];
+
+	delete mBillboardManager;
 }
 
 //! Updates all objects.
@@ -42,6 +47,9 @@ void World::Update(float dt)
 //! Draws all objects.
 void World::Draw(Graphics* pGraphics)
 {
+	// Draw the billboards.
+	mBillboardManager->DrawAll(pGraphics);
+
 	for(int i = 0; i < mObjectList.size(); i++)
 	{
 		mObjectList[i]->Draw(pGraphics);
@@ -72,4 +80,9 @@ void World::AddLight(Light* light)
 LightList* World::GetLights()
 {
 	return &mLightList;
+}
+
+BillboardManager* World::GetBillboardManager()
+{
+	return mBillboardManager;
 }

@@ -13,6 +13,7 @@ struct Material;
 struct Texture2D;
 class Light;
 class BasicEffect;
+class BillboardEffect;
 
 /**
 	Contains all the effects that can be used.
@@ -28,6 +29,7 @@ public:
 	static void DestroyAll();
 
 	static BasicEffect* BasicFX;
+	static BillboardEffect* BillboardFX;
 };
 
 #pragma endregion
@@ -81,15 +83,15 @@ public:
 	void CreateInputLayout();
 
 	// Setters to effect variables.
-	void SetWorldViewProj(CXMMATRIX matrix)			{mfxWVP->SetMatrix(reinterpret_cast<const float*>(&matrix));}
-	void SetWorld(CXMMATRIX matrix)					{mfxWorld->SetMatrix(reinterpret_cast<const float*>(&matrix));}
-	void SetWorldInvTranspose(CXMMATRIX matrix)		{mfxWorldInvTranspose->SetMatrix(reinterpret_cast<const float*>(&matrix));}
-	void SetEyePosition(XMFLOAT3 eyePos)			{mfxEyePosW->SetRawValue(&eyePos, 0, sizeof(XMFLOAT3));}
-	void SetMaterial(Material material)				{mfxMaterial->SetRawValue(&material, 0, sizeof(material));}
-	void SetUseTexture(bool use)					{mfxUseTexture->SetRawValue(&use, 0, sizeof(bool));}
-	void SetFogRange(float range)					{mfxFogRange->SetFloat(range);}
-	void SetFogStart(float start)					{mfxFogStart->SetFloat(start);}
-	void SetFogColor(XMFLOAT4 color)				{mfxFogColor->SetFloatVector((const float*)&color);}
+	void SetWorldViewProj(CXMMATRIX matrix)			{ mfxWVP->SetMatrix(reinterpret_cast<const float*>(&matrix)); }
+	void SetWorld(CXMMATRIX matrix)					{ mfxWorld->SetMatrix(reinterpret_cast<const float*>(&matrix)); }
+	void SetWorldInvTranspose(CXMMATRIX matrix)		{ mfxWorldInvTranspose->SetMatrix(reinterpret_cast<const float*>(&matrix)); }
+	void SetEyePosition(XMFLOAT3 eyePos)			{ mfxEyePosW->SetRawValue(&eyePos, 0, sizeof(XMFLOAT3)); }
+	void SetMaterial(Material material)				{ mfxMaterial->SetRawValue(&material, 0, sizeof(material)); }
+	void SetUseTexture(bool use)					{ mfxUseTexture->SetRawValue(&use, 0, sizeof(bool)); }
+	void SetFogRange(float range)					{ mfxFogRange->SetFloat(range); }
+	void SetFogStart(float start)					{ mfxFogStart->SetFloat(start); }
+	void SetFogColor(XMFLOAT4 color)				{ mfxFogColor->SetFloatVector((const float*)&color); }
 	void SetTexture(Texture2D* texture);				
 	void SetLights(LightList* lights);
 
@@ -113,3 +115,40 @@ private:
 };
 
 #pragma endregion
+
+/**
+	The billboard effect.
+*/
+
+class BillboardEffect : public Effect
+{
+public:
+	BillboardEffect();
+	~BillboardEffect();
+
+	void Init();
+	void CreateInputLayout();
+
+	// Setters to the effect variables.
+	void SetViewProj(CXMMATRIX matrix)              { mfxViewProj->SetMatrix(reinterpret_cast<const float*>(&matrix)); }
+	void SetEyePosition(XMFLOAT3 eyePos)			{ mfxEyePosW->SetRawValue(&eyePos, 0, sizeof(XMFLOAT3)); }
+	void SetFogColor(XMFLOAT4 color)				{ mfxFogColor->SetFloatVector(reinterpret_cast<const float*>(&color)); }
+	void SetFogStart(float start)                   { mfxFogStart->SetFloat(start); }
+	void SetFogRange(float range)                   { mfxFogRange->SetFloat(range); }
+	void SetUseTexture(bool use)					{ mfxUseTexture->SetRawValue(&use, 0, sizeof(bool)); }
+	void SetTexture(ID3D11ShaderResourceView* tex)	{ mfxTexture->SetResource(tex); }
+	void SetMaterial(Material material)				{ mfxMaterial->SetRawValue(&material, 0, sizeof(material)); }
+	void SetTexture(Texture2D* texture);				
+	void SetLights(LightList* lights);
+private:
+	ID3DX11EffectMatrixVariable* mfxViewProj;
+	ID3DX11EffectVectorVariable* mfxEyePosW;
+	ID3DX11EffectVectorVariable* mfxFogColor;
+	ID3DX11EffectScalarVariable* mfxFogStart;
+	ID3DX11EffectScalarVariable* mfxFogRange;
+	ID3DX11EffectVariable*		 mfxLights;
+	ID3DX11EffectVariable*		 mfxNumLights;
+	ID3DX11EffectVariable*		 mfxMaterial;
+	ID3DX11EffectVariable*		 mfxUseTexture;
+	ID3DX11EffectShaderResourceVariable* mfxTexture;
+};

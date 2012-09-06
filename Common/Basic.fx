@@ -1,6 +1,6 @@
 #include "LightHelper.fx"
  
-//! Constant buffers updates per frame.
+//! Constant buffers that updates per frame.
 cbuffer cbPerFrame
 {
 	// Lights & num lights.
@@ -16,7 +16,7 @@ cbuffer cbPerFrame
 	float4	gFogColor;
 };
 
-//! Constant buffers updates per object.
+//! Constant buffers that updates per object.
 cbuffer cbPerObject
 {
 	float4x4 gWorld;
@@ -109,8 +109,8 @@ technique11 BasicTech
 {
     pass P0
     {
-        SetVertexShader( CompileShader( vs_5_0, VS() ) );
-		SetGeometryShader( NULL );
-        SetPixelShader( CompileShader( ps_5_0, PS() ) );
+        SetVertexShader(CompileShader( vs_5_0, VS()));
+		SetGeometryShader(NULL);
+        SetPixelShader(CompileShader( ps_5_0, PS()));
     }
 }

@@ -1,5 +1,6 @@
 #include <crtdbg.h>
 #include <assert.h>
+#include <time.h>
 #include "Game.h"
 #include "Common\D3DCore.h"
 #include "Common\d3dUtil.h"
@@ -9,6 +10,8 @@
 #include "Common\Input.h"
 #include "Common\World.h"
 #include "Common\Light.h"
+#include "Common\BillboardManager.h"
+#include "Common\Billboard.h"
 
 // Set globals to nullptrs
 Runnable*			gGame				= nullptr;
@@ -96,6 +99,19 @@ void Game::Init()
 	mWorld->AddLight(mLight2);
 
 	GetGraphics()->SetFogColor(XMFLOAT4(1.0f, 0.2f, 0.8, 1.0f));
+	
+	// Add test billboard.
+	BillboardManager* billboardManager = mWorld->GetBillboardManager();
+	Billboard* billboard;
+	
+	srand(time(0));
+	for(int i = 0; i < 500; i++) {
+		XMFLOAT3 pos(rand() % 50 - 20, rand() % 30, rand() % 50 - 25);
+		XMFLOAT2 size(rand() % 5 + 0.5f, rand() % 5 + 0.5f);
+		billboard = new Billboard(GetGraphics(), pos, size, "textures\\grass.png");
+		billboardManager->AddBillboard(billboard);
+	}
+	
 }
 	
 void Game::Update(float dt)

@@ -42,6 +42,7 @@ public:
 	void Update(float dt);
 
 	void DrawPrimitive(Primitive* primitive, CXMMATRIX worldMatrix, Texture2D* texture, Material material, BasicEffect* effect);
+	void DrawBillboards(ID3D11Buffer* vertexBuffer, Texture2D* texture, int num);
 	void DrawText(string text, int x, int y, D3DXCOLOR textColor, int size);
 
 	Texture2D* LoadTexture(string filename, float scale = 1.0f);

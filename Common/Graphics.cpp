@@ -10,6 +10,7 @@
 #include "Camera.h"
 #include "Light.h"
 #include "Input.h"
+#include "Vertex.h"
 
 //! Constructor. The Init() function handles the initialization.
 Graphics::Graphics()
@@ -112,6 +113,34 @@ void Graphics::DrawPrimitive(Primitive* primitive, CXMMATRIX worldMatrix, Textur
 
 	// Draw the primitive.
 	primitive->Draw(context);
+}
+
+void Graphics::DrawBillboards(ID3D11Buffer* vertexBuffer, Texture2D* texture, int num)
+{
+	// Set topology and input layout.
+	ID3D11DeviceContext* context = GetD3D()->GetContext();
+	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
+	context->IASetInputLayout(Effects::BillboardFX->GetInputLayout());
+
+	// Set the vertex buffer.
+	UINT stride = sizeof(BillboardVertex);
+	UINT offset = 0;
+	context->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
+
+	// Set effect variables.
+	XMMATRIX view = XMLoadFloat4x4(&mCamera->GetViewMatrix());
+	XMMATRIX proj = XMLoadFloat4x4(&mCamera->GetProjectionMatrix());
+	Effects::BillboardFX->SetViewProj(view * proj);
+	Effects::BillboardFX->SetLights(mLightList);
+	Effects::BillboardFX->SetEyePosition(mCamera->GetPosition());
+	Effects::BillboardFX->SetFogColor(mFogColor);
+	Effects::BillboardFX->SetFogStart(15.0f);
+	Effects::BillboardFX->SetFogRange(175.0f);
+	Effects::BillboardFX->SetMaterial(Colors::White);
+	Effects::BillboardFX->SetTexture(texture);
+	Effects::BillboardFX->Apply();
+
+	context->Draw(num, 0);
 }
 
 void Graphics::SetEffectParameters(BasicEffect* effect, CXMMATRIX worldMatrix, Texture2D* texture, Material material)

@@ -13,3 +13,9 @@ struct Vertex
 	XMFLOAT3 Normal;
 	XMFLOAT2 Tex;
 };
+
+struct BillboardVertex
+{
+	XMFLOAT3 Pos;
+	XMFLOAT2 Size;
+};
