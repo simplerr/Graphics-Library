@@ -1,5 +1,6 @@
 #include "LightHelper.fx"
  
+//! Constant buffers updates per frame.
 cbuffer cbPerFrame
 {
 	// Lights & num lights.
@@ -15,6 +16,7 @@ cbuffer cbPerFrame
 	float4	gFogColor;
 };
 
+//! Constant buffers updates per object.
 cbuffer cbPerObject
 {
 	float4x4 gWorld;
@@ -25,8 +27,10 @@ cbuffer cbPerObject
 	bool	 gUseTexture;
 };
 
+//! The texture to use.
 Texture2D gTexture;
 
+//! The sampler state to use with the texture.
 SamplerState textureSampler
 {
 	Filter = ANISOTROPIC;
@@ -35,6 +39,7 @@ SamplerState textureSampler
 	AddressV = WRAP;
 };
 
+//! Input parameter to the vertex shader.
 struct VertexIn
 {
 	float3 PosL		: POSITION;
@@ -42,6 +47,7 @@ struct VertexIn
 	float2 Tex		: TEXCOORD;
 };
 
+//! Output by the vertex shader -> input for the pixel shader.
 struct VertexOut
 {
 	float4 PosH		: SV_POSITION;
@@ -50,6 +56,7 @@ struct VertexOut
 	float2 Tex		: TEXCOORD;
 };
 
+//! Vertex shader that transforms coordinates and normals to the world and homogeneous space.
 VertexOut VS(VertexIn vin)
 {
 	VertexOut vout;
@@ -66,7 +73,8 @@ VertexOut VS(VertexIn vin)
 	
 	return vout;
 }
-  
+
+//! Pixel shader that applies ligthing and fogging.
 float4 PS(VertexOut pin) : SV_Target
 {
 	// Interpolating normal can unnormalize it, so normalize it.
@@ -79,39 +87,11 @@ float4 PS(VertexOut pin) : SV_Target
 	if(gUseTexture)
 		texColor = gTexture.Sample(textureSampler, pin.Tex);
 
-	/**
-		Lighting.
-	*/
+	// Apply lighting.
+	float4 litColor;
+	ApplyLighting(gNumLights, gLights, gMaterial, pin.PosW, pin.NormalW, toEyeW, texColor, litColor);
 
-	// Start with a sum of zero. 
-	float4 ambient = float4(0.0f, 0.0f, 0.0f, 0.0f);
-	float4 diffuse = float4(0.0f, 0.0f, 0.0f, 0.0f);
-	float4 spec    = float4(0.0f, 0.0f, 0.0f, 0.0f);
-
-	// Loop through all lights
-	for(int i = 0; i < gNumLights; i++)
-	{
-		// Sum the light contribution from each light source.
-		float4 A, D, S;
-
-		if(gLights[i].type == 0)		// Directional light
-			ComputeDirectionalLight(gMaterial, gLights[i], pin.NormalW, toEyeW, A, D, S);
-		else if(gLights[i].type == 1)	// Point light.
-			ComputePointLight(gMaterial, gLights[i], pin.PosW, pin.NormalW, toEyeW, A, D, S);
-		else if(gLights[i].type == 2)	// Spot light.
-			ComputeSpotLight(gMaterial, gLights[i], pin.PosW, pin.NormalW, toEyeW, A, D, S);
-
-		ambient += A;  
-		diffuse += D;
-		spec    += S;
-	}
-	   
-	float4 litColor = texColor*(ambient + diffuse) + spec;
-
-	/**
-		Fogging.
-	*/
-
+	//! Apply fogging.
 	float distToEye = length(gEyePosW - pin.PosW);
 	float fogLerp = saturate( (distToEye - gFogStart) / gFogRange ); 
 
@@ -124,6 +104,7 @@ float4 PS(VertexOut pin) : SV_Target
     return litColor;
 }
 
+//! The standard technique used by most 3D objects.
 technique11 BasicTech
 {
     pass P0

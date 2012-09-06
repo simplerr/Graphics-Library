@@ -6,10 +6,10 @@
 #include "Light.h"
 #include "Graphics.h"
 
-#pragma region Code for the static effect handler.
-
 //! Initialize the effects.
 BasicEffect*	Effects::BasicFX	= nullptr;
+
+#pragma region Code for the static effect handler Effects.
 
 //! Inits all effects.
 void Effects::InitAll()

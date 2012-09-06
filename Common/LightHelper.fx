@@ -1,3 +1,10 @@
+
+/**
+	This file contains all functions that does lighting calculations.
+	Include it in any .fx file.
+*/
+
+//! Corresponds to the C++ class Material. Stores the ambient, diffuse and specular colors for a material.
 struct Material
 {
 	float4 ambient;
@@ -5,6 +12,7 @@ struct Material
 	float4 specular; // w = SpecPower
 };
 
+//! Corresponds to the C++ class Light, stores all information about a light.
 struct Light
 {
 	// Light color.
@@ -20,16 +28,8 @@ struct Light
 	float type;		 // 0 = directional, 1 = point light, 2 = spot light
 };
 
-//---------------------------------------------------------------------------------------
-// Computes the ambient, diffuse, and specular terms in the lighting equation
-// from a directional light.  We need to output the terms separately because
-// later we will modify the individual terms.
-//---------------------------------------------------------------------------------------
-void ComputeDirectionalLight(Material mat, Light light, 
-                             float3 normal, float3 toEye,
-					         out float4 ambient,
-						     out float4 diffuse,
-						     out float4 spec)
+//! Computes the colors for directional light.
+void ComputeDirectionalLight(Material mat, Light light, float3 normal, float3 toEye, out float4 ambient, out float4 diffuse, out float4 spec)
 {
 	// Initialize outputs.
 	ambient = float4(0.0f, 0.0f, 0.0f, 0.0f);
@@ -59,13 +59,8 @@ void ComputeDirectionalLight(Material mat, Light light,
 	}
 }
 
-//---------------------------------------------------------------------------------------
-// Computes the ambient, diffuse, and specular terms in the lighting equation
-// from a point light.  We need to output the terms separately because
-// later we will modify the individual terms.
-//---------------------------------------------------------------------------------------
-void ComputePointLight(Material mat, Light light, float3 pos, float3 normal, float3 toEye,
-				   out float4 ambient, out float4 diffuse, out float4 spec)
+//! Computes the colors for a point light.
+void ComputePointLight(Material mat, Light light, float3 pos, float3 normal, float3 toEye, out float4 ambient, out float4 diffuse, out float4 spec)
 {
 	// Initialize outputs.
 	ambient = float4(0.0f, 0.0f, 0.0f, 0.0f);
@@ -111,13 +106,8 @@ void ComputePointLight(Material mat, Light light, float3 pos, float3 normal, flo
 	spec    *= att;
 }
 
-//---------------------------------------------------------------------------------------
-// Computes the ambient, diffuse, and specular terms in the lighting equation
-// from a spotlight.  We need to output the terms separately because
-// later we will modify the individual terms.
-//---------------------------------------------------------------------------------------
-void ComputeSpotLight(Material mat, Light light, float3 pos, float3 normal, float3 toEye,
-				  out float4 ambient, out float4 diffuse, out float4 spec)
+//! Computes the colors for a spot light.
+void ComputeSpotLight(Material mat, Light light, float3 pos, float3 normal, float3 toEye, out float4 ambient, out float4 diffuse, out float4 spec)
 {
 	// Initialize outputs.
 	ambient = float4(0.0f, 0.0f, 0.0f, 0.0f);
@@ -167,5 +157,31 @@ void ComputeSpotLight(Material mat, Light light, float3 pos, float3 normal, floa
 	spec    *= att;
 }
 
- 
- 
+//! Takes a list of lights and calculate the resulting color for the pixel after all light calculations.
+void ApplyLighting(int numLights, Light lights[10], Material material, float3 posW, float3 normalW, float3 toEyeW, float4 texColor, out float4 litColor)
+{
+	// Start with a sum of zero. 
+	float4 ambient = float4(0.0f, 0.0f, 0.0f, 0.0f);
+	float4 diffuse = float4(0.0f, 0.0f, 0.0f, 0.0f);
+	float4 spec    = float4(0.0f, 0.0f, 0.0f, 0.0f);
+
+	// Loop through all lights
+	for(int i = 0; i < numLights; i++)
+	{
+		// Sum the light contribution from each light source.
+		float4 A, D, S;
+
+		if(lights[i].type == 0)		// Directional light
+			ComputeDirectionalLight(material, lights[i], normalW, toEyeW, A, D, S);
+		else if(lights[i].type == 1)	// Point light.
+			ComputePointLight(material, lights[i], posW, normalW, toEyeW, A, D, S);
+		else if(lights[i].type == 2)	// Spot light.
+			ComputeSpotLight(material, lights[i], posW, normalW, toEyeW, A, D, S);
+
+		ambient += A;  
+		diffuse += D;
+		spec    += S;
+	}
+	   
+	litColor = texColor*(ambient + diffuse) + spec;
+}
