@@ -6,7 +6,7 @@
 #include "Light.h"
 
 class Graphics;
-class Effect;
+class BasicEffect;
 class Primitive;
 struct Texture2D;
 
@@ -31,7 +31,6 @@ public:
 	Material GetMaterial();
 
 	void SetTexture(string filename, float scale = 1.0f);
-	void SetEffect(Effect* effect);
 	void SetPrimitive(Primitive* primitive);
 	void SetPosition(XMFLOAT3 position);
 	void SetRotation(XMFLOAT3 rotation);
@@ -41,7 +40,6 @@ public:
 private:
 	Texture2D*	mTexture;
 	Primitive*	mPrimitive;
-	Effect*		mEffect;
 	Material	mMaterial;
 	XMFLOAT3 mPosition;
 	XMFLOAT3 mRotation;

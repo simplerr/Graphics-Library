@@ -1,6 +1,6 @@
 #include "Object3D.h"
 #include "Graphics.h"
-#include "Effect.h"
+#include "Effects.h"
 #include "Runnable.h"
 #include "Primitive.h"
 #include "PrimitiveFactory.h"
@@ -8,7 +8,6 @@
 
 Object3D::Object3D()
 {
-	mEffect		= nullptr;
 	mPrimitive	= nullptr;
 	mTexture	= nullptr;
 
@@ -30,8 +29,8 @@ void Object3D::Update(float dt)
 	
 void Object3D::Draw(Graphics* pGraphics)
 {
-	// Draw the primitive.
-	pGraphics->DrawPrimitive(mPrimitive, GetWorldMatrix(), mTexture, GetMaterial(), mEffect);
+	// Draw the primitive with the BasicFX effect.
+	pGraphics->DrawPrimitive(mPrimitive, GetWorldMatrix(), mTexture, GetMaterial(), Effects::BasicFX);
 }
 
 //! Sets the texture to pass to the shader.
@@ -44,12 +43,6 @@ void Object3D::SetTexture(string filename, float scale)
 void Object3D::SetMaterial(Material material)
 {
 	mMaterial = material;
-}
-
-//! Sets the effect to use when drawing.
-void Object3D::SetEffect(Effect* effect)
-{
-	mEffect = effect;
 }
 
 //! Sets the primitive to use when drawing.

@@ -12,7 +12,7 @@
 using namespace std;
 
 class D3DCore;
-class Effect;
+class BasicEffect;
 class Primitive;
 class EffectManager;
 class Camera;
@@ -40,9 +40,8 @@ public:
 
 	bool Init(int clientWidth, int clientHeight, HWND hwnd, bool fullscreen = false);
 	void Update(float dt);
-	Effect* LoadEffect(string filename, string technique);
 
-	void DrawPrimitive(Primitive* primitive, CXMMATRIX worldMatrix, Texture2D* texture, Material material, Effect* effect);
+	void DrawPrimitive(Primitive* primitive, CXMMATRIX worldMatrix, Texture2D* texture, Material material, BasicEffect* effect);
 	void DrawText(string text, int x, int y, D3DXCOLOR textColor, int size);
 
 	Texture2D* LoadTexture(string filename, float scale = 1.0f);
@@ -50,14 +49,15 @@ public:
 	void ClearScene();
 	void Present();
 
-	void SetEffectParameters(Effect* effect, CXMMATRIX worldMatrix, Texture2D* texture, Material material);
+	void SetEffectParameters(BasicEffect* effect, CXMMATRIX worldMatrix, Texture2D* texture, Material material);
 	void SetLightList(LightList* lightList);
 	void SetFogColor(XMFLOAT4 color);
 
+	// Getters.
 	D3DCore* GetD3D();
+	BasicEffect* GetBasicEffect();
 private:
 	D3DCore*		mD3DCore;
-	EffectManager*	mEffectManager;
 	Camera*			mCamera;
 	map<string, Texture2D*> mTextureMap;
 	XMFLOAT4		mFogColor;

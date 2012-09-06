@@ -3,7 +3,7 @@
 #include "Light.h"
 #include "PrimitiveFactory.h"
 #include "Runnable.h"
-#include "Effect.h"
+#include "Effects.h"
 #include "Graphics.h"
 
 World::World()
@@ -15,7 +15,6 @@ void World::Init()
 {
 	mDebugObject = new Object3D();
 	mDebugObject->SetPrimitive(gPrimitiveFactory->CreateBox());
-	mDebugObject->SetEffect(gGame->GetGraphics()->LoadEffect("Base.fx", "BaseTech"));
 	mDebugObject->SetTexture("textures/crate.dds");
 }
 

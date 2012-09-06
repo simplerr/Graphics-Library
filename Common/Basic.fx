@@ -111,6 +111,7 @@ float4 PS(VertexOut pin) : SV_Target
 	/**
 		Fogging.
 	*/
+
 	float distToEye = length(gEyePosW - pin.PosW);
 	float fogLerp = saturate( (distToEye - gFogStart) / gFogRange ); 
 
@@ -123,7 +124,7 @@ float4 PS(VertexOut pin) : SV_Target
     return litColor;
 }
 
-technique11 BaseTech
+technique11 BasicTech
 {
     pass P0
     {
@@ -132,6 +133,3 @@ technique11 BaseTech
         SetPixelShader( CompileShader( ps_5_0, PS() ) );
     }
 }
-
-
-

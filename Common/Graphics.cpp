@@ -5,8 +5,7 @@
 #include <d3dx10math.h>
 #include <tchar.h>
 #include "d3dx11effect.h"
-#include "Effect.h"
-#include "EffectManager.h"
+#include "Effects.h"
 #include "Primitive.h"
 #include "Camera.h"
 #include "Light.h"
@@ -17,7 +16,6 @@ Graphics::Graphics()
 {
 	// Set default values.
 	mD3DCore = nullptr;
-	mEffectManager = nullptr;
 	mCamera = nullptr;
 
 	// Used for clear scene and fog.
@@ -29,7 +27,6 @@ Graphics::~Graphics()
 {
 	// Cleanup.
 	delete mD3DCore;
-	delete mEffectManager;
 	delete mCamera;
 
 	// Release and delete the textures.
@@ -38,6 +35,8 @@ Graphics::~Graphics()
 		ReleaseCOM((*iter).second->texture);
 		delete (*iter).second;
 	}
+
+	Effects::DestroyAll();
 }
 
 //! Initializes Direct3D by calling D3DCore::Init(...).
@@ -52,17 +51,17 @@ bool Graphics::Init(int clientWidth, int clientHeight, HWND hwnd, bool fullscree
 	// Create the D3DBase object.
 	mD3DCore = new D3DCore();
 
-	// Create the effect manager
-	mEffectManager = new EffectManager();
-
-	// Create the camera.
-	mCamera = new Camera();
-
 	// Initialize Direct3D.
 	if(!mD3DCore->Init(clientWidth, clientHeight, hwnd, fullscreen)) {
 		MessageBox(0, "Failed initializing Direct3D", "Error", MB_ICONEXCLAMATION);
 		return false;
 	}
+
+	//! Init all effects.
+	Effects::InitAll();
+
+	// Create the camera.
+	mCamera = new Camera();
 
 	mMaterial = Material(Colors::LightSteelBlue);
 }
@@ -100,7 +99,7 @@ void Graphics::Update(float dt)
 @param worldMatrix the primitives world transform matrix
 @param effect the effect to use when rendering the primitive
 */
-void Graphics::DrawPrimitive(Primitive* primitive, CXMMATRIX worldMatrix, Texture2D* texture, Material material, Effect* effect)
+void Graphics::DrawPrimitive(Primitive* primitive, CXMMATRIX worldMatrix, Texture2D* texture, Material material, BasicEffect* effect)
 {
 	ID3D11DeviceContext* context = GetD3D()->GetContext();
 
@@ -115,7 +114,7 @@ void Graphics::DrawPrimitive(Primitive* primitive, CXMMATRIX worldMatrix, Textur
 	primitive->Draw(context);
 }
 
-void Graphics::SetEffectParameters(Effect* effect, CXMMATRIX worldMatrix, Texture2D* texture, Material material)
+void Graphics::SetEffectParameters(BasicEffect* effect, CXMMATRIX worldMatrix, Texture2D* texture, Material material)
 {
 	// Set the world * view * proj matrix.
 	XMMATRIX view = XMLoadFloat4x4(&mCamera->GetViewMatrix());
@@ -129,10 +128,10 @@ void Graphics::SetEffectParameters(Effect* effect, CXMMATRIX worldMatrix, Textur
 	effect->SetTexture(texture);
 	
 	if(gInput->KeyPressed('C')) {
-	XMFLOAT3 pos = mCamera->GetPosition();
-	char buffer[256];
-	sprintf(buffer, "x: %f\n, y: %f\n, z: %f\n", pos.x, pos.y, pos.z);
-	OutputDebugString(buffer);
+		XMFLOAT3 pos = mCamera->GetPosition();
+		char buffer[256];
+		sprintf(buffer, "x: %f\n, y: %f\n, z: %f\n", pos.x, pos.y, pos.z);
+		OutputDebugString(buffer);
 	}
 
 	// Fog
@@ -165,13 +164,6 @@ void Graphics::Present()
 D3DCore* Graphics::GetD3D()
 {
 	return mD3DCore; 
-}
-
-Effect* Graphics::LoadEffect(string filename, string technique)
-{
-	Effect* effect = mEffectManager->LoadEffect(filename, technique);
-	effect->Init();
-	return effect;
 }
 
 void Graphics::SetLightList(LightList* lightList)
