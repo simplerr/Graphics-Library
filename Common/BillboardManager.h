@@ -15,16 +15,18 @@ class Texture2D;
 class BillboardManager
 {
 public:
-	BillboardManager();
+	BillboardManager(string texture);
 	~BillboardManager();
 
-	void DrawAll(Graphics* pGraphics);
-
-	void AddBillboard(Billboard* billboard);
+	void AddBillboard(BillboardVertex* billboard);
 	void BuildVertexBuffer(ID3D11Device* device);
 	void RebuildVertexBuffer();
+
+	ID3D11Buffer*	GetVertexBuffer();
+	Texture2D*		GetTexture();
+	int				GetNumVertices();
 private:
-	vector<Billboard*>	mBillboardList;
+	vector<BillboardVertex*>	mBillboardList;
 	ID3D11Buffer*		mVB;
 	Texture2D*			mTexture;
 	bool				mBuildVertexBuffer;

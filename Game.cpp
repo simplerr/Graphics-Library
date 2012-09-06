@@ -11,7 +11,7 @@
 #include "Common\World.h"
 #include "Common\Light.h"
 #include "Common\BillboardManager.h"
-#include "Common\Billboard.h"
+#include "Common\Vertex.h"
 
 // Set globals to nullptrs
 Runnable*			gGame				= nullptr;
@@ -100,18 +100,20 @@ void Game::Init()
 
 	GetGraphics()->SetFogColor(XMFLOAT4(1.0f, 0.2f, 0.8, 1.0f));
 	
-	// Add test billboard.
-	BillboardManager* billboardManager = mWorld->GetBillboardManager();
-	Billboard* billboard;
-	
+	// Add test billboards.
+	BillboardVertex* billboard;
 	srand(time(0));
 	for(int i = 0; i < 500; i++) {
 		XMFLOAT3 pos(rand() % 50 - 20, rand() % 30, rand() % 50 - 25);
 		XMFLOAT2 size(rand() % 5 + 0.5f, rand() % 5 + 0.5f);
-		billboard = new Billboard(GetGraphics(), pos, size, "textures\\grass.png");
-		billboardManager->AddBillboard(billboard);
+		GetGraphics()->AddBillboard(pos, size, "textures\\grass.png");
 	}
-	
+
+	for(int i = 0; i < 500; i++) {
+		XMFLOAT3 pos(rand() % 50 - 20 - 50, rand() % 30, rand() % 50 - 25);
+		XMFLOAT2 size(rand() % 5 + 0.5f, rand() % 5 + 0.5f);
+		GetGraphics()->AddBillboard(pos, size, "textures\\crate.dds");
+	}
 }
 	
 void Game::Update(float dt)
@@ -145,6 +147,7 @@ void Game::Draw(Graphics* pGraphics)
 
 	// Draw all objects.
 	mWorld->Draw(pGraphics);
+	pGraphics->DrawBillboards();
 
 	pGraphics->Present();
 }

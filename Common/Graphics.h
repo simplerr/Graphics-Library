@@ -15,6 +15,7 @@ class D3DCore;
 class BasicEffect;
 class Primitive;
 class EffectManager;
+class BillboardManager;
 class Camera;
 struct Material;
 struct Texture2D;
@@ -42,10 +43,11 @@ public:
 	void Update(float dt);
 
 	void DrawPrimitive(Primitive* primitive, CXMMATRIX worldMatrix, Texture2D* texture, Material material, BasicEffect* effect);
-	void DrawBillboards(ID3D11Buffer* vertexBuffer, Texture2D* texture, int num);
+	void DrawBillboards();
 	void DrawText(string text, int x, int y, D3DXCOLOR textColor, int size);
 
 	Texture2D* LoadTexture(string filename, float scale = 1.0f);
+	void AddBillboard(XMFLOAT3 position, XMFLOAT2 size, string texture);
 
 	void ClearScene();
 	void Present();
@@ -58,12 +60,13 @@ public:
 	D3DCore* GetD3D();
 	BasicEffect* GetBasicEffect();
 private:
+	map<string, Texture2D*>			mTextureMap;
+	map<string, BillboardManager*>	mBillboardManagerMap;
+	LightList*		mLightList;
 	D3DCore*		mD3DCore;
 	Camera*			mCamera;
-	map<string, Texture2D*> mTextureMap;
 	XMFLOAT4		mFogColor;
 
 	// TMP
-	LightList* mLightList;
 	Material mMaterial;
 };	// Class

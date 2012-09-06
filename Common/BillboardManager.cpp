@@ -1,39 +1,30 @@
 #include "BillboardManager.h"
-#include "Billboard.h"
 #include "d3dUtil.h"
 #include "Graphics.h"
 #include "D3DCore.h"
 #include "Effects.h"
 #include "Runnable.h"
 
-BillboardManager::BillboardManager()
+BillboardManager::BillboardManager(string texture)
 {
 	mBuildVertexBuffer = false;
-	mTexture = gGame->GetGraphics()->LoadTexture("textures\\grass.png");
+	mTexture = gGame->GetGraphics()->LoadTexture(texture);
 }
 	
+//! Cleanup.
 BillboardManager::~BillboardManager()
 {
+	for(int i = 0; i < mBillboardList.size(); i++)
+		delete mBillboardList[i];
 
+	ReleaseCOM(mVB);
 }
 
 //! Adds a billboard.
-void BillboardManager::AddBillboard(Billboard* billboard)
+void BillboardManager::AddBillboard(BillboardVertex* billboard)
 {
 	mBillboardList.push_back(billboard);
 	BuildVertexBuffer(gGame->GetD3D()->GetDevice());	//  [HACK]
-}
-	
-//!  Draws all the billboards.
-void BillboardManager::DrawAll(Graphics* pGraphics)
-{
-	if(mBuildVertexBuffer)
-		BuildVertexBuffer(pGraphics->GetD3D()->GetDevice());
-
-	// Draw all vertices in the buffer.
-	pGraphics->DrawBillboards(mVB, mTexture, mBillboardList.size());
-
-	mBuildVertexBuffer = false;
 }
 
 //! Builds the vertex buffer.
@@ -44,8 +35,8 @@ void BillboardManager::BuildVertexBuffer(ID3D11Device* device)
 	// Copy over the position and size.
 	for(int i = 0; i < mBillboardList.size(); i++)
 	{
-		vertices[i].Pos	 = mBillboardList[i]->GetPosition();
-		vertices[i].Size = mBillboardList[i]->GetSize();
+		vertices[i].Pos	 = mBillboardList[i]->Pos;
+		vertices[i].Size = mBillboardList[i]->Size;
 	}
 
 	// Fill out the D3D11_BUFFER_DESC struct.
@@ -59,7 +50,7 @@ void BillboardManager::BuildVertexBuffer(ID3D11Device* device)
 
 	// Set the init data.
     D3D11_SUBRESOURCE_DATA initData;
-    initData.pSysMem = vertices;
+	initData.pSysMem = vertices;
 
 	// Create the vertex buffer.
 	HR(device->CreateBuffer(&vbd, &initData, &mVB));
@@ -72,4 +63,19 @@ void BillboardManager::BuildVertexBuffer(ID3D11Device* device)
 void BillboardManager::RebuildVertexBuffer()
 {
 	mBuildVertexBuffer = true;
+}
+
+ID3D11Buffer* BillboardManager::GetVertexBuffer()
+{
+	return mVB;
+}
+
+int BillboardManager::GetNumVertices()
+{
+	return mBillboardList.size();
+}
+
+Texture2D* BillboardManager::GetTexture()
+{
+	return mTexture;
 }

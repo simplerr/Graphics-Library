@@ -16,6 +16,10 @@ struct Vertex
 
 struct BillboardVertex
 {
+	BillboardVertex() {}
+	BillboardVertex(XMFLOAT3 pos, XMFLOAT2 size) 
+		: Pos(pos), Size(size) {}	
+
 	XMFLOAT3 Pos;
 	XMFLOAT2 Size;
 };

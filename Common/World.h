@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <map>
 #include "d3dUtil.h"
 using namespace std;
 
@@ -21,10 +22,8 @@ public:
 	void AddObject(Object3D* object);
 	void AddLight(Light* light);
 	LightList* GetLights();
-	BillboardManager* GetBillboardManager();
 private:
 	vector<Object3D*> mObjectList;
 	LightList mLightList;//LightList mLightList;	
 	Object3D* mDebugObject;
-	BillboardManager* mBillboardManager;
 };

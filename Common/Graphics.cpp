@@ -11,6 +11,7 @@
 #include "Light.h"
 #include "Input.h"
 #include "Vertex.h"
+#include "BillboardManager.h"
 
 //! Constructor. The Init() function handles the initialization.
 Graphics::Graphics()
@@ -36,6 +37,10 @@ Graphics::~Graphics()
 		ReleaseCOM((*iter).second->texture);
 		delete (*iter).second;
 	}
+
+	// Cleanup the billboards
+	for(auto iter = mBillboardManagerMap.begin(); iter!= mBillboardManagerMap.end(); iter++)
+		delete (*iter).second;
 
 	Effects::DestroyAll();
 }
@@ -115,32 +120,38 @@ void Graphics::DrawPrimitive(Primitive* primitive, CXMMATRIX worldMatrix, Textur
 	primitive->Draw(context);
 }
 
-void Graphics::DrawBillboards(ID3D11Buffer* vertexBuffer, Texture2D* texture, int num)
+void Graphics::DrawBillboards()
 {
 	// Set topology and input layout.
 	ID3D11DeviceContext* context = GetD3D()->GetContext();
 	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 	context->IASetInputLayout(Effects::BillboardFX->GetInputLayout());
 
-	// Set the vertex buffer.
-	UINT stride = sizeof(BillboardVertex);
-	UINT offset = 0;
-	context->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
+	// Loop through all billboard managers.
+	for(auto iter = mBillboardManagerMap.begin(); iter != mBillboardManagerMap.end(); iter++)
+	{
+		BillboardManager* manager = (*iter).second;
+		ID3D11Buffer* vb = manager->GetVertexBuffer();
+		// Set the vertex buffer.
+		UINT stride = sizeof(BillboardVertex);
+		UINT offset = 0;
+		context->IASetVertexBuffers(0, 1, &vb, &stride, &offset);
 
-	// Set effect variables.
-	XMMATRIX view = XMLoadFloat4x4(&mCamera->GetViewMatrix());
-	XMMATRIX proj = XMLoadFloat4x4(&mCamera->GetProjectionMatrix());
-	Effects::BillboardFX->SetViewProj(view * proj);
-	Effects::BillboardFX->SetLights(mLightList);
-	Effects::BillboardFX->SetEyePosition(mCamera->GetPosition());
-	Effects::BillboardFX->SetFogColor(mFogColor);
-	Effects::BillboardFX->SetFogStart(15.0f);
-	Effects::BillboardFX->SetFogRange(175.0f);
-	Effects::BillboardFX->SetMaterial(Colors::White);
-	Effects::BillboardFX->SetTexture(texture);
-	Effects::BillboardFX->Apply();
+		// Set effect variables.
+		XMMATRIX view = XMLoadFloat4x4(&mCamera->GetViewMatrix());
+		XMMATRIX proj = XMLoadFloat4x4(&mCamera->GetProjectionMatrix());
+		Effects::BillboardFX->SetViewProj(view * proj);
+		Effects::BillboardFX->SetLights(mLightList);
+		Effects::BillboardFX->SetEyePosition(mCamera->GetPosition());
+		Effects::BillboardFX->SetFogColor(mFogColor);
+		Effects::BillboardFX->SetFogStart(15.0f);
+		Effects::BillboardFX->SetFogRange(175.0f);
+		Effects::BillboardFX->SetMaterial(Colors::White);
+		Effects::BillboardFX->SetTexture(manager->GetTexture());
+		Effects::BillboardFX->Apply();
 
-	context->Draw(num, 0);
+		context->Draw(manager->GetNumVertices(), 0);
+	}
 }
 
 void Graphics::SetEffectParameters(BasicEffect* effect, CXMMATRIX worldMatrix, Texture2D* texture, Material material)
@@ -174,6 +185,21 @@ void Graphics::SetEffectParameters(BasicEffect* effect, CXMMATRIX worldMatrix, T
 void Graphics::DrawText(string text, int x, int y, D3DXCOLOR textColor, int size)
 {
 
+}
+
+//! Adds a billboard to the scene.
+void Graphics::AddBillboard(XMFLOAT3 position, XMFLOAT2 size, string texture)
+{
+	// A billboard manager for the texture already exists.
+	if(mBillboardManagerMap.find(texture) != mBillboardManagerMap.end()) {
+		BillboardVertex* billboard = new BillboardVertex(position, size);
+		mBillboardManagerMap[texture]->AddBillboard(billboard);
+	}
+	else {
+		mBillboardManagerMap[texture] = new BillboardManager(texture);
+		BillboardVertex* billboard = new BillboardVertex(position, size);
+		mBillboardManagerMap[texture]->AddBillboard(billboard);
+	}
 }
 
 //! Clears the backbuffer with the color "color".
