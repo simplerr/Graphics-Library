@@ -65,21 +65,25 @@ void BillboardManager::SetRebuild(bool rebuild)
 	mRebuild = rebuild;
 }
 
+//! Returns the vertex buffer.
 ID3D11Buffer* BillboardManager::GetVertexBuffer()
 {
 	return mVB;
 }
 
-int BillboardManager::GetNumVertices()
+//! Returns the number of billboards
+int BillboardManager::GetNumBillboards()
 {
 	return mBillboardList.size();
 }
 
+//! Returns the texture.
 Texture2D* BillboardManager::GetTexture()
 {
 	return mTexture;
 }
 
+//! Returns true if the vertex buffer should get rebuilt.
 bool BillboardManager::GetRebuild()
 {
 	return mRebuild;

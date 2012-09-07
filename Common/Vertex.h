@@ -16,6 +16,7 @@ struct Vertex
 	XMFLOAT2 Tex;
 };
 
+//! Billboard Vertex.
 struct BillboardVertex
 {
 	BillboardVertex() {}

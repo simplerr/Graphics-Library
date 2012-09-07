@@ -5,6 +5,9 @@
 class Object3D;
 class World;
 class Light;
+class RenderTarget;
+class Primitive;
+class Texture2D;
 
 class Game : public Runnable
 {
@@ -21,4 +24,7 @@ private:
 	World* mWorld;
 	Light* mLight;
 	Light* mLight2;
+	RenderTarget* mRenderTarget;
+	Primitive* mPrimitive;
+	Texture2D* mTexture2D;
 };

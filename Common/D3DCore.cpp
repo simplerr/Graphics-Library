@@ -221,3 +221,13 @@ ID3D11DepthStencilView* D3DCore::GetDepthStencilView()
 {
 	return mDepthStencilView;
 }
+
+float D3DCore::GetClientWidth()
+{
+	return mClientWidth;
+}
+	
+float D3DCore::GetClientHeight()
+{
+	return mClientHeight;
+}

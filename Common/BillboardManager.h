@@ -24,7 +24,7 @@ public:
 
 	ID3D11Buffer*	GetVertexBuffer();
 	Texture2D*		GetTexture();
-	int				GetNumVertices();
+	int				GetNumBillboards();
 	bool			GetRebuild();
 private:
 	vector<BillboardVertex*>	mBillboardList;

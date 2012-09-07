@@ -20,6 +20,7 @@ public:
 
 	Primitive* CreateBox();
 	Primitive* CreateGrid(float width, float depth, UINT m, UINT n);
+	Primitive* CreateQuad();
 
 	// For grid landscapes.
 	float GetHeight(float x, float z);

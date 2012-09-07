@@ -40,6 +40,9 @@ public:
 	ID3D11RenderTargetView* GetRenderTargetView();
 	ID3D11DepthStencilView* GetDepthStencilView();
 
+	float					GetClientWidth();
+	float					GetClientHeight();
+
 private:
 	// Core Direct3D members.
 	ID3D11Device*			md3dDevice;

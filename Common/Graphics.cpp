@@ -12,6 +12,8 @@
 #include "Input.h"
 #include "Vertex.h"
 #include "BillboardManager.h"
+#include "RenderTarget.h"
+#include "PrimitiveFactory.h"
 
 //! Constructor. The Init() function handles the initialization.
 Graphics::Graphics()
@@ -70,6 +72,9 @@ bool Graphics::Init(int clientWidth, int clientHeight, HWND hwnd, bool fullscree
 	mCamera = new Camera();
 
 	mMaterial = Material(Colors::LightSteelBlue);
+
+	// Create the primtive used when drawing 2D screen quads.
+	mScreenQuad = gPrimitiveFactory->CreateQuad();
 }
 
 //! Returns the created texture. The Graphics class handles cleanup.
@@ -94,6 +99,7 @@ Texture2D* Graphics::LoadTexture(string filename, float scale)
 	}
 }
 
+//! Updates the camera.
 void Graphics::Update(float dt)
 {
 	mCamera->Update(dt);
@@ -120,6 +126,7 @@ void Graphics::DrawPrimitive(Primitive* primitive, CXMMATRIX worldMatrix, Textur
 	primitive->Draw(context);
 }
 
+//! Draws all the billboards.
 void Graphics::DrawBillboards()
 {
 	// Set topology and input layout.
@@ -156,10 +163,34 @@ void Graphics::DrawBillboards()
 		Effects::BillboardFX->SetTexture(manager->GetTexture());
 		Effects::BillboardFX->Apply();
 
-		context->Draw(manager->GetNumVertices(), 0);
+		context->Draw(manager->GetNumBillboards(), 0);
 	}
 }
 
+void Graphics::DrawScreenQuad(Texture2D* texture, float x, float y, float width, float height)
+{
+	ID3D11DeviceContext* context = GetD3D()->GetContext();
+
+	// Set the input layout and the primitive topology.
+	context->IASetInputLayout(Effects::BasicFX->GetInputLayout());
+	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	// Set the effect parameters.
+	float transformedX = x - GetClientWidth()/2;
+	float transformedY = -(y - GetClientHeight()/2);
+	XMMATRIX T = XMMatrixTranslation(transformedX / GetClientWidth() * 2, transformedY / GetClientHeight() * 2, 0);
+	XMMATRIX S = XMMatrixScaling(width / GetClientWidth(), height / GetClientHeight(), 1);
+	SetEffectParameters(Effects::BasicFX, S*T, texture, Material(XMFLOAT4(1, 1, 1, 1)));
+
+	// Make sure to not use the view and projection matrices when dealing with NDC coordinates.
+	Effects::BasicFX->SetWorldViewProj(S*T);
+	Effects::BasicFX->Apply();
+
+	// Draw the primitive.
+	mScreenQuad->Draw(context);
+}
+
+//! Sets the effect parameters.
 void Graphics::SetEffectParameters(BasicEffect* effect, CXMMATRIX worldMatrix, Texture2D* texture, Material material)
 {
 	// Set the world * view * proj matrix.
@@ -233,12 +264,56 @@ D3DCore* Graphics::GetD3D()
 	return mD3DCore; 
 }
 
+//! Returns the Direct3D device context.
+ID3D11DeviceContext* Graphics::GetContext()
+{
+	return mD3DCore->GetContext();
+}
+	
+//! Returns the 3D camera.
+Camera*	Graphics::GetCamera()
+{
+	return mCamera;
+}
+
+//! Sets which render target to use.
+void Graphics::SetRenderTarget(RenderTarget* renderTarget)
+{
+	ID3D11RenderTargetView* renderTargetView = renderTarget->GetRenderTargetView();
+	ID3D11DepthStencilView* depthStencilView = renderTarget->GetDepthStencilView();
+	GetContext()->OMSetRenderTargets(1, &renderTargetView, depthStencilView);
+}
+
+//! Sets which render target to use.
+void Graphics::SetRenderTarget(ID3D11RenderTargetView* renderTargetView, ID3D11DepthStencilView* depthStencilView)
+{
+	GetContext()->OMSetRenderTargets(1, &renderTargetView, depthStencilView);
+}
+
+//! Returns the Direct3D device.
+ID3D11Device* Graphics::GetDevice()
+{
+	return mD3DCore->GetDevice();
+}
+
+//! Sets the light list.
 void Graphics::SetLightList(LightList* lightList)
 {
 	mLightList = lightList;
 }
 
+//! Sets the fog color.
 void Graphics::SetFogColor(XMFLOAT4 color)
 {
 	mFogColor = color;
+}
+
+float Graphics::GetClientWidth()
+{
+	return mD3DCore->GetClientWidth();
+}
+	
+float Graphics::GetClientHeight()
+{
+	return mD3DCore->GetClientHeight();
 }

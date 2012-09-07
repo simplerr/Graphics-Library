@@ -12,6 +12,9 @@
 #include "Common\Light.h"
 #include "Common\BillboardManager.h"
 #include "Common\Vertex.h"
+#include "Common\RenderTarget.h"
+#include "Common\Camera.h"
+#include "Common\Effects.h"
 
 // Set globals to nullptrs
 Runnable*			gGame				= nullptr;
@@ -31,8 +34,13 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance, PSTR cmdLine, in
 	Game game(hInstance, "Graphics Library", 800, 600);
 	gGame = &game;
 
+	// Create the primitive factory.
+	gPrimitiveFactory = new PrimitiveFactory();
+
+	// Init the app.
 	game.Init();
 
+	// Create the input class.
 	gInput = new Input();
 
 	return gGame->Run();
@@ -55,9 +63,6 @@ void Game::Init()
 {
 	// Important to run Systems Init() function.
 	Runnable::Init();
-
-	// Create the primitive factory.
-	gPrimitiveFactory = new PrimitiveFactory();
 
 	// Create the world.
 	mWorld = new World();
@@ -105,7 +110,7 @@ void Game::Init()
 	// Add test billboards.
 	billboard = GetGraphics()->AddBillboard(XMFLOAT3(0, 10, 0), XMFLOAT2(5, 5), "textures\\crate.dds");
 	srand(time(0));
-	for(int i = 0; i < 500; i++) {
+	/*for(int i = 0; i < 500; i++) {
 		XMFLOAT3 pos(rand() % 50 - 20, rand() % 30, rand() % 50 - 25);
 		XMFLOAT2 size(rand() % 5 + 0.5f, rand() % 5 + 0.5f);
 		GetGraphics()->AddBillboard(pos, size, "textures\\grass.png");
@@ -115,7 +120,12 @@ void Game::Init()
 		XMFLOAT3 pos(rand() % 50 - 20 - 50, rand() % 30, rand() % 50 - 25);
 		XMFLOAT2 size(rand() % 5 + 0.5f, rand() % 5 + 0.5f);
 		GetGraphics()->AddBillboard(pos, size, "textures\\crate.dds");
-	}
+	}*/
+
+	mTexture2D = new Texture2D();
+	mRenderTarget = new RenderTarget(GetGraphics(), 256, 256);
+	mTexture2D->texture = mRenderTarget->GetShaderResourceView();
+	mPrimitive = gPrimitiveFactory->CreateQuad();
 }
 	
 void Game::Update(float dt)
@@ -156,9 +166,28 @@ void Game::Draw(Graphics* pGraphics)
 {
 	pGraphics->ClearScene();
 
+	/**
+		Draw everything to a texture.
+	*/
+	pGraphics->SetRenderTarget(mRenderTarget);
+	XMFLOAT3 oldPos = GetGraphics()->GetCamera()->GetPosition();
+	GetGraphics()->GetCamera()->SetPosition(XMFLOAT3(0, 20, 0));
+
 	// Draw all objects.
 	mWorld->Draw(pGraphics);
 	pGraphics->DrawBillboards();
+
+	// Restore the render target.
+	pGraphics->SetRenderTarget(GetD3D()->GetRenderTargetView(), GetD3D()->GetDepthStencilView());
+
+	GetGraphics()->GetCamera()->SetPosition(oldPos);
+
+	// Draw all objects.
+	mWorld->Draw(pGraphics);
+	pGraphics->DrawBillboards();
+
+	// Draw the texture.
+	pGraphics->DrawScreenQuad(mTexture2D, 210, 210, 400, 400);
 
 	pGraphics->Present();
 }

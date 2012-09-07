@@ -111,6 +111,40 @@ Primitive* PrimitiveFactory::CreateBox()
 	return &mPrimitiveMap["box"];
 }
 
+Primitive* PrimitiveFactory::CreateQuad()
+{
+	// Already created a box primitive?
+	if(mPrimitiveMap.find("quad") != mPrimitiveMap.end())
+		return &mPrimitiveMap["quad"];
+
+	Primitive primitive;
+
+	Vertex vertices[4];
+	vertices[0] = Vertex(-1.0f, -1.0f, 0.0f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+	vertices[1] = Vertex(-1.0f, +1.0f, 0.0f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+	vertices[2] = Vertex(+1.0f, +1.0f, 0.0f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+	vertices[3] = Vertex(+1.0f, -1.0f, 0.0f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f);
+
+	primitive.SetVertices(gGame->GetD3D()->GetDevice(), vertices, 4);
+
+	UINT indices[6];
+
+	indices[0] = 0;
+	indices[1] = 1;
+	indices[2] = 2;
+	indices[3] = 0;
+	indices[4] = 2;
+	indices[5] = 3;
+
+	primitive.SetIndices(gGame->GetD3D()->GetDevice(), indices, 6);
+
+	// Add to the primitive map.
+	mPrimitiveMap["quad"] = primitive;
+
+	// Return the adress to the newly added primitive.
+	return &mPrimitiveMap["quad"];
+}
+
 Primitive* PrimitiveFactory::CreateGrid(float width, float depth, UINT m, UINT n)
 {
 	if(mPrimitiveMap.find("grid") != mPrimitiveMap.end())
