@@ -26,7 +26,12 @@ struct Texture2D;
 //! Represents a 2D texture.
 struct Texture2D
 {
-	ID3D11ShaderResourceView* texture;
+	Texture2D() {
+		shaderResourceView = 0;
+		scale = 1.0f;
+	}
+
+	ID3D11ShaderResourceView* shaderResourceView;
 	float scale;
 };
 
@@ -59,7 +64,7 @@ public:
 	void SetLightList(LightList* lightList);
 	void SetFogColor(XMFLOAT4 color);
 	void SetRenderTarget(RenderTarget* renderTarget);
-	void SetRenderTarget(ID3D11RenderTargetView* renderTargetView, ID3D11DepthStencilView* depthStencilView);
+	void RestoreRenderTarget();
 
 	// Getters.
 	ID3D11DeviceContext*	GetContext();

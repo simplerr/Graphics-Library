@@ -72,19 +72,20 @@ void Game::Init()
 	GetGraphics()->SetLightList(mWorld->GetLights());
 
 	// Add some objects.
-	Object3D* object = new Object3D();
+	mObject = new Object3D();
 
 	// Load the effect and the primitive.
-	object->SetPrimitive(gPrimitiveFactory->CreateBox());
-	object->SetTexture("textures/crate.dds");
-	object->SetPosition(XMFLOAT3(0, 3, 0));
+	mObject->SetPrimitive(gPrimitiveFactory->CreateBox());
+	mObject->LoadTexture("textures/crate.dds");
+	mObject->SetPosition(XMFLOAT3(0, 3, 0));
+	mObject->SetScale(XMFLOAT3(5, 5, 5));
 
-	mWorld->AddObject(object);
+	mWorld->AddObject(mObject);
 
-	object = new Object3D();
+	Object3D* object = new Object3D();
 
 	object->SetPrimitive(gPrimitiveFactory->CreateGrid(160.0f, 160.0f, 50, 50));
-	object->SetTexture("textures/grass.png", 15.0f);
+	object->LoadTexture("textures/grass.png", 15.0f);
 
 	mWorld->AddObject(object);
 
@@ -122,10 +123,10 @@ void Game::Init()
 		GetGraphics()->AddBillboard(pos, size, "textures\\crate.dds");
 	}*/
 
-	mTexture2D = new Texture2D();
-	mRenderTarget = new RenderTarget(GetGraphics(), 256, 256);
-	mTexture2D->texture = mRenderTarget->GetShaderResourceView();
-	mPrimitive = gPrimitiveFactory->CreateQuad();
+	// Testing...
+	mRenderTarget	= new RenderTarget(GetGraphics(), 256, 256);
+	mPrimitive		= gPrimitiveFactory->CreateQuad();
+	mObject->SetTexture(mRenderTarget->GetRenderTargetTexture());
 }
 	
 void Game::Update(float dt)
@@ -171,23 +172,27 @@ void Game::Draw(Graphics* pGraphics)
 	*/
 	pGraphics->SetRenderTarget(mRenderTarget);
 	XMFLOAT3 oldPos = GetGraphics()->GetCamera()->GetPosition();
-	GetGraphics()->GetCamera()->SetPosition(XMFLOAT3(0, 20, 0));
+	XMFLOAT3 oldDir = GetGraphics()->GetCamera()->GetDirection();
 
 	// Draw all objects.
 	mWorld->Draw(pGraphics);
 	pGraphics->DrawBillboards();
 
 	// Restore the render target.
-	pGraphics->SetRenderTarget(GetD3D()->GetRenderTargetView(), GetD3D()->GetDepthStencilView());
+	pGraphics->RestoreRenderTarget();
 
 	GetGraphics()->GetCamera()->SetPosition(oldPos);
+	GetGraphics()->GetCamera()->SetDirection(oldDir);
 
 	// Draw all objects.
 	mWorld->Draw(pGraphics);
 	pGraphics->DrawBillboards();
 
 	// Draw the texture.
-	pGraphics->DrawScreenQuad(mTexture2D, 210, 210, 400, 400);
+	Texture2D texture;
+	texture.shaderResourceView = mRenderTarget->GetShaderResourceView();
+	texture.scale = 1.0f;
+	pGraphics->DrawScreenQuad(&texture, 400, 300, 256, 256);
 
 	pGraphics->Present();
 }

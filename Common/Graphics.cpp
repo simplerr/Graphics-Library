@@ -36,7 +36,7 @@ Graphics::~Graphics()
 	// Release and delete the textures.
 	for(auto iter = mTextureMap.begin(); iter != mTextureMap.end(); iter++)
 	{
-		ReleaseCOM((*iter).second->texture);
+		ReleaseCOM((*iter).second->shaderResourceView);
 		delete (*iter).second;
 	}
 
@@ -92,7 +92,7 @@ Texture2D* Graphics::LoadTexture(string filename, float scale)
 	else
 	{
 		Texture2D* texture2d = new Texture2D();
-		HR(D3DX11CreateShaderResourceViewFromFile(GetD3D()->GetDevice(), filename.c_str(), 0, 0, &texture2d->texture, 0));
+		HR(D3DX11CreateShaderResourceViewFromFile(GetD3D()->GetDevice(), filename.c_str(), 0, 0, &texture2d->shaderResourceView, 0));
 		texture2d->scale = scale;
 		mTextureMap[textureId] = texture2d;
 		return mTextureMap[textureId];
@@ -282,12 +282,18 @@ void Graphics::SetRenderTarget(RenderTarget* renderTarget)
 	ID3D11RenderTargetView* renderTargetView = renderTarget->GetRenderTargetView();
 	ID3D11DepthStencilView* depthStencilView = renderTarget->GetDepthStencilView();
 	GetContext()->OMSetRenderTargets(1, &renderTargetView, depthStencilView);
+	GetContext()->ClearRenderTargetView(renderTarget->GetRenderTargetView(), reinterpret_cast<const float*>(&mFogColor));
+	GetContext()->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 }
 
 //! Sets which render target to use.
-void Graphics::SetRenderTarget(ID3D11RenderTargetView* renderTargetView, ID3D11DepthStencilView* depthStencilView)
+void Graphics::RestoreRenderTarget()
 {
+	ID3D11RenderTargetView* renderTargetView = GetD3D()->GetRenderTargetView();
+	ID3D11DepthStencilView* depthStencilView = GetD3D()->GetDepthStencilView();
 	GetContext()->OMSetRenderTargets(1, &renderTargetView, depthStencilView);
+	GetContext()->ClearRenderTargetView(GetD3D()->GetRenderTargetView(), reinterpret_cast<const float*>(&mFogColor));
+	GetContext()->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 }
 
 //! Returns the Direct3D device.

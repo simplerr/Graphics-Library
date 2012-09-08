@@ -26,5 +26,5 @@ private:
 	Light* mLight2;
 	RenderTarget* mRenderTarget;
 	Primitive* mPrimitive;
-	Texture2D* mTexture2D;
+	Object3D*  mObject;
 };

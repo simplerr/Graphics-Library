@@ -15,7 +15,7 @@ void World::Init()
 {
 	mDebugObject = new Object3D();
 	mDebugObject->SetPrimitive(gPrimitiveFactory->CreateBox());
-	mDebugObject->SetTexture("textures/crate.dds");
+	mDebugObject->LoadTexture("textures/crate.dds");
 }
 
 //! Cleanup the object and light lists.

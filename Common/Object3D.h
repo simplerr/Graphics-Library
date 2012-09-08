@@ -30,18 +30,18 @@ public:
 	XMFLOAT3 GetScale();
 	Material GetMaterial();
 
-	void SetTexture(string filename, float scale = 1.0f);
+	void LoadTexture(string filename, float scale = 1.0f);
+	void SetTexture(Texture2D* texture);
 	void SetPrimitive(Primitive* primitive);
 	void SetPosition(XMFLOAT3 position);
 	void SetRotation(XMFLOAT3 rotation);
 	void SetScale(XMFLOAT3 scale);
 	void SetMaterial(Material material);
-	
 private:
 	Texture2D*	mTexture;
 	Primitive*	mPrimitive;
 	Material	mMaterial;
-	XMFLOAT3 mPosition;
-	XMFLOAT3 mRotation;
-	XMFLOAT3 mScale;
+	XMFLOAT3	mPosition;
+	XMFLOAT3	mRotation;
+	XMFLOAT3	mScale;
 };

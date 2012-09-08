@@ -173,7 +173,7 @@ void BasicEffect::SetLights(LightList* lights)
 void BasicEffect::SetTexture(Texture2D* texture)
 {
 	SetUseTexture(texture == nullptr ? false : true);
-	mfxTexture->SetResource(texture->texture);
+	mfxTexture->SetResource(texture->shaderResourceView);
 	XMMATRIX transform = XMMatrixScaling(texture->scale, texture->scale, 0);
 	mfxTexTransform->SetMatrix((const float*)&transform);
 }
@@ -227,7 +227,7 @@ void BillboardEffect::CreateInputLayout()
 void BillboardEffect::SetTexture(Texture2D* texture)
 {
 	SetUseTexture(texture == nullptr ? false : true);
-	mfxTexture->SetResource(texture->texture);
+	mfxTexture->SetResource(texture->shaderResourceView);
 }
 	
 void BillboardEffect::SetLights(LightList* lights)

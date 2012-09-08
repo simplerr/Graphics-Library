@@ -33,10 +33,16 @@ void Object3D::Draw(Graphics* pGraphics)
 	pGraphics->DrawPrimitive(mPrimitive, GetWorldMatrix(), mTexture, GetMaterial(), Effects::BasicFX);
 }
 
-//! Sets the texture to pass to the shader.
-void Object3D::SetTexture(string filename, float scale)
+//! Loads the texture to pass to the shader.
+void Object3D::LoadTexture(string filename, float scale)
 {
 	mTexture = gGame->GetGraphics()->LoadTexture(filename, scale);
+}
+
+//! Sets the texture to pass to the shader.
+void Object3D::SetTexture(Texture2D* texture)
+{
+	mTexture = texture;
 }
 
 //! Sets the objects material.
