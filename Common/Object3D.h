@@ -4,6 +4,9 @@
 #include <xnamath.h>
 #include "d3dx11Effect.h"
 #include "Light.h"
+#include "xnacollision.h"
+
+using namespace XNA;
 
 class Graphics;
 class BasicEffect;
@@ -29,6 +32,7 @@ public:
 	XMFLOAT3 GetRotation();
 	XMFLOAT3 GetScale();
 	Material GetMaterial();
+	AxisAlignedBox GetBoundingBox();
 
 	void LoadTexture(string filename, float scale = 1.0f);
 	void SetTexture(Texture2D* texture);

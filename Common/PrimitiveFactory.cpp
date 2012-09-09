@@ -32,7 +32,8 @@ Primitive* PrimitiveFactory::CreateBox()
 	Primitive primitive;
 
 	// Create the vertices.
-    Vertex v[24];
+    vector<Vertex> v;
+	v.resize(24);
 	float w2, h2, d2;
 	w2 = h2 = d2 = 1.0f;
 
@@ -119,7 +120,8 @@ Primitive* PrimitiveFactory::CreateQuad()
 
 	Primitive primitive;
 
-	Vertex vertices[4];
+	vector<Vertex> vertices;
+	vertices.resize(4);
 	vertices[0] = Vertex(-1.0f, -1.0f, 0.0f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
 	vertices[1] = Vertex(-1.0f, +1.0f, 0.0f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
 	vertices[2] = Vertex(+1.0f, +1.0f, 0.0f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f);
@@ -182,7 +184,7 @@ Primitive* PrimitiveFactory::CreateGrid(float width, float depth, UINT m, UINT n
 		}
 	}
  
-	primitive.SetVertices(gGame->GetD3D()->GetDevice(), &vertices[0], vertexCount);
+	primitive.SetVertices(gGame->GetD3D()->GetDevice(), vertices, vertexCount);
 
 	// Create the indices.
 	vector<UINT> indices;

@@ -31,7 +31,7 @@ void Primitive::Draw(ID3D11DeviceContext* dc)
 	dc->DrawIndexed(mNumIndices, 0, 0);
 }
 	
-void Primitive::SetVertices(ID3D11Device* device, Vertex* vertices, UINT count)
+void Primitive::SetVertices(ID3D11Device* device, vector<Vertex> vertices, UINT count)
 {
 	// Fill out the D3D11_BUFFER_DESC struct.
 	D3D11_BUFFER_DESC vbd;
@@ -44,12 +44,15 @@ void Primitive::SetVertices(ID3D11Device* device, Vertex* vertices, UINT count)
 
 	// Set the init data.
     D3D11_SUBRESOURCE_DATA initData;
-    initData.pSysMem = vertices;
+    initData.pSysMem = &vertices[0];
 
 	// Create the vertex buffer.
 	HR(device->CreateBuffer(&vbd, &initData, &mVertexBuffer));
 
 	mNumVertices = count;
+
+	// Compute the AABB.
+	XNA::ComputeBoundingAxisAlignedBoxFromPoints(&mBoundingBox, vertices.size(), &vertices[0].Pos, sizeof(Vertex));
 }
 	
 void Primitive::SetIndices(ID3D11Device* device, const UINT* indices, UINT count)
@@ -71,4 +74,10 @@ void Primitive::SetIndices(ID3D11Device* device, const UINT* indices, UINT count
 	HR(device->CreateBuffer(&ibd, &initData, &mIndexBuffer));
 
 	mNumIndices = count;
+}
+
+//! Returns the bounding box.
+AxisAlignedBox Primitive::GetBoundingBox()
+{
+	return mBoundingBox;
 }

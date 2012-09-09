@@ -181,9 +181,11 @@ void BasicEffect::SetLights(LightList* lights)
 void BasicEffect::SetTexture(Texture2D* texture)
 {
 	SetUseTexture(texture == nullptr ? false : true);
-	mfxTexture->SetResource(texture->shaderResourceView);
-	XMMATRIX transform = XMMatrixScaling(texture->scale, texture->scale, 0);
-	mfxTexTransform->SetMatrix((const float*)&transform);
+	if(texture != nullptr) {
+		mfxTexture->SetResource(texture->shaderResourceView);
+		XMMATRIX transform = XMMatrixScaling(texture->scale, texture->scale, 0);
+		mfxTexTransform->SetMatrix((const float*)&transform);
+	}
 }
 
 #pragma endregion

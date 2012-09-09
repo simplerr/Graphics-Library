@@ -15,6 +15,7 @@
 #include "Common\RenderTarget.h"
 #include "Common\Camera.h"
 #include "Common\Effects.h"
+#include "Common\RenderStates.h"
 
 // Set globals to nullptrs
 Runnable*			gGame				= nullptr;
@@ -72,6 +73,13 @@ void Game::Init()
 	GetGraphics()->SetLightList(mWorld->GetLights());
 
 	// Add some objects.
+	Object3D* object = new Object3D();
+
+	object->SetPrimitive(gPrimitiveFactory->CreateGrid(160.0f, 160.0f, 50, 50));
+	object->LoadTexture("textures/grass.png", 15.0f);
+
+	mWorld->AddObject(object);
+	
 	mObject = new Object3D();
 
 	// Load the effect and the primitive.
@@ -81,13 +89,6 @@ void Game::Init()
 	mObject->SetScale(XMFLOAT3(5, 5, 5));
 
 	mWorld->AddObject(mObject);
-
-	Object3D* object = new Object3D();
-
-	object->SetPrimitive(gPrimitiveFactory->CreateGrid(160.0f, 160.0f, 50, 50));
-	object->LoadTexture("textures/grass.png", 15.0f);
-
-	mWorld->AddObject(object);
 
 	// Add some lights.
 	mLight = new Light();
@@ -111,7 +112,7 @@ void Game::Init()
 	// Add test billboards.
 	billboard = GetGraphics()->AddBillboard(XMFLOAT3(0, 10, 0), XMFLOAT2(5, 5), "textures\\crate.dds");
 	srand(time(0));
-	for(int i = 0; i < 500; i++) {
+	/*for(int i = 0; i < 500; i++) {
 		XMFLOAT3 pos(rand() % 50 - 20, rand() % 30, rand() % 50 - 25);
 		XMFLOAT2 size(rand() % 5 + 0.5f, rand() % 5 + 0.5f);
 		GetGraphics()->AddBillboard(pos, size, "textures\\grass.png");
@@ -121,12 +122,15 @@ void Game::Init()
 		XMFLOAT3 pos(rand() % 50 - 20 - 50, rand() % 30, rand() % 50 - 25);
 		XMFLOAT2 size(rand() % 5 + 0.5f, rand() % 5 + 0.5f);
 		GetGraphics()->AddBillboard(pos, size, "textures\\crate.dds");
-	}
+	}*/
 
 	// Testing...
 	mRenderTarget	= new RenderTarget(GetGraphics(), 256, 256);
 	mPrimitive		= gPrimitiveFactory->CreateQuad();
 	mObject->SetTexture(mRenderTarget->GetRenderTargetTexture());
+
+	float blendFactor[] = {0.0f, 0.0f, 0.0f, 0.0f};
+	GetGraphics()->GetContext()->OMSetBlendState(RenderStates::TransparentBS, blendFactor, 0xffffffff);
 }
 	
 void Game::Update(float dt)
@@ -188,9 +192,9 @@ void Game::Draw(Graphics* pGraphics)
 	mWorld->Draw(pGraphics);
 	pGraphics->DrawBillboards();
 
-	// Draw the texture.
-	pGraphics->ApplyBlur(mRenderTarget->GetRenderTargetTexture(), 4);
-	pGraphics->DrawScreenQuad(mRenderTarget->GetRenderTargetTexture(), 400, 300, 256, 256);
+	// Draw the blur texture.
+	//pGraphics->ApplyBlur(mRenderTarget->GetRenderTargetTexture(), 4);
+	//pGraphics->DrawScreenQuad(mRenderTarget->GetRenderTargetTexture(), 400, 300, 256, 256);
 
 	// Present the backbuffer.
 	pGraphics->Present();

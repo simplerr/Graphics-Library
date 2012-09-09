@@ -8,8 +8,10 @@
 #include <d3dx9.h>
 #include "Light.h"
 #include "d3dUtil.h"
+#include "xnacollision.h"
 
 using namespace std;
+using namespace XNA;
 
 class D3DCore;
 class BasicEffect;
@@ -53,6 +55,7 @@ public:
 	void DrawPrimitive(Primitive* primitive, CXMMATRIX worldMatrix, Texture2D* texture, Material material, BasicEffect* effect);
 	void DrawBillboards();
 	void DrawScreenQuad(Texture2D* texture, float x, float y, float width, float height);
+	void DrawBoundingBox(AxisAlignedBox* aabb, CXMMATRIX worldMatrix, Material material, float transparency = 0.4f);
 	void DrawText(string text, int x, int y, D3DXCOLOR textColor, int size);
 	void ApplyBlur(Texture2D* texture, int blurCount);
 
@@ -83,6 +86,7 @@ private:
 	Camera*			mCamera;
 	BlurFilter*		mBlurFilter;
 	Primitive*		mScreenQuad;
+	Primitive*		mAABB;
 	XMFLOAT4		mFogColor;
 
 	// TMP

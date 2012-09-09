@@ -15,6 +15,7 @@
 #include "RenderTarget.h"
 #include "PrimitiveFactory.h"
 #include "BlurFilter.h"
+#include "RenderStates.h"
 
 //! Constructor. The Init() function handles the initialization.
 Graphics::Graphics()
@@ -47,6 +48,7 @@ Graphics::~Graphics()
 		delete (*iter).second;
 
 	Effects::DestroyAll();
+	RenderStates::DestroyAll();
 }
 
 //! Initializes Direct3D by calling D3DCore::Init(...).
@@ -69,6 +71,7 @@ bool Graphics::Init(int clientWidth, int clientHeight, HWND hwnd, bool fullscree
 
 	//! Init all effects.
 	Effects::InitAll();
+	RenderStates::InitAll(GetDevice());
 
 	// Create the camera.
 	mCamera = new Camera();
@@ -80,6 +83,8 @@ bool Graphics::Init(int clientWidth, int clientHeight, HWND hwnd, bool fullscree
 
 	// Create the primtive used when drawing 2D screen quads.
 	mScreenQuad = gPrimitiveFactory->CreateQuad();
+
+	mAABB = gPrimitiveFactory->CreateBox();
 }
 
 //! Returns the created texture. The Graphics class handles cleanup.
@@ -193,6 +198,15 @@ void Graphics::DrawScreenQuad(Texture2D* texture, float x, float y, float width,
 
 	// Draw the primitive.
 	mScreenQuad->Draw(context);
+}
+
+void Graphics::DrawBoundingBox(AxisAlignedBox* aabb, CXMMATRIX worldMatrix, Material material, float transparency)
+{
+	XMMATRIX scale = XMMatrixScaling(aabb->Extents.x, aabb->Extents.y, aabb->Extents.z);
+	XMMATRIX world = worldMatrix * scale;
+
+	material.diffuse.w = transparency;
+	DrawPrimitive(mAABB, world, 0, material, Effects::BasicFX);
 }
 
 //! Sets the effect parameters.
