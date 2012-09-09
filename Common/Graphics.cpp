@@ -14,6 +14,7 @@
 #include "BillboardManager.h"
 #include "RenderTarget.h"
 #include "PrimitiveFactory.h"
+#include "BlurFilter.h"
 
 //! Constructor. The Init() function handles the initialization.
 Graphics::Graphics()
@@ -32,6 +33,7 @@ Graphics::~Graphics()
 	// Cleanup.
 	delete mD3DCore;
 	delete mCamera;
+	delete mBlurFilter;
 
 	// Release and delete the textures.
 	for(auto iter = mTextureMap.begin(); iter != mTextureMap.end(); iter++)
@@ -71,6 +73,9 @@ bool Graphics::Init(int clientWidth, int clientHeight, HWND hwnd, bool fullscree
 	// Create the camera.
 	mCamera = new Camera();
 
+	// Create the blur filter.
+	mBlurFilter = new BlurFilter();
+
 	mMaterial = Material(Colors::LightSteelBlue);
 
 	// Create the primtive used when drawing 2D screen quads.
@@ -89,7 +94,7 @@ Texture2D* Graphics::LoadTexture(string filename, float scale)
 	if(mTextureMap.find(textureId) != mTextureMap.end()) {
 		return mTextureMap[textureId];
 	}
-	else
+	else // Not already loaded.
 	{
 		Texture2D* texture2d = new Texture2D();
 		HR(D3DX11CreateShaderResourceViewFromFile(GetD3D()->GetDevice(), filename.c_str(), 0, 0, &texture2d->shaderResourceView, 0));
@@ -217,6 +222,11 @@ void Graphics::SetEffectParameters(BasicEffect* effect, CXMMATRIX worldMatrix, T
 	effect->SetFogRange(50.0f);
 
 	effect->Apply();
+}
+
+void Graphics::ApplyBlur(Texture2D* texture, int blurCount)
+{
+	mBlurFilter->ApplyBlur(GetContext(), texture->shaderResourceView, blurCount);
 }
 
 void Graphics::DrawText(string text, int x, int y, D3DXCOLOR textColor, int size)

@@ -14,6 +14,7 @@ struct Texture2D;
 class Light;
 class BasicEffect;
 class BillboardEffect;
+class BlurEffect;
 
 /**
 	Contains all the effects that can be used.
@@ -28,8 +29,9 @@ public:
 	static void InitAll();
 	static void DestroyAll();
 
-	static BasicEffect* BasicFX;
+	static BasicEffect*		BasicFX;
 	static BillboardEffect* BillboardFX;
+	static BlurEffect*		BlurFX;
 };
 
 #pragma endregion
@@ -151,4 +153,28 @@ private:
 	ID3DX11EffectVariable*		 mfxMaterial;
 	ID3DX11EffectVariable*		 mfxUseTexture;
 	ID3DX11EffectShaderResourceVariable* mfxTexture;
+};
+
+/**
+	The blur effect.
+*/
+
+class BlurEffect : public Effect
+{
+public:
+	BlurEffect();
+	~BlurEffect();
+
+	void Init();
+
+	void SetWeights(const float weights[9])					{ Weights->SetFloatArray(weights, 0, 9); }
+	void SetInputMap(ID3D11ShaderResourceView* tex)			{ InputMap->SetResource(tex); }
+	void SetOutputMap(ID3D11UnorderedAccessView* tex)		{ OutputMap->SetUnorderedAccessView(tex); }
+
+	ID3DX11EffectTechnique*	HorzTech;
+	ID3DX11EffectTechnique* VertTech;
+
+	ID3DX11EffectScalarVariable* Weights;
+	ID3DX11EffectShaderResourceVariable* InputMap;
+	ID3DX11EffectUnorderedAccessViewVariable* OutputMap;
 };

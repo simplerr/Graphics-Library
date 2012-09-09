@@ -9,6 +9,7 @@
 //! Initialize the effects.
 BasicEffect*		Effects::BasicFX		= nullptr;
 BillboardEffect*	Effects::BillboardFX	= nullptr;
+BlurEffect*			Effects::BlurFX			= nullptr;
 
 #pragma region Code for the static effect handler Effects.
 
@@ -28,6 +29,12 @@ void Effects::InitAll()
 	BillboardFX = new BillboardEffect();
 	BillboardFX->CreateInputLayout();
 	BillboardFX->Init();
+
+	/**
+		Init the blur effect.
+	*/
+	BlurFX = new BlurEffect();
+	BlurFX->Init();
 }
 
 //! Cleans up all effects.
@@ -35,6 +42,7 @@ void Effects::DestroyAll()
 {
 	delete BasicFX;
 	delete BillboardFX;
+	delete BlurFX;
 }
 
 #pragma endregion
@@ -242,3 +250,24 @@ void BillboardEffect::SetLights(LightList* lights)
 	mfxNumLights->SetRawValue(&size, 0, sizeof(float));
 }
 #pragma endregion
+
+BlurEffect::BlurEffect()
+	: Effect("Blur.fx", "VertBlur")
+{
+
+}
+	
+BlurEffect::~BlurEffect()
+{
+
+}
+
+void BlurEffect::Init()
+{
+	HorzTech	= mEffect->GetTechniqueByName("HorzBlur");
+	VertTech	= mEffect->GetTechniqueByName("VertBlur");
+
+	Weights     = mEffect->GetVariableByName("gWeights")->AsScalar();
+	InputMap    = mEffect->GetVariableByName("gInput")->AsShaderResource();
+	OutputMap   = mEffect->GetVariableByName("gOutput")->AsUnorderedAccessView();
+}

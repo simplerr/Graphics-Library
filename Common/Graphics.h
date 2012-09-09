@@ -17,10 +17,11 @@ class Primitive;
 class EffectManager;
 class BillboardManager;
 class RenderTarget;
-struct BillboardVertex;
 class Camera;
+class BlurFilter;
 struct Material;
 struct Texture2D;
+struct BillboardVertex;
 
 
 //! Represents a 2D texture.
@@ -53,6 +54,7 @@ public:
 	void DrawBillboards();
 	void DrawScreenQuad(Texture2D* texture, float x, float y, float width, float height);
 	void DrawText(string text, int x, int y, D3DXCOLOR textColor, int size);
+	void ApplyBlur(Texture2D* texture, int blurCount);
 
 	Texture2D* LoadTexture(string filename, float scale = 1.0f);
 	BillboardVertex* AddBillboard(XMFLOAT3 position, XMFLOAT2 size, string texture);
@@ -79,6 +81,7 @@ private:
 	LightList*		mLightList;
 	D3DCore*		mD3DCore;
 	Camera*			mCamera;
+	BlurFilter*		mBlurFilter;
 	Primitive*		mScreenQuad;
 	XMFLOAT4		mFogColor;
 

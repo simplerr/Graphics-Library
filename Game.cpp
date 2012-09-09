@@ -111,7 +111,7 @@ void Game::Init()
 	// Add test billboards.
 	billboard = GetGraphics()->AddBillboard(XMFLOAT3(0, 10, 0), XMFLOAT2(5, 5), "textures\\crate.dds");
 	srand(time(0));
-	/*for(int i = 0; i < 500; i++) {
+	for(int i = 0; i < 500; i++) {
 		XMFLOAT3 pos(rand() % 50 - 20, rand() % 30, rand() % 50 - 25);
 		XMFLOAT2 size(rand() % 5 + 0.5f, rand() % 5 + 0.5f);
 		GetGraphics()->AddBillboard(pos, size, "textures\\grass.png");
@@ -121,7 +121,7 @@ void Game::Init()
 		XMFLOAT3 pos(rand() % 50 - 20 - 50, rand() % 30, rand() % 50 - 25);
 		XMFLOAT2 size(rand() % 5 + 0.5f, rand() % 5 + 0.5f);
 		GetGraphics()->AddBillboard(pos, size, "textures\\crate.dds");
-	}*/
+	}
 
 	// Testing...
 	mRenderTarget	= new RenderTarget(GetGraphics(), 256, 256);
@@ -189,35 +189,14 @@ void Game::Draw(Graphics* pGraphics)
 	pGraphics->DrawBillboards();
 
 	// Draw the texture.
-	Texture2D texture;
-	texture.shaderResourceView = mRenderTarget->GetShaderResourceView();
-	texture.scale = 1.0f;
-	pGraphics->DrawScreenQuad(&texture, 400, 300, 256, 256);
+	pGraphics->ApplyBlur(mRenderTarget->GetRenderTargetTexture(), 4);
+	pGraphics->DrawScreenQuad(mRenderTarget->GetRenderTargetTexture(), 400, 300, 256, 256);
 
+	// Present the backbuffer.
 	pGraphics->Present();
 }
 
 LRESULT Game::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
-	switch(msg)
-	{
-	case WM_COMMAND:
-		switch(wParam)
-		{
-		
-		};
-		break;
-	case WM_LBUTTONDOWN:
-		{
-		
-		break;
-		}
-	case WM_RBUTTONDOWN: 
-		{
-		
-		break;
-		}
-	};
-
 	return Runnable::MsgProc(hwnd, msg, wParam, lParam);
 }
