@@ -5,10 +5,12 @@
 #include "Runnable.h"
 #include "Effects.h"
 #include "Graphics.h"
+#include "xnacollision.h"
+#include "Camera.h"
 
 World::World()
 {
-
+	mNumVisibleObjects = 0;
 }
 
 void World::Init()
@@ -42,9 +44,15 @@ void World::Update(float dt)
 //! Draws all objects.
 void World::Draw(Graphics* pGraphics)
 {
+	mNumVisibleObjects = 0;
 	for(int i = 0; i < mObjectList.size(); i++)
 	{
-		mObjectList[i]->Draw(pGraphics);
+		// Don't draw the object if it's outside the cameras frustum.
+		Frustum frustum = pGraphics->GetCamera()->GetFrustum();
+		if(XNA::IntersectAxisAlignedBoxFrustum(&mObjectList[i]->GetBoundingBox(), &frustum)) {
+			mObjectList[i]->Draw(pGraphics);
+			mNumVisibleObjects++;
+		}
 	}
 
 	for(int i = 0; i < mLightList.size(); i++)
@@ -72,4 +80,10 @@ void World::AddLight(Light* light)
 LightList* World::GetLights()
 {
 	return &mLightList;
+}
+
+//! Returns the number of visible objects (inside the camera frustum).
+int World::GetVisibleObjects()
+{
+	return mNumVisibleObjects;
 }

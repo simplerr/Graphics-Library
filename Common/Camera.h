@@ -1,9 +1,13 @@
 #pragma once
 #include "d3dUtil.h"
-#include <xnamath.h>
 
+using namespace XNA;
 class Graphics;
 
+/**
+	Contains the view and projection matrices.
+	Simulates a first person camera.
+*/
 class Camera
 {
 public:
@@ -30,14 +34,16 @@ public:
 	XMFLOAT3	GetTarget();
 	XMFLOAT3	GetDirection();
 	XMFLOAT3	GetRight();
+	Frustum		GetFrustum();
 private:
 	void UpdatePitchYaw();
 	XMFLOAT4X4	mView;
 	XMFLOAT4X4	mProj;
 	XMFLOAT3	mPosition;
-	XMFLOAT3 mTarget;
-	XMFLOAT3 mUp;
-	XMFLOAT3 mRight;
+	XMFLOAT3	mTarget;
+	XMFLOAT3	mUp;
+	XMFLOAT3	mRight;
+	Frustum		mFrustum;
 
 	float		mVelocity;
 	float		mSensitivity;

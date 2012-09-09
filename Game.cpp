@@ -91,6 +91,17 @@ void Game::Init()
 
 	mWorld->AddObject(mObject);
 
+	mObject2 = new Object3D();
+
+	// Load the effect and the primitive.
+	mObject2->SetPrimitive(gPrimitiveFactory->CreateBox());
+	mObject2->LoadTexture("textures/crate.dds");
+	mObject2->SetPosition(XMFLOAT3(0, 15, 30));
+	mObject2->SetScale(XMFLOAT3(3, 7, 5));
+	mObject2->SetRotation(XMFLOAT3(0, 0, 0.2f));
+
+	mWorld->AddObject(mObject2);
+
 	// Add some lights.
 	mLight = new Light();
 	mLight->SetMaterials(Colors::Red*0.2f, Colors::Red*0.8f, Colors::Red*0.8f);
@@ -128,7 +139,7 @@ void Game::Init()
 	// Testing...
 	mRenderTarget	= new RenderTarget(GetGraphics(), 256, 256);
 	mPrimitive		= gPrimitiveFactory->CreateQuad();
-	mObject->SetTexture(mRenderTarget->GetRenderTargetTexture());
+	//mObject->SetTexture(mRenderTarget->GetRenderTargetTexture());
 
 	float blendFactor[] = {0.0f, 0.0f, 0.0f, 0.0f};
 	GetGraphics()->GetContext()->OMSetBlendState(RenderStates::TransparentBS, blendFactor, 0xffffffff);
@@ -173,6 +184,28 @@ void Game::Update(float dt)
 	else if(gInput->KeyDown(VK_RBUTTON)) {
 		mObject->SetRotation(mObject->GetRotation() - XMFLOAT3(0.003, 0.003, 0.003));
 	}
+
+	if(gInput->KeyDown('V'))
+		mObject->SetPosition(mObject->GetPosition() + XMFLOAT3(0, 0, 0.03));
+	if(gInput->KeyDown('B'))
+		mObject->SetPosition(mObject->GetPosition() - XMFLOAT3(0, 0, 0.03));
+
+	/*static char buffer[16];
+	sprintf(buffer, "Inside frustum: %i", mWorld->GetVisibleObjects());
+	SetWindowText(GetHwnd(), buffer);*/
+
+	// Collision?
+	/*if(XNA::IntersectAxisAlignedBoxAxisAlignedBox(&mObject->GetBoundingBox(), &mObject2->GetBoundingBox()))
+		SetWindowText(GetHwnd(), "Collision!");
+	else
+		SetWindowText(GetHwnd(), "No collision!");*/
+	
+	// Frustum test
+	/*Frustum frustum = GetGraphics()->GetCamera()->GetFrustum();
+	if(XNA::IntersectAxisAlignedBoxFrustum(&mObject->GetBoundingBox(), &frustum))
+		SetWindowText(GetHwnd(), "Inside frustum!");
+	else
+		SetWindowText(GetHwnd(), "Outside frustum!");*/
 }
 	
 void Game::Draw(Graphics* pGraphics)
@@ -182,19 +215,17 @@ void Game::Draw(Graphics* pGraphics)
 	/**
 		Draw everything to a texture.
 	*/
-	pGraphics->SetRenderTarget(mRenderTarget);
-	XMFLOAT3 oldPos = GetGraphics()->GetCamera()->GetPosition();
-	XMFLOAT3 oldDir = GetGraphics()->GetCamera()->GetDirection();
+	/*
+		pGraphics->SetRenderTarget(mRenderTarget);
 
-	// Draw all objects.
-	mWorld->Draw(pGraphics);
-	pGraphics->DrawBillboards();
+		// Draw all objects.
+		mWorld->Draw(pGraphics);
+		pGraphics->DrawBillboards();
 
-	// Restore the render target.
-	pGraphics->RestoreRenderTarget();
+		// Restore the render target.
+		pGraphics->RestoreRenderTarget();
 
-	GetGraphics()->GetCamera()->SetPosition(oldPos);
-	GetGraphics()->GetCamera()->SetDirection(oldDir);
+	*/
 
 	// Draw all objects.
 	mWorld->Draw(pGraphics);

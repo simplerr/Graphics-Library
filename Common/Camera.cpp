@@ -22,6 +22,9 @@ Camera::Camera()
 	XMStoreFloat4x4(&mProj, proj);
 
 	UpdateViewMatrix();
+
+	// Build the camera frustum.
+	XNA::ComputeFrustumFromProjection(&mFrustum, &XMLoadFloat4x4(&GetProjectionMatrix()));
 }
 
 Camera::~Camera()
@@ -158,21 +161,25 @@ void Camera::UpdatePitchYaw()
 	mYaw = atan2f(direction.x, direction.z);
 }
 
+//! Sets the look sensitivity.
 void Camera::SetLookSensitivity(float sensitivity)
 {
 	mSensitivity = sensitivity/100.0f;
 }
 
+//! Sets the movement speed of the camera.
 void Camera::SetMoveSpeed(float speed)
 {
 	mVelocity = speed;
 }
 
+//! Returns the view matrix.
 XMFLOAT4X4 Camera::GetViewMatrix()
 {
 	return mView;
 }
 
+//! Returns the projection matrix.
 XMFLOAT4X4 Camera::GetProjectionMatrix()
 {
 	return mProj;
@@ -202,6 +209,24 @@ XMFLOAT3 Camera::GetDirection()
 	XMStoreFloat3(&dir, direction);
 
 	return dir;
+}
+
+//! Returns the camera frustum in world space.
+Frustum Camera::GetFrustum()
+{
+	XMVECTOR scale, rotation, translation, detView;
+
+	// The frustum is in view space, so we need to get the inverse view matrix
+	// to transform it to world space.
+	XMMATRIX invView = XMMatrixInverse(&detView, XMLoadFloat4x4(&GetViewMatrix()));
+
+	// Decompose the inverse view matrix and transform the frustum with it.
+	XMMatrixDecompose(&scale, &rotation, &translation, invView);
+	Frustum worldFrustum;
+	TransformFrustum(&worldFrustum, &mFrustum, XMVectorGetX(scale), rotation, translation);
+
+	// Return the transformed frustum that now is in world space.
+	return worldFrustum;
 }
 
 void Camera::SetYaw(float yaw)
