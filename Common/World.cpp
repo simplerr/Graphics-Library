@@ -51,7 +51,7 @@ void World::Draw(Graphics* pGraphics)
 	{
 		mDebugObject->SetPosition(mLightList[i]->GetPosition());
 		mDebugObject->SetRotation(mLightList[i]->GetDirection());
-		mDebugObject->Draw(pGraphics);
+		//mDebugObject->Draw(pGraphics);
 	}
 }
 	

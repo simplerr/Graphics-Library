@@ -7,8 +7,10 @@
 #include <vector>
 #include <xnamath.h>
 #include <D3DX10math.h>
+#include "xnacollision.h"
 
 class Light;
+using namespace XNA;
 
 // Typedef for convenience
 typedef std::vector<Light*> LightList;
@@ -27,6 +29,10 @@ XMFLOAT4 operator*(const XMFLOAT4 a, const float b);
 
 // Returns the inverse transpose.
 XMMATRIX InverseTranspose(CXMMATRIX M);
+
+// Transform an axis aligned box by an angle preserving transform.
+// Custom version of the XNA::TransformAxisAlignedBox.
+VOID TransformAxisAlignedBoxCustom(AxisAlignedBox* pOut, const AxisAlignedBox* pIn, FXMVECTOR Scale, FXMVECTOR Rotation, FXMVECTOR Translation);
 
 // Debug macro that catches HRESULT errors.
 #if defined(DEBUG) | defined(_DEBUG)

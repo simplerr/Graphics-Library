@@ -31,8 +31,7 @@ void Object3D::Draw(Graphics* pGraphics)
 {
 	// Draw the primitive with the BasicFX effect.
 	pGraphics->DrawPrimitive(mPrimitive, GetWorldMatrix(), mTexture, GetMaterial(), Effects::BasicFX);
-	XMMATRIX s = XMMatrixScaling(2, 2, 2);
-	pGraphics->DrawBoundingBox(&GetBoundingBox(), s*GetWorldMatrix(), Colors::Blue);
+	pGraphics->DrawBoundingBox(&GetBoundingBox(), GetWorldMatrix(), Colors::Blue);
 }
 
 //! Loads the texture to pass to the shader.
@@ -108,8 +107,17 @@ XMFLOAT3 Object3D::GetScale()
 	return mScale;
 }
 
-//! Returns the bounding box.
+//! Returns the bounding box in WORLD space.
 AxisAlignedBox Object3D::GetBoundingBox()
 {
-	return mPrimitive->GetBoundingBox();
+	AxisAlignedBox aabb = mPrimitive->GetBoundingBox();
+
+	// Break up the world matrix into it's components.
+	XMVECTOR scale, rotation, translation;
+	XMMatrixDecompose(&scale, &rotation, &translation, GetWorldMatrix());
+
+	// Transform the AABB with the components.
+	TransformAxisAlignedBoxCustom(&aabb, &aabb, scale, rotation, translation);
+
+	return aabb;
 }

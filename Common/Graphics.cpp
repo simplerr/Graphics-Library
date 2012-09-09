@@ -202,9 +202,13 @@ void Graphics::DrawScreenQuad(Texture2D* texture, float x, float y, float width,
 
 void Graphics::DrawBoundingBox(AxisAlignedBox* aabb, CXMMATRIX worldMatrix, Material material, float transparency)
 {
-	XMMATRIX scale = XMMatrixScaling(aabb->Extents.x, aabb->Extents.y, aabb->Extents.z);
-	XMMATRIX world = worldMatrix * scale;
+	// Calculate the scaling matrix.
+	XMMATRIX scaleMatrix = XMMatrixScaling(aabb->Extents.x, aabb->Extents.y, aabb->Extents.z);
 
+	// Ignore the rotation.
+	XMMATRIX world = scaleMatrix * XMMatrixTranslation(aabb->Center.x, aabb->Center.y, aabb->Center.z);
+
+	// Draw the primitive.
 	material.diffuse.w = transparency;
 	DrawPrimitive(mAABB, world, 0, material, Effects::BasicFX);
 }
@@ -232,7 +236,7 @@ void Graphics::SetEffectParameters(BasicEffect* effect, CXMMATRIX worldMatrix, T
 
 	// Fog
 	effect->SetFogColor(mFogColor);
-	effect->SetFogStart(100.0f);
+	effect->SetFogStart(1000.0f);
 	effect->SetFogRange(50.0f);
 
 	effect->Apply();

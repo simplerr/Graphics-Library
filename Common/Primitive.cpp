@@ -76,7 +76,7 @@ void Primitive::SetIndices(ID3D11Device* device, const UINT* indices, UINT count
 	mNumIndices = count;
 }
 
-//! Returns the bounding box.
+//! Returns the bounding box in local space.
 AxisAlignedBox Primitive::GetBoundingBox()
 {
 	return mBoundingBox;

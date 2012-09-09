@@ -73,20 +73,21 @@ void Game::Init()
 	GetGraphics()->SetLightList(mWorld->GetLights());
 
 	// Add some objects.
-	Object3D* object = new Object3D();
+	mTerrain = new Object3D();
 
-	object->SetPrimitive(gPrimitiveFactory->CreateGrid(160.0f, 160.0f, 50, 50));
-	object->LoadTexture("textures/grass.png", 15.0f);
+	mTerrain->SetPrimitive(gPrimitiveFactory->CreateGrid(160.0f, 160.0f, 50, 50));
+	mTerrain->LoadTexture("textures/grass.png", 15.0f);
 
-	mWorld->AddObject(object);
+	mWorld->AddObject(mTerrain);
 	
 	mObject = new Object3D();
 
 	// Load the effect and the primitive.
 	mObject->SetPrimitive(gPrimitiveFactory->CreateBox());
 	mObject->LoadTexture("textures/crate.dds");
-	mObject->SetPosition(XMFLOAT3(0, 3, 0));
-	mObject->SetScale(XMFLOAT3(5, 5, 5));
+	mObject->SetPosition(XMFLOAT3(0, 15, 0));
+	mObject->SetScale(XMFLOAT3(1, 10, 10));
+	mObject->SetRotation(XMFLOAT3(0.2f, 0.2f, 0.2f));
 
 	mWorld->AddObject(mObject);
 
@@ -164,6 +165,13 @@ void Game::Update(float dt)
 	else if(gInput->KeyDown('T')) {
 		billboard->SetPos(billboard->Pos - XMFLOAT3(0.05, 0, 0));
 		billboard->SetSize(billboard->Size - XMFLOAT2(0.01, 0));
+	}
+
+	if(gInput->KeyDown(VK_LBUTTON)) {
+		mObject->SetRotation(mObject->GetRotation() + XMFLOAT3(0.003, 0.003, 0.003));
+	}
+	else if(gInput->KeyDown(VK_RBUTTON)) {
+		mObject->SetRotation(mObject->GetRotation() - XMFLOAT3(0.003, 0.003, 0.003));
 	}
 }
 	
