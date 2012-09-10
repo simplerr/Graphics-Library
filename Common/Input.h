@@ -20,7 +20,7 @@ public:
 	bool KeyDown(int key);
 	bool KeyReleased(int key);
 
-	void GetWorldPickingRay(D3DXVECTOR3& originW, D3DXVECTOR3& dirW);
+	Ray GetWorldPickingRay();
 
 	XMFLOAT3 MousePosition();
 	float	MouseDx();

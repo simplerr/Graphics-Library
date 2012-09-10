@@ -12,6 +12,12 @@
 class Light;
 using namespace XNA;
 
+struct Ray
+{
+	XMFLOAT3 origin;
+	XMFLOAT3 direction;
+};
+
 // Typedef for convenience
 typedef std::vector<Light*> LightList;
 

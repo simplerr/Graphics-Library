@@ -206,6 +206,16 @@ void Game::Update(float dt)
 		SetWindowText(GetHwnd(), "Inside frustum!");
 	else
 		SetWindowText(GetHwnd(), "Outside frustum!");*/
+
+	Ray ray = gInput->GetWorldPickingRay();
+	float dist;
+	if(IntersectRayAxisAlignedBox(XMLoadFloat3(&ray.origin), XMLoadFloat3(&ray.direction), &mObject->GetBoundingBox(), &dist)) {
+		char buffer[256];
+		sprintf(buffer, "Intersect! Dist = %f", dist);
+		SetWindowText(GetHwnd(), buffer);
+	}
+	else
+		SetWindowText(GetHwnd(), "No intersection!");
 }
 	
 void Game::Draw(Graphics* pGraphics)
@@ -241,5 +251,7 @@ void Game::Draw(Graphics* pGraphics)
 
 LRESULT Game::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
+	gInput->MsgProc(msg, wParam, lParam);
+
 	return Runnable::MsgProc(hwnd, msg, wParam, lParam);
 }

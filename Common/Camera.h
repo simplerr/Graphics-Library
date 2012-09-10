@@ -35,6 +35,7 @@ public:
 	XMFLOAT3	GetDirection();
 	XMFLOAT3	GetRight();
 	Frustum		GetFrustum();
+	Ray			GetWorldPickingRay();
 private:
 	void UpdatePitchYaw();
 	XMFLOAT4X4	mView;

@@ -220,13 +220,20 @@ Frustum Camera::GetFrustum()
 	// to transform it to world space.
 	XMMATRIX invView = XMMatrixInverse(&detView, XMLoadFloat4x4(&GetViewMatrix()));
 
-	// Decompose the inverse view matrix and transform the frustum with it.
+	// Decompose the inverse view matrix and transform the frustum with the components.
 	XMMatrixDecompose(&scale, &rotation, &translation, invView);
 	Frustum worldFrustum;
 	TransformFrustum(&worldFrustum, &mFrustum, XMVectorGetX(scale), rotation, translation);
 
 	// Return the transformed frustum that now is in world space.
 	return worldFrustum;
+}
+
+//! Returns the ray from the camera origin in world space.
+Ray Camera::GetWorldPickingRay()
+{
+	Ray ray = {mPosition, GetDirection()};
+	return ray;
 }
 
 void Camera::SetYaw(float yaw)

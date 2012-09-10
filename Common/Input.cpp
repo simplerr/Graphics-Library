@@ -1,5 +1,7 @@
 #include "Input.h"
 #include "Runnable.h"
+#include "Graphics.h"
+#include "Camera.h"
 
 //! Constructor.
 Input::Input()
@@ -126,6 +128,9 @@ XMFLOAT3 Input::MousePosition()
 	GetCursorPos(&pos);
 	ScreenToClient(gGame->GetHwnd(), &pos);
 
+	// [NOTE] Doesn't use the other code..
+	//return XMFLOAT3(pos.x, pos.y, 0);
+
 	RECT r;
 	GetWindowRect(gGame->GetHwnd(), &r);
 	float width = r.right - r.left;
@@ -186,38 +191,32 @@ void Input::Poll()
 	}
 }
 
-void Input::GetWorldPickingRay(D3DXVECTOR3& originW, D3DXVECTOR3& dirW)
+Ray Input::GetWorldPickingRay()
 {
-	//// Get the screen point clicked.
-	//POINT s;
-	//GetCursorPos(&s);
+	XMFLOAT3 mousePos = MousePosition();
+	XMMATRIX proj = XMLoadFloat4x4(&gGame->GetGraphics()->GetCamera()->GetProjectionMatrix());
 
-	//// Make it relative to the client area window.
-	//ScreenToClient(gGame->getMainWnd(), &s);
+	// Compute the ray in view space.
+	float vx = (+2.0f * mousePos.x / gGame->GetScreenWidth() - 1) / proj(0, 0);
+	float vy = (-2.0f * mousePos.y / gGame->GetScreenHeight() + 1) / proj(1, 1);
 
-	//// By the way we've been constructing things, the entire 
-	//// backbuffer is the viewport.
-	//float w = (float)gGame->getScreenWidth();
-	//float h = (float)gGame->getScreenHeight();
+	XMVECTOR origin = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
+	XMVECTOR dir = XMVectorSet(vx, vy, 1.0f, 0.0f);
 
-	//D3DXMATRIX proj = gCamera->getProjectionMatrix();
+	// Transform the ray to world space with the inverse view matrix.
+	XMVECTOR det;
+	XMMATRIX view = XMLoadFloat4x4(&gGame->GetGraphics()->GetCamera()->GetViewMatrix());
+	XMMATRIX invView = XMMatrixInverse(&det, view);
 
-	//float x = (2.0f*s.x/w - 1.0f) / proj(0,0);
-	//float y = (-2.0f*s.y/h + 1.0f) / proj(1,1);
+	origin = XMVector3TransformCoord(origin, invView);
+	dir = XMVector3TransformNormal(dir, invView);
 
-	//// Build picking ray in view space.
-	//D3DXVECTOR3 origin(0.0f, 0.0f, 0.0f);
-	//D3DXVECTOR3 dir(x, y, 1.0f);
+	// Normalize the direction.
+	dir = XMVector3Normalize(dir);
 
-	//// So if the view matrix transforms coordinates from 
-	//// world space to view space, then the inverse of the
-	//// view matrix transforms coordinates from view space
-	//// to world space.
-	//D3DXMATRIX invView;
-	//D3DXMatrixInverse(&invView, 0, &gCamera->getViewMatrix());
+	Ray ray;
+	XMStoreFloat3(&ray.origin, origin);
+	XMStoreFloat3(&ray.direction, dir);
 
-	//// Transform picking ray to world space.
-	//D3DXVec3TransformCoord(&originW, &origin, &invView);
-	//D3DXVec3TransformNormal(&dirW, &dir, &invView);
-	//D3DXVec3Normalize(&dirW, &dirW);
+	return ray;
 }

@@ -31,7 +31,7 @@ void Object3D::Draw(Graphics* pGraphics)
 {
 	// Draw the primitive with the BasicFX effect.
 	pGraphics->DrawPrimitive(mPrimitive, GetWorldMatrix(), mTexture, GetMaterial(), Effects::BasicFX);
-	//pGraphics->DrawBoundingBox(&GetBoundingBox(), GetWorldMatrix(), Colors::Blue);
+	pGraphics->DrawBoundingBox(&GetBoundingBox(), GetWorldMatrix(), Colors::Blue);
 }
 
 //! Loads the texture to pass to the shader.
