@@ -77,6 +77,7 @@ void Game::Init()
 
 	mTerrain->SetPrimitive(gPrimitiveFactory->CreateGrid(160.0f, 160.0f, 50, 50));
 	mTerrain->LoadTexture("textures/grass.png", 15.0f);
+	mTerrain->LoadNormalMap("textures/grass_nmap.png");
 
 	mWorld->AddObject(mTerrain);
 	
@@ -85,6 +86,7 @@ void Game::Init()
 	// Load the effect and the primitive.
 	mObject->SetPrimitive(gPrimitiveFactory->CreateBox());
 	mObject->LoadTexture("textures/crate.dds");
+	mObject->LoadNormalMap("textures/crate_nmap.dds");
 	mObject->SetPosition(XMFLOAT3(0, 15, 0));
 	mObject->SetScale(XMFLOAT3(1, 10, 10));
 	mObject->SetRotation(XMFLOAT3(0.2f, 0.2f, 0.2f));
@@ -207,7 +209,7 @@ void Game::Update(float dt)
 	else
 		SetWindowText(GetHwnd(), "Outside frustum!");*/
 
-	Ray ray = gInput->GetWorldPickingRay();
+	/*Ray ray = gInput->GetWorldPickingRay();
 	float dist;
 	if(IntersectRayAxisAlignedBox(XMLoadFloat3(&ray.origin), XMLoadFloat3(&ray.direction), &mObject->GetBoundingBox(), &dist)) {
 		char buffer[256];
@@ -215,7 +217,7 @@ void Game::Update(float dt)
 		SetWindowText(GetHwnd(), buffer);
 	}
 	else
-		SetWindowText(GetHwnd(), "No intersection!");
+		SetWindowText(GetHwnd(), "No intersection!");*/
 }
 	
 void Game::Draw(Graphics* pGraphics)

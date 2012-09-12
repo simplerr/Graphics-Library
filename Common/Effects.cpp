@@ -153,6 +153,8 @@ void BasicEffect::Init()
 	mfxFogStart			 = mEffect->GetVariableByName("gFogStart")->AsScalar();
 	mfxFogRange			 = mEffect->GetVariableByName("gFogRange")->AsScalar();
 	mfxFogColor			 = mEffect->GetVariableByName("gFogColor")->AsVector();
+	mfxNormalMap		 = mEffect->GetVariableByName("gNormalMap")->AsShaderResource();
+	mfxUseNormalMap		 = mEffect->GetVariableByName("gUseNormalMap");
 }
 
 //! Creates the input layout that will get set before the Input-Assembler state. The EffectManager calls this function.
@@ -163,13 +165,14 @@ void BasicEffect::CreateInputLayout()
 	{
 		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"NORMAL",   0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0}
+		{"TANGENT",   0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 36, D3D11_INPUT_PER_VERTEX_DATA, 0}
 	};
 
 	// Create the input layout.
     D3DX11_PASS_DESC passDesc;
     mTech->GetPassByIndex(0)->GetDesc(&passDesc);
-	HR(gGame->GetD3D()->GetDevice()->CreateInputLayout(vertexDesc, 3, passDesc.pIAInputSignature, 
+	HR(gGame->GetD3D()->GetDevice()->CreateInputLayout(vertexDesc, 4, passDesc.pIAInputSignature, 
 		passDesc.IAInputSignatureSize, &mInputLayout));
 }
 
@@ -194,6 +197,15 @@ void BasicEffect::SetTexture(Texture2D* texture)
 		mfxTexture->SetResource(texture->shaderResourceView);
 		XMMATRIX transform = XMMatrixScaling(texture->scale, texture->scale, 0);
 		mfxTexTransform->SetMatrix((const float*)&transform);
+	}
+}
+
+//! Sets the normal map to use.
+void BasicEffect::SetNormalMap(Texture2D* normalMap)
+{
+	SetUseNormalMap(normalMap == nullptr ? false : true);
+	if(normalMap != nullptr) {
+		mfxNormalMap->SetResource(normalMap->shaderResourceView);
 	}
 }
 

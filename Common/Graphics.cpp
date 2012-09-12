@@ -126,7 +126,7 @@ void Graphics::Update(float dt)
 @param worldMatrix the primitives world transform matrix
 @param effect the effect to use when rendering the primitive
 */
-void Graphics::DrawPrimitive(Primitive* primitive, CXMMATRIX worldMatrix, Texture2D* texture, Material material, BasicEffect* effect)
+void Graphics::DrawPrimitive(Primitive* primitive, CXMMATRIX worldMatrix, Texture2D* texture, Texture2D* normalMap, Material material, BasicEffect* effect)
 {
 	ID3D11DeviceContext* context = GetD3D()->GetContext();
 
@@ -135,7 +135,7 @@ void Graphics::DrawPrimitive(Primitive* primitive, CXMMATRIX worldMatrix, Textur
 	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	// Set the effect parameters.
-	SetEffectParameters(effect, worldMatrix, texture, material);
+	SetEffectParameters(effect, worldMatrix, texture, normalMap, material);
 
 	// Draw the primitive.
 	primitive->Draw(context);
@@ -195,7 +195,7 @@ void Graphics::DrawScreenQuad(Texture2D* texture, float x, float y, float width,
 	float transformedY = -(y - GetClientHeight()/2);
 	XMMATRIX T = XMMatrixTranslation(transformedX / GetClientWidth() * 2, transformedY / GetClientHeight() * 2, 0);
 	XMMATRIX S = XMMatrixScaling(width / GetClientWidth(), height / GetClientHeight(), 1);
-	SetEffectParameters(Effects::BasicFX, S*T, texture, Material(XMFLOAT4(1, 1, 1, 1)));
+	SetEffectParameters(Effects::BasicFX, S*T, texture, 0, Material(XMFLOAT4(1, 1, 1, 1)));
 
 	// Make sure to not use the view and projection matrices when dealing with NDC coordinates.
 	Effects::BasicFX->SetWorldViewProj(S*T);
@@ -215,7 +215,7 @@ void Graphics::DrawBoundingBox(AxisAlignedBox* aabb, CXMMATRIX worldMatrix, Mate
 
 	// Draw the primitive.
 	material.diffuse.w = transparency;
-	DrawPrimitive(mAABB, world, 0, material, Effects::BasicFX);
+	DrawPrimitive(mAABB, world, 0, 0, material, Effects::BasicFX);
 }
 
 void Graphics::DrawSkyBox()
@@ -224,7 +224,7 @@ void Graphics::DrawSkyBox()
 }
 
 //! Sets the effect parameters.
-void Graphics::SetEffectParameters(BasicEffect* effect, CXMMATRIX worldMatrix, Texture2D* texture, Material material)
+void Graphics::SetEffectParameters(BasicEffect* effect, CXMMATRIX worldMatrix, Texture2D* texture, Texture2D* normalMap, Material material)
 {
 	// Set the world * view * proj matrix.
 	XMMATRIX view = XMLoadFloat4x4(&mCamera->GetViewMatrix());
@@ -236,6 +236,7 @@ void Graphics::SetEffectParameters(BasicEffect* effect, CXMMATRIX worldMatrix, T
 	effect->SetMaterial(material);
 	effect->SetLights(mLightList);
 	effect->SetTexture(texture);
+	effect->SetNormalMap(normalMap);
 	
 	if(gInput->KeyPressed('C')) {
 		XMFLOAT3 pos = mCamera->GetPosition();

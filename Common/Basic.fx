@@ -25,10 +25,12 @@ cbuffer cbPerObject
 	float4x4 gTexTransform;
 	Material gMaterial;
 	bool	 gUseTexture;
+	bool	 gUseNormalMap;
 };
 
-//! The texture to use.
+//! The texture and normal map to use.
 Texture2D gTexture;
+Texture2D gNormalMap;
 
 //! The sampler state to use with the texture.
 SamplerState textureSampler
@@ -39,11 +41,20 @@ SamplerState textureSampler
 	AddressV = WRAP;
 };
 
+//! The sampler state to use with the normal map.
+SamplerState samLinear
+{
+	Filter = MIN_MAG_MIP_LINEAR;
+	AddressU = WRAP;
+	AddressV = WRAP;
+};
+
 //! Input parameter to the vertex shader.
 struct VertexIn
 {
 	float3 PosL		: POSITION;
 	float3 NormalL	: NORMAL;
+	float3 TangentL	: TANGENT;
 	float2 Tex		: TEXCOORD;
 };
 
@@ -53,6 +64,7 @@ struct VertexOut
 	float4 PosH		: SV_POSITION;
     float3 PosW		: POSITION;
     float3 NormalW	: NORMAL;
+	float3 TangentW : TANGENT;
 	float2 Tex		: TEXCOORD;
 };
 
@@ -62,8 +74,9 @@ VertexOut VS(VertexIn vin)
 	VertexOut vout;
 	
 	// Transform to world space space.
-	vout.PosW    = mul(float4(vin.PosL, 1.0f), gWorld).xyz;
-	vout.NormalW = mul(vin.NormalL, (float3x3)gWorldInvTranspose);
+	vout.PosW     = mul(float4(vin.PosL, 1.0f), gWorld).xyz;
+	vout.NormalW  = mul(vin.NormalL, (float3x3)gWorldInvTranspose);
+	vout.TangentW = mul(vin.TangentL, (float3x3)gWorld);
 		
 	// Transform to homogeneous clip space.
 	vout.PosH = mul(float4(vin.PosL, 1.0f), gWorldViewProj);
@@ -86,6 +99,12 @@ float4 PS(VertexOut pin) : SV_Target
 	float4 texColor = float4(1, 1, 1, 1);
 	if(gUseTexture)
 		texColor = gTexture.Sample(textureSampler, pin.Tex);
+
+	// Use normal mapping?
+	if(gUseNormalMap) {
+		float3 normalMapSample = gNormalMap.Sample(samLinear, pin.Tex).rgb;
+		pin.NormalW = NormalSampleToWorldSpace(normalMapSample, pin.NormalW, pin.TangentW);
+	}
 
 	// Apply lighting.
 	float4 litColor;

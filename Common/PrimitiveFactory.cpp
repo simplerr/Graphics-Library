@@ -180,6 +180,7 @@ Primitive* PrimitiveFactory::CreateGrid(float width, float depth, UINT m, UINT n
 			vertices[i*n+j].Pos		= XMFLOAT3(x, 0.0f, z);
 			vertices[i*n+j].Pos.y	= GetHeight(x, z);
 			vertices[i*n+j].Normal	= GetHillNormal(x, z);
+			vertices[i*n+j].Tangent = XMFLOAT3(1.0f, 0.0f, 0.0f);
 			vertices[i*n+j].Tex.x	= j*du;
 			vertices[i*n+j].Tex.y	= i*dv;
 		}

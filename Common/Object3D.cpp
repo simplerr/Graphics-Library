@@ -10,6 +10,7 @@ Object3D::Object3D()
 {
 	mPrimitive	= nullptr;
 	mTexture	= nullptr;
+	mNormalMap	= nullptr;
 
 	SetPosition(XMFLOAT3(0.0f, 0.0f, 0.0f));
 	SetRotation(XMFLOAT3(0.0f, 0.0f, 0.0f));
@@ -30,7 +31,7 @@ void Object3D::Update(float dt)
 void Object3D::Draw(Graphics* pGraphics)
 {
 	// Draw the primitive with the BasicFX effect.
-	pGraphics->DrawPrimitive(mPrimitive, GetWorldMatrix(), mTexture, GetMaterial(), Effects::BasicFX);
+	pGraphics->DrawPrimitive(mPrimitive, GetWorldMatrix(), mTexture, mNormalMap, GetMaterial(), Effects::BasicFX);
 	//pGraphics->DrawBoundingBox(&GetBoundingBox(), GetWorldMatrix(), Colors::Blue);
 }
 
@@ -44,6 +45,16 @@ void Object3D::LoadTexture(string filename, float scale)
 void Object3D::SetTexture(Texture2D* texture)
 {
 	mTexture = texture;
+}
+
+void Object3D::LoadNormalMap(string filename)
+{
+	mNormalMap = gGame->GetGraphics()->LoadTexture(filename);
+}
+	
+void Object3D::SetNormalMap(Texture2D* normalMap)
+{
+	mNormalMap = normalMap;
 }
 
 //! Sets the objects material.

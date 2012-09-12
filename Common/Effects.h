@@ -93,10 +93,12 @@ public:
 	void SetEyePosition(XMFLOAT3 eyePos)			{ mfxEyePosW->SetRawValue(&eyePos, 0, sizeof(XMFLOAT3)); }
 	void SetMaterial(Material material)				{ mfxMaterial->SetRawValue(&material, 0, sizeof(material)); }
 	void SetUseTexture(bool use)					{ mfxUseTexture->SetRawValue(&use, 0, sizeof(bool)); }
+	void SetUseNormalMap(bool use)					{ mfxUseNormalMap->SetRawValue(&use, 0, sizeof(bool)) ;}
 	void SetFogRange(float range)					{ mfxFogRange->SetFloat(range); }
 	void SetFogStart(float start)					{ mfxFogStart->SetFloat(start); }
 	void SetFogColor(XMFLOAT4 color)				{ mfxFogColor->SetFloatVector((const float*)&color); }
 	void SetTexture(Texture2D* texture);				
+	void SetNormalMap(Texture2D* normalMap);
 	void SetLights(LightList* lights);
 
 private:
@@ -111,6 +113,8 @@ private:
 	ID3DX11EffectVariable* mfxNumLights;
 	ID3DX11EffectVariable* mfxUseTexture;
 	ID3DX11EffectShaderResourceVariable* mfxTexture;
+	ID3DX11EffectShaderResourceVariable* mfxNormalMap;
+	ID3DX11EffectVariable* mfxUseNormalMap;
 
 	// Fog.
 	ID3DX11EffectScalarVariable* mfxFogStart;

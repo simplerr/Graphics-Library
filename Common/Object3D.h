@@ -36,6 +36,8 @@ public:
 
 	void LoadTexture(string filename, float scale = 1.0f);
 	void SetTexture(Texture2D* texture);
+	void LoadNormalMap(string filename);
+	void SetNormalMap(Texture2D* normalMap);
 	void SetPrimitive(Primitive* primitive);
 	void SetPosition(XMFLOAT3 position);
 	void SetRotation(XMFLOAT3 rotation);
@@ -43,6 +45,7 @@ public:
 	void SetMaterial(Material material);
 private:
 	Texture2D*	mTexture;
+	Texture2D*	mNormalMap;
 	Primitive*	mPrimitive;
 	Material	mMaterial;
 	XMFLOAT3	mPosition;
