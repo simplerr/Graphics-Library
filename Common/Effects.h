@@ -15,6 +15,7 @@ class Light;
 class BasicEffect;
 class BillboardEffect;
 class BlurEffect;
+class SkyEffect;
 
 /**
 	Contains all the effects that can be used.
@@ -32,6 +33,7 @@ public:
 	static BasicEffect*		BasicFX;
 	static BillboardEffect* BillboardFX;
 	static BlurEffect*		BlurFX;
+	static SkyEffect*		SkyFX;
 };
 
 #pragma endregion
@@ -177,4 +179,24 @@ public:
 	ID3DX11EffectScalarVariable* Weights;
 	ID3DX11EffectShaderResourceVariable* InputMap;
 	ID3DX11EffectUnorderedAccessViewVariable* OutputMap;
+};
+
+/**
+	The sky box effect.
+*/
+
+class SkyEffect : public Effect
+{
+public:
+	SkyEffect();
+	~SkyEffect();
+
+	void Init();
+	void CreateInputLayout();
+
+	void SetWorldViewProj(CXMMATRIX M)                  { WorldViewProj->SetMatrix(reinterpret_cast<const float*>(&M)); }
+	void SetCubeMap(ID3D11ShaderResourceView* cubemap)  { CubeMap->SetResource(cubemap); }
+
+	ID3DX11EffectMatrixVariable* WorldViewProj;
+	ID3DX11EffectShaderResourceVariable* CubeMap;
 };

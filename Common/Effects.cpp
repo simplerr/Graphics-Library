@@ -10,6 +10,7 @@
 BasicEffect*		Effects::BasicFX		= nullptr;
 BillboardEffect*	Effects::BillboardFX	= nullptr;
 BlurEffect*			Effects::BlurFX			= nullptr;
+SkyEffect*			Effects::SkyFX			= nullptr;
 
 #pragma region Code for the static effect handler Effects.
 
@@ -35,6 +36,13 @@ void Effects::InitAll()
 	*/
 	BlurFX = new BlurEffect();
 	BlurFX->Init();
+
+	/**
+		Init the sky box effect.
+	*/
+	SkyFX = new SkyEffect();
+	SkyFX->CreateInputLayout();
+	SkyFX->Init();
 }
 
 //! Cleans up all effects.
@@ -43,6 +51,7 @@ void Effects::DestroyAll()
 	delete BasicFX;
 	delete BillboardFX;
 	delete BlurFX;
+	delete SkyFX;
 }
 
 #pragma endregion
@@ -273,3 +282,42 @@ void BlurEffect::Init()
 	InputMap    = mEffect->GetVariableByName("gInput")->AsShaderResource();
 	OutputMap   = mEffect->GetVariableByName("gOutput")->AsUnorderedAccessView();
 }
+
+#pragma region Code for the sky box effect SkyEffect.
+
+SkyEffect::SkyEffect()
+	: Effect("Sky.fx", "SkyTech")
+{
+	
+}
+
+SkyEffect::~SkyEffect()
+{
+
+}
+
+void SkyEffect::Init()
+{
+	WorldViewProj = mEffect->GetVariableByName("gWorldViewProj")->AsMatrix();
+	CubeMap       = mEffect->GetVariableByName("gCubeMap")->AsShaderResource();
+}
+
+//! Creates the input layout that will get set before the Input-Assembler state. The EffectManager calls this function.
+void SkyEffect::CreateInputLayout()
+{
+	// Create the vertex input layout.
+	D3D11_INPUT_ELEMENT_DESC vertexDesc[] =
+	{
+		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"NORMAL",   0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0}
+	};
+
+	// Create the input layout.
+    D3DX11_PASS_DESC passDesc;
+    mTech->GetPassByIndex(0)->GetDesc(&passDesc);
+	HR(gGame->GetD3D()->GetDevice()->CreateInputLayout(vertexDesc, 3, passDesc.pIAInputSignature, 
+		passDesc.IAInputSignatureSize, &mInputLayout));
+}
+
+#pragma endregion

@@ -240,6 +240,7 @@ void Game::Draw(Graphics* pGraphics)
 	// Draw all objects.
 	mWorld->Draw(pGraphics);
 	pGraphics->DrawBillboards();
+	pGraphics->DrawSkyBox();
 
 	// Draw the blur texture.
 	//pGraphics->ApplyBlur(mRenderTarget->GetRenderTargetTexture(), 4);

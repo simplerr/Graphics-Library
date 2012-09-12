@@ -8,6 +8,7 @@ BlurFilter::BlurFilter()
 {
 	mTmpSRV = 0;
 	mTmpUAV = 0;
+	mInputUAV = 0;
 }
 	
 //! Cleanup.

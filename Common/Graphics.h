@@ -20,6 +20,7 @@ class EffectManager;
 class BillboardManager;
 class RenderTarget;
 class Camera;
+class Sky;
 class BlurFilter;
 struct Material;
 struct Texture2D;
@@ -57,6 +58,7 @@ public:
 	void DrawScreenQuad(Texture2D* texture, float x, float y, float width, float height);
 	void DrawBoundingBox(AxisAlignedBox* aabb, CXMMATRIX worldMatrix, Material material, float transparency = 0.4f);
 	void DrawText(string text, int x, int y, D3DXCOLOR textColor, int size);
+	void DrawSkyBox();
 	void ApplyBlur(Texture2D* texture, int blurCount);
 
 	Texture2D* LoadTexture(string filename, float scale = 1.0f);
@@ -87,6 +89,7 @@ private:
 	BlurFilter*		mBlurFilter;
 	Primitive*		mScreenQuad;
 	Primitive*		mAABB;
+	Sky*			mSkyBox;
 	XMFLOAT4		mFogColor;
 
 	// TMP
