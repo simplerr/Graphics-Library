@@ -43,6 +43,7 @@ SamplerState textureSampler
 	AddressV = WRAP;
 };
 
+//! The sampler comparison states that is used when compering Z values between the shadow map and ShadowPosH.
 SamplerComparisonState samShadow
 {
 	Filter   = COMPARISON_MIN_MAG_LINEAR_MIP_POINT;
@@ -125,7 +126,7 @@ float4 PS(VertexOut pin) : SV_Target
 	}
 
 	// Get the shadow factor.
-	float shadow = 1.0f;//float3(1.0f, 1.0f, 1.0f);
+	float shadow = 1.0f;
 	shadow = CalcShadowFactor(samShadow, gShadowMap, pin.ShadowPosH);
 
 	// Apply lighting.

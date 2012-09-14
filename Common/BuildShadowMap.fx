@@ -1,13 +1,4 @@
-//=============================================================================
-// BuildShadowMap.fx by Frank Luna (C) 2011 All Rights Reserved.
-//
 // Effect used to build the shadow map.
-//
-// A lot of code is copy and pasted from DisplacementMap.fx.  When drawing 
-// depth to shadow map, we need to tessellate the geometry the same way
-// when rendering from the eye so that the shadow map records the same
-// geometry the eye sees.
-//=============================================================================
 
 cbuffer cbPerObject
 {
@@ -45,7 +36,7 @@ VertexOut VS(VertexIn vin)
 
 RasterizerState Depth
 {
-	// To remove shadow acne or smth..
+	// To remove shadow acne.
 	DepthBias = 100000;
     DepthBiasClamp = 0.0f;
 	SlopeScaledDepthBias = 1.0f;

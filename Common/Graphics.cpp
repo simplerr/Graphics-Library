@@ -38,7 +38,6 @@ Graphics::~Graphics()
 	delete mD3DCore;
 	delete mCamera;
 	delete mBlurFilter;
-	delete mSkyBox;
 	delete mShadowMap;
 
 	// Release and delete the textures.
@@ -90,9 +89,6 @@ bool Graphics::Init(int clientWidth, int clientHeight, HWND hwnd, bool fullscree
 	mScreenQuad = gPrimitiveFactory->CreateQuad();
 
 	mAABB = gPrimitiveFactory->CreateBox();
-
-	// Create the sky box.
-	mSkyBox = new Sky("textures/sky.dds", 5000.0f);
 
 	mShadowMap = new ShadowMap(GetDevice(), 2048, 2048);
 }
@@ -222,11 +218,6 @@ void Graphics::DrawBoundingBox(AxisAlignedBox* aabb, CXMMATRIX worldMatrix, Mate
 	// Draw the primitive.
 	material.diffuse.w = transparency;
 	DrawPrimitive(mAABB, world, 0, 0, material, Effects::BasicFX);
-}
-
-void Graphics::DrawSkyBox()
-{
-	mSkyBox->Draw();
 }
 
 //! Sets the effect parameters.

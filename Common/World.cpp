@@ -7,6 +7,7 @@
 #include "Graphics.h"
 #include "xnacollision.h"
 #include "Camera.h"
+#include "Sky.h"
 
 World::World()
 {
@@ -18,11 +19,16 @@ void World::Init()
 	mDebugObject = new Object3D();
 	mDebugObject->SetPrimitive(gPrimitiveFactory->CreateBox());
 	mDebugObject->LoadTexture("textures/crate.dds");
+
+	// Create the sky box.
+	mSkyBox = new Sky("textures/sky.dds", 5000.0f);
 }
 
 //! Cleanup the object and light lists.
 World::~World()
 {
+	delete mSkyBox;
+
 	// Delete all objects.
 	for(int i = 0; i < mObjectList.size(); i++)
 		delete mObjectList[i];
@@ -61,6 +67,8 @@ void World::Draw(Graphics* pGraphics)
 		mDebugObject->SetRotation(mLightList[i]->GetDirection());
 		//mDebugObject->Draw(pGraphics);
 	}
+
+	mSkyBox->Draw();
 }
 
 //! Adds a object to the object list.

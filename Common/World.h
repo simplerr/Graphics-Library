@@ -8,6 +8,7 @@ using namespace std;
 class Graphics;
 class Object3D;
 class Light;
+class Sky;
 class BillboardManager;
 
 class World
@@ -28,6 +29,7 @@ public:
 private:
 	ObjectList	mObjectList;
 	LightList	mLightList;//LightList mLightList;	
+	Sky*		mSkyBox;
 	Object3D*	mDebugObject;
 	int			mNumVisibleObjects;
 };
