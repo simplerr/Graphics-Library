@@ -39,6 +39,7 @@ public:
 	IDXGISwapChain*			GetSwapChain();
 	ID3D11RenderTargetView* GetRenderTargetView();
 	ID3D11DepthStencilView* GetDepthStencilView();
+	D3D11_VIEWPORT			GetViewport();
 
 	float					GetClientWidth();
 	float					GetClientHeight();

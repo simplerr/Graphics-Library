@@ -1,6 +1,7 @@
 #pragma once
 
 #include <d3dx11.h>
+#include <D3D11.h>
 #include <dxerr.h>
 #include <assert.h>
 #include <Windows.h>
@@ -10,6 +11,7 @@
 #include "xnacollision.h"
 
 class Light;
+class Object3D;
 using namespace XNA;
 
 struct Ray
@@ -18,8 +20,16 @@ struct Ray
 	XMFLOAT3 direction;
 };
 
+struct BoundingSphere
+{
+	BoundingSphere() : center(0.0f, 0.0f, 0.0f), radius(0.0f) {}
+	XMFLOAT3 center;
+	float radius;
+};
+
 // Typedef for convenience
 typedef std::vector<Light*> LightList;
+typedef std::vector<Object3D*> ObjectList;
 
 // Overloaded operators to make things smoother.
 XMFLOAT3 operator+(const XMFLOAT3 a, const XMFLOAT3 b);

@@ -17,6 +17,8 @@
 #include "BlurFilter.h"
 #include "RenderStates.h"
 #include "Sky.h"
+#include "ShadowMap.h"
+#include "Object3D.h"
 
 //! Constructor. The Init() function handles the initialization.
 Graphics::Graphics()
@@ -37,6 +39,7 @@ Graphics::~Graphics()
 	delete mCamera;
 	delete mBlurFilter;
 	delete mSkyBox;
+	delete mShadowMap;
 
 	// Release and delete the textures.
 	for(auto iter = mTextureMap.begin(); iter != mTextureMap.end(); iter++)
@@ -90,6 +93,8 @@ bool Graphics::Init(int clientWidth, int clientHeight, HWND hwnd, bool fullscree
 
 	// Create the sky box.
 	mSkyBox = new Sky("textures/sky.dds", 5000.0f);
+
+	mShadowMap = new ShadowMap(GetDevice(), 2048, 2048);
 }
 
 //! Returns the created texture. The Graphics class handles cleanup.
@@ -118,6 +123,7 @@ Texture2D* Graphics::LoadTexture(string filename, float scale)
 void Graphics::Update(float dt)
 {
 	mCamera->Update(dt);
+	mShadowMap->BuildShadowTransform(mLightList->operator[](0));
 }
 
 //! Draws a primitive.
@@ -237,6 +243,8 @@ void Graphics::SetEffectParameters(BasicEffect* effect, CXMMATRIX worldMatrix, T
 	effect->SetLights(mLightList);
 	effect->SetTexture(texture);
 	effect->SetNormalMap(normalMap);
+	effect->SetShadowMap(mShadowMap->GetSRV());
+	effect->SetShadowTransform(worldMatrix * XMLoadFloat4x4(&mShadowMap->GetShadowTransform()));
 	
 	if(gInput->KeyPressed('C')) {
 		XMFLOAT3 pos = mCamera->GetPosition();
@@ -251,6 +259,45 @@ void Graphics::SetEffectParameters(BasicEffect* effect, CXMMATRIX worldMatrix, T
 	effect->SetFogRange(50.0f);
 
 	effect->Apply();
+}
+
+//! Renders depth values from the light space to the shadow map texture.
+void Graphics::FillShadowMap(ObjectList* objects)
+{
+	// Sets render target to NULL and the DSV to the shadow maps. Enables depth writes to the DSV basicly.
+	GetShadowMap()->BindDepthStencil(GetContext());
+
+	XMMATRIX view = XMLoadFloat4x4(&mShadowMap->GetLightView());
+	XMMATRIX proj = XMLoadFloat4x4(&mShadowMap->GetLightProj());
+	XMMATRIX viewProj = XMMatrixMultiply(view, proj);
+
+	Effects::BuildShadowMapFX->SetViewProj(viewProj);
+
+	// Set the input layout and the primitive topology.
+	GetContext()->IASetInputLayout(Effects::BuildShadowMapFX->GetInputLayout());
+	GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	// Loop through all objects.
+	for(int i = 0; i < objects->size(); i++)
+	{
+		Object3D* object = objects->operator[](i);	
+		XMMATRIX world = object->GetWorldMatrix();
+		XMMATRIX worldInvTranspose = InverseTranspose(world);
+
+		Effects::BuildShadowMapFX->SetWorld(world);
+		Effects::BuildShadowMapFX->SetWorldViewProj(world * view * proj);
+		Effects::BuildShadowMapFX->SetWorldInvTranspose(worldInvTranspose);
+		Effects::BuildShadowMapFX->Apply();
+
+		object->GetPrimitive()->Draw(GetContext());
+	}
+
+	// Restore the rasterizer state.
+	GetContext()->RSSetState(0);
+
+	// Restore the render targets and viewport.
+	RestoreRenderTarget();
+	GetContext()->RSSetViewports(1, &GetD3D()->GetViewport());
 }
 
 void Graphics::ApplyBlur(Texture2D* texture, int blurCount)
@@ -313,6 +360,11 @@ ID3D11DeviceContext* Graphics::GetContext()
 Camera*	Graphics::GetCamera()
 {
 	return mCamera;
+}
+
+ShadowMap* Graphics::GetShadowMap()
+{
+	return mShadowMap;
 }
 
 //! Sets which render target to use.

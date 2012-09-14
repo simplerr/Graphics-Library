@@ -16,6 +16,7 @@ class BasicEffect;
 class BillboardEffect;
 class BlurEffect;
 class SkyEffect;
+class ShadowMapEffect;
 
 /**
 	Contains all the effects that can be used.
@@ -34,6 +35,7 @@ public:
 	static BillboardEffect* BillboardFX;
 	static BlurEffect*		BlurFX;
 	static SkyEffect*		SkyFX;
+	static ShadowMapEffect* BuildShadowMapFX;
 };
 
 #pragma endregion
@@ -72,9 +74,8 @@ protected:
 
 #pragma endregion
 
-/**
-	The basic effect class, used as the standard render effect.
-*/
+
+//! The basic effect class, used as the standard render effect.
 #pragma region BasicEffect class
 
 class BasicEffect : public Effect
@@ -97,6 +98,8 @@ public:
 	void SetFogRange(float range)					{ mfxFogRange->SetFloat(range); }
 	void SetFogStart(float start)					{ mfxFogStart->SetFloat(start); }
 	void SetFogColor(XMFLOAT4 color)				{ mfxFogColor->SetFloatVector((const float*)&color); }
+	void SetShadowMap(ID3D11ShaderResourceView* tex){ mfxShadowMap->SetResource(tex); }
+	void SetShadowTransform(CXMMATRIX M)            { mfxShadowTransform->SetMatrix(reinterpret_cast<const float*>(&M)); }
 	void SetTexture(Texture2D* texture);				
 	void SetNormalMap(Texture2D* normalMap);
 	void SetLights(LightList* lights);
@@ -107,6 +110,7 @@ private:
 	ID3DX11EffectMatrixVariable* mfxWorld;
 	ID3DX11EffectMatrixVariable* mfxWorldInvTranspose;
 	ID3DX11EffectMatrixVariable* mfxTexTransform;
+	ID3DX11EffectMatrixVariable* mfxShadowTransform;
 	ID3DX11EffectVectorVariable* mfxEyePosW;
 	ID3DX11EffectVariable* mfxLights;
 	ID3DX11EffectVariable* mfxMaterial;
@@ -114,6 +118,7 @@ private:
 	ID3DX11EffectVariable* mfxUseTexture;
 	ID3DX11EffectShaderResourceVariable* mfxTexture;
 	ID3DX11EffectShaderResourceVariable* mfxNormalMap;
+	ID3DX11EffectShaderResourceVariable* mfxShadowMap;
 	ID3DX11EffectVariable* mfxUseNormalMap;
 
 	// Fog.
@@ -124,10 +129,8 @@ private:
 
 #pragma endregion
 
-/**
-	The billboard effect.
-*/
 
+//! The billboard effect.
 class BillboardEffect : public Effect
 {
 public:
@@ -161,10 +164,8 @@ private:
 	ID3DX11EffectShaderResourceVariable* mfxTexture;
 };
 
-/**
-	The blur effect.
-*/
 
+//! The blur effect.
 class BlurEffect : public Effect
 {
 public:
@@ -185,10 +186,7 @@ public:
 	ID3DX11EffectUnorderedAccessViewVariable* OutputMap;
 };
 
-/**
-	The sky box effect.
-*/
-
+//! The sky box effect.
 class SkyEffect : public Effect
 {
 public:
@@ -203,4 +201,27 @@ public:
 
 	ID3DX11EffectMatrixVariable* WorldViewProj;
 	ID3DX11EffectShaderResourceVariable* CubeMap;
+};
+
+
+//! The build shadow map effect.
+class ShadowMapEffect : public Effect
+{
+public:
+	ShadowMapEffect();
+	~ShadowMapEffect();
+
+	void Init();
+	void CreateInputLayout();
+
+	void SetViewProj(CXMMATRIX M)           { ViewProj->SetMatrix(reinterpret_cast<const float*>(&M)); }
+	void SetWorldViewProj(CXMMATRIX M)      { WorldViewProj->SetMatrix(reinterpret_cast<const float*>(&M)); }
+	void SetWorld(CXMMATRIX M)              { World->SetMatrix(reinterpret_cast<const float*>(&M)); }
+	void SetWorldInvTranspose(CXMMATRIX M)  { WorldInvTranspose->SetMatrix(reinterpret_cast<const float*>(&M)); }
+	//void SetTexture(Texture2D* texture); [TODO] Add support for alpha clipping.
+
+	ID3DX11EffectMatrixVariable* ViewProj;
+	ID3DX11EffectMatrixVariable* WorldViewProj;
+	ID3DX11EffectMatrixVariable* World;
+	ID3DX11EffectMatrixVariable* WorldInvTranspose;
 };

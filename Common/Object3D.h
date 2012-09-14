@@ -33,6 +33,7 @@ public:
 	XMFLOAT3 GetScale();
 	Material GetMaterial();
 	AxisAlignedBox GetBoundingBox();
+	Primitive* GetPrimitive();
 
 	void LoadTexture(string filename, float scale = 1.0f);
 	void SetTexture(Texture2D* texture);

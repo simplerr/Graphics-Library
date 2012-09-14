@@ -62,7 +62,7 @@ void World::Draw(Graphics* pGraphics)
 		//mDebugObject->Draw(pGraphics);
 	}
 }
-	
+
 //! Adds a object to the object list.
 void World::AddObject(Object3D* object)
 {
@@ -80,6 +80,12 @@ void World::AddLight(Light* light)
 LightList* World::GetLights()
 {
 	return &mLightList;
+}
+
+//! Returns the address to the object list.
+ObjectList* World::GetObjects()
+{
+	return &mObjectList;
 }
 
 //! Returns the number of visible objects (inside the camera frustum).

@@ -118,6 +118,11 @@ XMFLOAT3 Object3D::GetScale()
 	return mScale;
 }
 
+Primitive* Object3D::GetPrimitive()
+{
+	return mPrimitive;
+}
+
 //! Returns the bounding box in WORLD space.
 AxisAlignedBox Object3D::GetBoundingBox()
 {

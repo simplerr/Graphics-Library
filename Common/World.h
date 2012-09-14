@@ -23,10 +23,11 @@ public:
 	void AddLight(Light* light);
 
 	LightList* GetLights();
+	ObjectList* GetObjects();
 	int GetVisibleObjects();
 private:
-	vector<Object3D*>	mObjectList;
-	LightList			mLightList;//LightList mLightList;	
-	Object3D*			mDebugObject;
-	int					mNumVisibleObjects;
+	ObjectList	mObjectList;
+	LightList	mLightList;//LightList mLightList;	
+	Object3D*	mDebugObject;
+	int			mNumVisibleObjects;
 };

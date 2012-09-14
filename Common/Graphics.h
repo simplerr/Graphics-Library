@@ -22,6 +22,7 @@ class RenderTarget;
 class Camera;
 class Sky;
 class BlurFilter;
+class ShadowMap;
 struct Material;
 struct Texture2D;
 struct BillboardVertex;
@@ -59,6 +60,7 @@ public:
 	void DrawBoundingBox(AxisAlignedBox* aabb, CXMMATRIX worldMatrix, Material material, float transparency = 0.4f);
 	void DrawText(string text, int x, int y, D3DXCOLOR textColor, int size);
 	void DrawSkyBox();
+	void FillShadowMap(ObjectList* objects);
 	void ApplyBlur(Texture2D* texture, int blurCount);
 
 	Texture2D* LoadTexture(string filename, float scale = 1.0f);
@@ -78,6 +80,7 @@ public:
 	ID3D11Device*			GetDevice();
 	D3DCore*				GetD3D();
 	Camera*					GetCamera();
+	ShadowMap*				GetShadowMap();
 	float					GetClientWidth();
 	float					GetClientHeight();
 private:
@@ -90,6 +93,7 @@ private:
 	Primitive*		mScreenQuad;
 	Primitive*		mAABB;
 	Sky*			mSkyBox;
+	ShadowMap*		mShadowMap;
 	XMFLOAT4		mFogColor;
 
 	// TMP

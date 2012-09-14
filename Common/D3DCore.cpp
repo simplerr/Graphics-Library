@@ -222,6 +222,10 @@ ID3D11DepthStencilView* D3DCore::GetDepthStencilView()
 	return mDepthStencilView;
 }
 
+D3D11_VIEWPORT	D3DCore::GetViewport()
+{
+	return mScreenViewport;
+}
 float D3DCore::GetClientWidth()
 {
 	return mClientWidth;

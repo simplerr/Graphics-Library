@@ -158,7 +158,8 @@ void ComputeSpotLight(Material mat, Light light, float3 pos, float3 normal, floa
 }
 
 //! Takes a list of lights and calculate the resulting color for the pixel after all light calculations.
-void ApplyLighting(int numLights, Light lights[10], Material material, float3 posW, float3 normalW, float3 toEyeW, float4 texColor, out float4 litColor)
+void ApplyLighting(int numLights, Light lights[10], Material material, float3 posW, float3 normalW, float3 toEyeW, float4 texColor,
+				   float shadow, out float4 litColor)
 {
 	// Start with a sum of zero. 
 	float4 ambient = float4(0.0f, 0.0f, 0.0f, 0.0f);
@@ -179,8 +180,8 @@ void ApplyLighting(int numLights, Light lights[10], Material material, float3 po
 			ComputeSpotLight(material, lights[i], posW, normalW, toEyeW, A, D, S);
 
 		ambient += A;  
-		diffuse += D;
-		spec    += S;
+		diffuse += shadow*D;
+		spec    += shadow*S;
 	}
 	   
 	litColor = texColor*(ambient + diffuse) + spec;
@@ -204,4 +205,41 @@ float3 NormalSampleToWorldSpace(float3 normalMapSample, float3 unitNormalW, floa
 	float3 bumpedNormalW = mul(normalT, TBN);
 
 	return bumpedNormalW;
+}
+
+
+static const float SMAP_SIZE = 2048.0f;
+static const float SMAP_DX = 1.0f / SMAP_SIZE;
+
+// Performs shadowmap test to determine if a pixel is in shadow.
+float CalcShadowFactor(SamplerComparisonState samShadow, 
+                       Texture2D shadowMap, 
+					   float4 shadowPosH)
+{
+	// Complete projection by doing division by w.
+	shadowPosH.xyz /= shadowPosH.w;
+	
+	// Depth in NDC space.
+	float depth = shadowPosH.z;
+
+	// Texel size.
+	const float dx = SMAP_DX;
+
+	float percentLit = 0.0f;
+	const float2 offsets[9] = 
+	{
+		float2(-dx,  -dx), float2(0.0f,  -dx), float2(dx,  -dx),
+		float2(-dx, 0.0f), float2(0.0f, 0.0f), float2(dx, 0.0f),
+		float2(-dx,  +dx), float2(0.0f,  +dx), float2(dx,  +dx)
+	};
+
+	[unroll]
+	for(int i = 0; i < 9; ++i)
+	{
+		// The key function that compares the Z values between the passed shadowPosH and the
+		// value of the texel inside shadowMap.
+		percentLit += shadowMap.SampleCmpLevelZero(samShadow, shadowPosH.xy + offsets[i], depth).r;
+	}
+
+	return percentLit /= 9.0f;
 }

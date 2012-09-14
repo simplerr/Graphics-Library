@@ -11,6 +11,7 @@ BasicEffect*		Effects::BasicFX		= nullptr;
 BillboardEffect*	Effects::BillboardFX	= nullptr;
 BlurEffect*			Effects::BlurFX			= nullptr;
 SkyEffect*			Effects::SkyFX			= nullptr;
+ShadowMapEffect*	Effects::BuildShadowMapFX = nullptr;
 
 #pragma region Code for the static effect handler Effects.
 
@@ -43,6 +44,11 @@ void Effects::InitAll()
 	SkyFX = new SkyEffect();
 	SkyFX->CreateInputLayout();
 	SkyFX->Init();
+
+	// Init the build shadow map effect.
+	BuildShadowMapFX = new ShadowMapEffect();
+	BuildShadowMapFX->CreateInputLayout();
+	BuildShadowMapFX->Init();
 }
 
 //! Cleans up all effects.
@@ -52,6 +58,7 @@ void Effects::DestroyAll()
 	delete BillboardFX;
 	delete BlurFX;
 	delete SkyFX;
+	delete BuildShadowMapFX;
 }
 
 #pragma endregion
@@ -144,6 +151,7 @@ void BasicEffect::Init()
 	mfxWorld			 = mEffect->GetVariableByName("gWorld")->AsMatrix();
 	mfxWorldInvTranspose = mEffect->GetVariableByName("gWorldInvTranspose")->AsMatrix();
 	mfxTexTransform		 = mEffect->GetVariableByName("gTexTransform")->AsMatrix();
+	mfxShadowTransform   = mEffect->GetVariableByName("gShadowTransform")->AsMatrix();
 	mfxEyePosW			 = mEffect->GetVariableByName("gEyePosW")->AsVector();
 	mfxLights			 = mEffect->GetVariableByName("gLights");
 	mfxMaterial			 = mEffect->GetVariableByName("gMaterial");
@@ -154,6 +162,7 @@ void BasicEffect::Init()
 	mfxFogRange			 = mEffect->GetVariableByName("gFogRange")->AsScalar();
 	mfxFogColor			 = mEffect->GetVariableByName("gFogColor")->AsVector();
 	mfxNormalMap		 = mEffect->GetVariableByName("gNormalMap")->AsShaderResource();
+	mfxShadowMap         = mEffect->GetVariableByName("gShadowMap")->AsShaderResource();
 	mfxUseNormalMap		 = mEffect->GetVariableByName("gUseNormalMap");
 }
 
@@ -165,8 +174,8 @@ void BasicEffect::CreateInputLayout()
 	{
 		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"NORMAL",   0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"TANGENT",   0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 36, D3D11_INPUT_PER_VERTEX_DATA, 0}
+		{"TEXCOORD",   0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0}
 	};
 
 	// Create the input layout.
@@ -274,6 +283,7 @@ void BillboardEffect::SetLights(LightList* lights)
 }
 #pragma endregion
 
+#pragma region BlurEffect
 BlurEffect::BlurEffect()
 	: Effect("Blur.fx", "VertBlur")
 {
@@ -294,6 +304,7 @@ void BlurEffect::Init()
 	InputMap    = mEffect->GetVariableByName("gInput")->AsShaderResource();
 	OutputMap   = mEffect->GetVariableByName("gOutput")->AsUnorderedAccessView();
 }
+#pragma endregion
 
 #pragma region Code for the sky box effect SkyEffect.
 
@@ -329,6 +340,44 @@ void SkyEffect::CreateInputLayout()
     D3DX11_PASS_DESC passDesc;
     mTech->GetPassByIndex(0)->GetDesc(&passDesc);
 	HR(gGame->GetD3D()->GetDevice()->CreateInputLayout(vertexDesc, 3, passDesc.pIAInputSignature, 
+		passDesc.IAInputSignatureSize, &mInputLayout));
+}
+
+#pragma endregion
+
+#pragma region ShadowMapEffect
+
+ShadowMapEffect::ShadowMapEffect()
+	: Effect("BuildShadowMap.fx", "BuildShadowMapTech")
+{
+
+}
+	
+ShadowMapEffect::~ShadowMapEffect()
+{
+
+}
+
+void ShadowMapEffect::Init()
+{
+	ViewProj          = mEffect->GetVariableByName("gViewProj")->AsMatrix();
+	WorldViewProj     = mEffect->GetVariableByName("gWorldViewProj")->AsMatrix();
+	World             = mEffect->GetVariableByName("gWorld")->AsMatrix();
+	WorldInvTranspose = mEffect->GetVariableByName("gWorldInvTranspose")->AsMatrix();
+}
+
+void ShadowMapEffect::CreateInputLayout()
+{
+	// Create the vertex input layout.
+	D3D11_INPUT_ELEMENT_DESC vertexDesc[] =
+	{
+		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+	};
+
+	// Create the input layout.
+    D3DX11_PASS_DESC passDesc;
+    mTech->GetPassByIndex(0)->GetDesc(&passDesc);
+	HR(gGame->GetD3D()->GetDevice()->CreateInputLayout(vertexDesc, 1, passDesc.pIAInputSignature, 
 		passDesc.IAInputSignatureSize, &mInputLayout));
 }
 

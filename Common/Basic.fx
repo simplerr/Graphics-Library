@@ -23,6 +23,7 @@ cbuffer cbPerObject
 	float4x4 gWorldInvTranspose;
 	float4x4 gWorldViewProj;
 	float4x4 gTexTransform;
+	float4x4 gShadowTransform; 
 	Material gMaterial;
 	bool	 gUseTexture;
 	bool	 gUseNormalMap;
@@ -31,6 +32,7 @@ cbuffer cbPerObject
 //! The texture and normal map to use.
 Texture2D gTexture;
 Texture2D gNormalMap;
+Texture2D gShadowMap;
 
 //! The sampler state to use with the texture.
 SamplerState textureSampler
@@ -40,6 +42,18 @@ SamplerState textureSampler
 	AddressU = WRAP;
 	AddressV = WRAP;
 };
+
+SamplerComparisonState samShadow
+{
+	Filter   = COMPARISON_MIN_MAG_LINEAR_MIP_POINT;
+	AddressU = BORDER;
+	AddressV = BORDER;
+	AddressW = BORDER;
+	BorderColor = float4(0.0f, 0.0f, 0.0f, 0.0f);
+
+    ComparisonFunc = LESS;
+};
+ 
 
 //! The sampler state to use with the normal map.
 SamplerState samLinear
@@ -54,8 +68,8 @@ struct VertexIn
 {
 	float3 PosL		: POSITION;
 	float3 NormalL	: NORMAL;
-	float3 TangentL	: TANGENT;
 	float2 Tex		: TEXCOORD;
+	float3 TangentL	: TANGENT;
 };
 
 //! Output by the vertex shader -> input for the pixel shader.
@@ -66,6 +80,7 @@ struct VertexOut
     float3 NormalW	: NORMAL;
 	float3 TangentW : TANGENT;
 	float2 Tex		: TEXCOORD;
+	float4 ShadowPosH : TEXCOORD1;
 };
 
 //! Vertex shader that transforms coordinates and normals to the world and homogeneous space.
@@ -84,6 +99,9 @@ VertexOut VS(VertexIn vin)
 	// Pass on the texture.
 	vout.Tex = mul(float4(vin.Tex, 0.0f, 1.0f), gTexTransform).xy;
 	
+	// Generate projective tex-coords to project shadow map onto scene.
+	vout.ShadowPosH = mul(float4(vin.PosL, 1.0f), gShadowTransform);
+
 	return vout;
 }
 
@@ -106,13 +124,17 @@ float4 PS(VertexOut pin) : SV_Target
 		pin.NormalW = NormalSampleToWorldSpace(normalMapSample, pin.NormalW, pin.TangentW);
 	}
 
+	// Get the shadow factor.
+	float shadow = 1.0f;//float3(1.0f, 1.0f, 1.0f);
+	shadow = CalcShadowFactor(samShadow, gShadowMap, pin.ShadowPosH);
+
 	// Apply lighting.
 	float4 litColor;
-	ApplyLighting(gNumLights, gLights, gMaterial, pin.PosW, pin.NormalW, toEyeW, texColor, litColor);
+	ApplyLighting(gNumLights, gLights, gMaterial, pin.PosW, pin.NormalW, toEyeW, texColor, shadow, litColor);
 
 	//! Apply fogging.
 	float distToEye = length(gEyePosW - pin.PosW);
-	float fogLerp = saturate( (distToEye - gFogStart) / gFogRange ); 
+	float fogLerp = saturate((distToEye - gFogStart) / gFogRange); 
 
 	// Blend the fog color and the lit color.
 	litColor = lerp(litColor, gFogColor, fogLerp);

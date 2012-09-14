@@ -16,6 +16,7 @@
 #include "Common\Camera.h"
 #include "Common\Effects.h"
 #include "Common\RenderStates.h"
+#include "Common\ShadowMap.h"
 
 // Set globals to nullptrs
 Runnable*			gGame				= nullptr;
@@ -106,20 +107,11 @@ void Game::Init()
 
 	// Add some lights.
 	mLight = new Light();
-	mLight->SetMaterials(Colors::Red*0.2f, Colors::Red*0.8f, Colors::Red*0.8f);
-	mLight->SetDirection(0.7f, -1.0f, 0.7);
-	mLight->SetType(SPOT_LIGHT);
-	mLight->SetPosition(0, 10, 0);
-	mLight->SetAtt(0.0f, 1.0f/20, 0.0f);
-	mLight->SetRange(250.0f);
-	mLight->SetSpot(5.0f);
+	mLight->SetMaterials(Colors::White*0.3f, Colors::White*0.6f, Colors::White*0.0f);
+	mLight->SetDirection(0.5f, -0.5f, 0.5f);
+	mLight->SetType(DIRECTIONAL_LIGHT);
+	mLight->SetPosition(0, 5, 5);
 	mWorld->AddLight(mLight);
-
-	mLight2 = new Light;
-	mLight2->SetMaterials(Colors::White*0.3f, Colors::White*0.8f, Colors::White*0.0f);
-	mLight2->SetDirection(0.5f, -0.5f, 0.5f);
-	mLight2->SetType(DIRECTIONAL_LIGHT);
-	mWorld->AddLight(mLight2);
 
 	GetGraphics()->SetFogColor(XMFLOAT4(1.0f, 0.2f, 0.8, 1.0f));
 	
@@ -151,6 +143,10 @@ void Game::Update(float dt)
 {
 	gInput->Update(dt);
 	GetGraphics()->Update(dt);
+
+	/*Camera* camera = GetGraphics()->GetCamera();
+	mLight->SetPosition(camera->GetPosition());
+	mLight->SetDirection(camera->GetDirection());*/
 
 	static float speed = 0.005;
 	if(gInput->KeyDown('1'))
@@ -224,20 +220,12 @@ void Game::Draw(Graphics* pGraphics)
 {
 	pGraphics->ClearScene();
 
-	/**
-		Draw everything to a texture.
-	*/
-	/*
-		pGraphics->SetRenderTarget(mRenderTarget);
+	// Unbind the SRVS from the pipeline so they can be used as DSV instead.
+	ID3D11ShaderResourceView *const nullSRV[3] = {NULL, NULL, NULL};
+	pGraphics->GetContext()->PSSetShaderResources(0, 3, nullSRV);
 
-		// Draw all objects.
-		mWorld->Draw(pGraphics);
-		pGraphics->DrawBillboards();
-
-		// Restore the render target.
-		pGraphics->RestoreRenderTarget();
-
-	*/
+	// Draw depth values to the shadow map.
+	pGraphics->FillShadowMap(mWorld->GetObjects());
 
 	// Draw all objects.
 	mWorld->Draw(pGraphics);
@@ -246,7 +234,9 @@ void Game::Draw(Graphics* pGraphics)
 
 	// Draw the blur texture.
 	//pGraphics->ApplyBlur(mRenderTarget->GetRenderTargetTexture(), 4);
-	//pGraphics->DrawScreenQuad(mRenderTarget->GetRenderTargetTexture(), 400, 300, 256, 256);
+	/*Texture2D tex;
+	tex.shaderResourceView = pGraphics->GetShadowMap()->GetSRV();
+	pGraphics->DrawScreenQuad(&tex, 400, 300, 256, 256);*/
 
 	// Present the backbuffer.
 	pGraphics->Present();

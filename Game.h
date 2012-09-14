@@ -8,6 +8,7 @@ class Light;
 class RenderTarget;
 class Primitive;
 class Texture2D;
+class ShadowMap;
 
 class Game : public Runnable
 {

@@ -133,7 +133,7 @@ float4 PS(GeoOut pin) : SV_Target
 
 	// Apply lighting.
 	float4 litColor;
-	ApplyLighting(gNumLights, gLights, gMaterial, pin.PosW, pin.NormalW, toEyeW, texColor, litColor);
+	ApplyLighting(gNumLights, gLights, gMaterial, pin.PosW, pin.NormalW, toEyeW, texColor, 1.0f, litColor);
 
 	//! Apply fogging.
 	float distToEye = length(gEyePosW - pin.PosW);
