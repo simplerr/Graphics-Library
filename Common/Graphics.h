@@ -74,12 +74,16 @@ public:
 	void SetRenderTarget(RenderTarget* renderTarget);
 	void RestoreRenderTarget();
 
+	
+
 	// Getters.
 	ID3D11DeviceContext*	GetContext();
 	ID3D11Device*			GetDevice();
 	D3DCore*				GetD3D();
 	Camera*					GetCamera();
 	ShadowMap*				GetShadowMap();
+	LightList*				GetLightList();
+	XMFLOAT4				GetFogColor();
 	float					GetClientWidth();
 	float					GetClientHeight();
 private:

@@ -12,6 +12,7 @@ BillboardEffect*	Effects::BillboardFX	= nullptr;
 BlurEffect*			Effects::BlurFX			= nullptr;
 SkyEffect*			Effects::SkyFX			= nullptr;
 ShadowMapEffect*	Effects::BuildShadowMapFX = nullptr;
+TerrainEffect*		Effects::TerrainFX		= nullptr;
 
 #pragma region Code for the static effect handler Effects.
 
@@ -49,6 +50,11 @@ void Effects::InitAll()
 	BuildShadowMapFX = new ShadowMapEffect();
 	BuildShadowMapFX->CreateInputLayout();
 	BuildShadowMapFX->Init();
+
+	// Init the terrrain effect.
+	TerrainFX = new TerrainEffect();
+	TerrainFX->CreateInputLayout();
+	TerrainFX->Init();
 }
 
 //! Cleans up all effects.
@@ -59,6 +65,7 @@ void Effects::DestroyAll()
 	delete BlurFX;
 	delete SkyFX;
 	delete BuildShadowMapFX;
+	delete TerrainFX;
 }
 
 #pragma endregion
@@ -379,6 +386,74 @@ void ShadowMapEffect::CreateInputLayout()
     mTech->GetPassByIndex(0)->GetDesc(&passDesc);
 	HR(gGame->GetD3D()->GetDevice()->CreateInputLayout(vertexDesc, 1, passDesc.pIAInputSignature, 
 		passDesc.IAInputSignatureSize, &mInputLayout));
+}
+
+#pragma endregion
+
+#pragma region TerrainEffect
+
+TerrainEffect::TerrainEffect()
+	: Effect("Terrain.fx", "TerrainTech")
+{
+	
+}
+	
+TerrainEffect::~TerrainEffect()
+{
+
+}
+
+void TerrainEffect::Init()
+{
+	ViewProj           = mEffect->GetVariableByName("gViewProj")->AsMatrix();
+	TexScale		   = mEffect->GetVariableByName("gTexScale")->AsScalar();
+	EyePosW            = mEffect->GetVariableByName("gEyePosW")->AsVector();
+	FogColor           = mEffect->GetVariableByName("gFogColor")->AsVector();
+	FogStart           = mEffect->GetVariableByName("gFogStart")->AsScalar();
+	FogRange           = mEffect->GetVariableByName("gFogRange")->AsScalar();
+	Lights			   = mEffect->GetVariableByName("gLights");
+	NumLights		   = mEffect->GetVariableByName("gNumLights");
+	Mat                = mEffect->GetVariableByName("gMaterial");
+	ShadowMap          = mEffect->GetVariableByName("gShadowMap")->AsShaderResource();
+	ShadowTransform    = mEffect->GetVariableByName("gShadowTransform")->AsMatrix();
+	TexelCellSpaceU    = mEffect->GetVariableByName("gTexelCellSpaceU")->AsScalar();
+	TexelCellSpaceV    = mEffect->GetVariableByName("gTexelCellSpaceV")->AsScalar();
+	WorldCellSpace     = mEffect->GetVariableByName("gWorldCellSpace")->AsScalar();
+
+	LayerMapArray      = mEffect->GetVariableByName("gLayerMapArray")->AsShaderResource();
+	BlendMap           = mEffect->GetVariableByName("gBlendMap")->AsShaderResource();
+	HeightMap          = mEffect->GetVariableByName("gHeightMap")->AsShaderResource();
+}
+	
+void TerrainEffect::CreateInputLayout()
+{
+	// Create the vertex input layout.
+	D3D11_INPUT_ELEMENT_DESC vertexDesc[] =
+	{
+		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"NORMAL",   0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TEXCOORD",   0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0}
+	};
+
+	// Create the input layout.
+    D3DX11_PASS_DESC passDesc;
+    mTech->GetPassByIndex(0)->GetDesc(&passDesc);
+	HR(gGame->GetD3D()->GetDevice()->CreateInputLayout(vertexDesc, 4, passDesc.pIAInputSignature, 
+		passDesc.IAInputSignatureSize, &mInputLayout));
+}
+
+//! Sets the lights to use in the shader.
+void TerrainEffect::SetLights(LightList* lights)
+{
+	Light lightArray[10];
+	for(int i = 0; i < lights->size(); i++)
+		lightArray[i] = *lights->operator[](i);
+
+	// Sets the light list in the effect file.
+	Lights->SetRawValue((void*)lightArray, 0, sizeof(Light) * lights->size());
+	float size = lights->size();
+	NumLights->SetRawValue(&size, 0, sizeof(float));
 }
 
 #pragma endregion

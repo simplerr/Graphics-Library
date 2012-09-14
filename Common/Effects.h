@@ -17,6 +17,7 @@ class BillboardEffect;
 class BlurEffect;
 class SkyEffect;
 class ShadowMapEffect;
+class TerrainEffect;
 
 /**
 	Contains all the effects that can be used.
@@ -36,6 +37,7 @@ public:
 	static BlurEffect*		BlurFX;
 	static SkyEffect*		SkyFX;
 	static ShadowMapEffect* BuildShadowMapFX;
+	static TerrainEffect*	TerrainFX;
 };
 
 #pragma endregion
@@ -225,3 +227,56 @@ public:
 	ID3DX11EffectMatrixVariable* World;
 	ID3DX11EffectMatrixVariable* WorldInvTranspose;
 };
+
+//! The terrain effect.
+#pragma region TerrainEffect
+class TerrainEffect : public Effect
+{
+public:
+	TerrainEffect();
+	~TerrainEffect();
+
+	void Init();
+	void CreateInputLayout();
+
+	void SetViewProj(CXMMATRIX M)                       { ViewProj->SetMatrix(reinterpret_cast<const float*>(&M)); }
+	void SetEyePosW(const XMFLOAT3& v)                  { EyePosW->SetRawValue(&v, 0, sizeof(XMFLOAT3)); }
+	void SetFogColor(const FXMVECTOR v)                 { FogColor->SetFloatVector(reinterpret_cast<const float*>(&v)); }
+	void SetFogStart(float f)                           { FogStart->SetFloat(f); }
+	void SetFogRange(float f)                           { FogRange->SetFloat(f); }
+	void SetMaterial(const Material& mat)               { Mat->SetRawValue(&mat, 0, sizeof(Material)); }
+	void SetShadowMap(ID3D11ShaderResourceView* tex)	{ ShadowMap->SetResource(tex); }
+	void SetShadowTransform(CXMMATRIX M)				{ ShadowTransform->SetMatrix(reinterpret_cast<const float*>(&M)); }
+	void SetTexelCellSpaceU(float f)                    { TexelCellSpaceU->SetFloat(f); }
+	void SetTexelCellSpaceV(float f)                    { TexelCellSpaceV->SetFloat(f); }
+	void SetWorldCellSpace(float f)                     { WorldCellSpace->SetFloat(f); }
+	void SetTextureScale(float scale)					{ TexScale->SetFloat(scale); }
+
+	void SetLayerMapArray(ID3D11ShaderResourceView* tex)   { LayerMapArray->SetResource(tex); }
+	void SetBlendMap(ID3D11ShaderResourceView* tex)        { BlendMap->SetResource(tex); }
+	void SetHeightMap(ID3D11ShaderResourceView* tex)       { HeightMap->SetResource(tex); }
+
+	void SetLights(LightList* lights);
+
+	ID3DX11EffectMatrixVariable* ViewProj;
+	ID3DX11EffectMatrixVariable* World;
+	ID3DX11EffectMatrixVariable* WorldInvTranspose;
+	ID3DX11EffectVectorVariable* EyePosW;
+	ID3DX11EffectScalarVariable* TexScale;
+	ID3DX11EffectScalarVariable* TexelCellSpaceU;
+	ID3DX11EffectScalarVariable* TexelCellSpaceV;
+	ID3DX11EffectScalarVariable* WorldCellSpace;
+	ID3DX11EffectVectorVariable* FogColor;
+	ID3DX11EffectScalarVariable* FogStart;
+	ID3DX11EffectScalarVariable* FogRange;
+	ID3DX11EffectMatrixVariable* ShadowTransform;
+	ID3DX11EffectShaderResourceVariable* ShadowMap;
+	ID3DX11EffectVariable* Lights;
+	ID3DX11EffectVariable* NumLights;
+	ID3DX11EffectVariable* Mat;
+
+	ID3DX11EffectShaderResourceVariable* LayerMapArray;
+	ID3DX11EffectShaderResourceVariable* BlendMap;
+	ID3DX11EffectShaderResourceVariable* HeightMap;
+};
+#pragma endregion

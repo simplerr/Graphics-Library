@@ -74,13 +74,13 @@ void Game::Init()
 	GetGraphics()->SetLightList(mWorld->GetLights());
 
 	// Add some objects.
-	mTerrain = new Object3D();
+	/*mTerrain = new Object3D();
 
 	mTerrain->SetPrimitive(gPrimitiveFactory->CreateGrid(160.0f, 160.0f, 50, 50));
 	mTerrain->LoadTexture("textures/grass.png", 15.0f);
 	mTerrain->LoadNormalMap("textures/grass_nmap.png");
 
-	mWorld->AddObject(mTerrain);
+	mWorld->AddObject(mTerrain);*/
 	
 	mObject = new Object3D();
 
@@ -133,7 +133,6 @@ void Game::Init()
 	// Testing...
 	mRenderTarget	= new RenderTarget(GetGraphics(), 256, 256);
 	mPrimitive		= gPrimitiveFactory->CreateQuad();
-	//mObject->SetTexture(mRenderTarget->GetRenderTargetTexture());
 
 	float blendFactor[] = {0.0f, 0.0f, 0.0f, 0.0f};
 	GetGraphics()->GetContext()->OMSetBlendState(RenderStates::TransparentBS, blendFactor, 0xffffffff);
@@ -148,33 +147,24 @@ void Game::Update(float dt)
 	mLight->SetPosition(camera->GetPosition());
 	mLight->SetDirection(camera->GetDirection());*/
 
-	static float speed = 0.005;
+	static float speed = 0.05;
 	if(gInput->KeyDown('1'))
-		mLight->SetPosition(mLight->GetPosition() + XMFLOAT3(speed, 0, 0));
+		mObject->SetPosition(mObject->GetPosition() + XMFLOAT3(speed, 0, 0));
 	else if(gInput->KeyDown('2'))
-		mLight->SetPosition(mLight->GetPosition() + XMFLOAT3(-speed, 0, 0));
+		mObject->SetPosition(mObject->GetPosition() + XMFLOAT3(-speed, 0, 0));
 	if(gInput->KeyDown('3'))
-		mLight->SetPosition(mLight->GetPosition() + XMFLOAT3(0, 0, speed));
+		mObject->SetPosition(mObject->GetPosition() + XMFLOAT3(0, 0, speed));
 	else if(gInput->KeyDown('4'))
-		mLight->SetPosition(mLight->GetPosition() + XMFLOAT3(0, 0, -speed));
+		mObject->SetPosition(mObject->GetPosition() + XMFLOAT3(0, 0, -speed));
 	if(gInput->KeyDown('5'))
-		mLight->SetPosition(mLight->GetPosition() + XMFLOAT3(0, speed, 0));
+		mObject->SetPosition(mObject->GetPosition() + XMFLOAT3(0, speed, 0));
 	else if(gInput->KeyDown('6'))
-		mLight->SetPosition(mLight->GetPosition() + XMFLOAT3(0, -speed, 0));
+		mObject->SetPosition(mObject->GetPosition() + XMFLOAT3(0, -speed, 0));
 
 	if(gInput->KeyDown('Z'))
-		mLight2->SetDirection(mLight2->GetDirection() + XMFLOAT3(0, 0, 0.001));
+		mLight->SetDirection(mLight->GetDirection() + XMFLOAT3(0, 0.0000, 0.0005));
 	else if(gInput->KeyDown('X'))
-		mLight2->SetDirection(mLight2->GetDirection() + XMFLOAT3(0, -0, -0.001));
-
-	if(gInput->KeyDown('R')) {
-		billboard->SetSize(billboard->Size + XMFLOAT2(0.01, 0.01)),
-		billboard->SetPos(billboard->Pos + XMFLOAT3(0.05, 0, 0));
-	}
-	else if(gInput->KeyDown('T')) {
-		billboard->SetPos(billboard->Pos - XMFLOAT3(0.05, 0, 0));
-		billboard->SetSize(billboard->Size - XMFLOAT2(0.01, 0));
-	}
+		mLight->SetDirection(mLight->GetDirection() + XMFLOAT3(0, -0.0000, -0.0005));
 
 	if(gInput->KeyDown(VK_LBUTTON)) {
 		mObject->SetRotation(mObject->GetRotation() + XMFLOAT3(0.003, 0.003, 0.003));
@@ -218,9 +208,10 @@ void Game::Update(float dt)
 	
 void Game::Draw(Graphics* pGraphics)
 {
+	// Clear the render target and depth/stencil.
 	pGraphics->ClearScene();
 
-	// Unbind the SRVS from the pipeline so they can be used as DSV instead.
+	// Unbind the SRVs from the pipeline so they can be used as DSVs instead.
 	ID3D11ShaderResourceView *const nullSRV[3] = {NULL, NULL, NULL};
 	pGraphics->GetContext()->PSSetShaderResources(0, 3, nullSRV);
 
@@ -233,9 +224,9 @@ void Game::Draw(Graphics* pGraphics)
 
 	// Draw the blur texture.
 	//pGraphics->ApplyBlur(mRenderTarget->GetRenderTargetTexture(), 4);
-	/*Texture2D tex;
-	tex.shaderResourceView = pGraphics->GetShadowMap()->GetSRV();
-	pGraphics->DrawScreenQuad(&tex, 400, 300, 256, 256);*/
+	//Texture2D tex;
+	//tex.shaderResourceView = pGraphics->GetShadowMap()->GetSRV();
+	//pGraphics->DrawScreenQuad(&tex, 400, 300, 256, 256);
 
 	// Present the backbuffer.
 	pGraphics->Present();

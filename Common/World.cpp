@@ -8,6 +8,7 @@
 #include "xnacollision.h"
 #include "Camera.h"
 #include "Sky.h"
+#include "Terrain.h"
 
 World::World()
 {
@@ -22,12 +23,29 @@ void World::Init()
 
 	// Create the sky box.
 	mSkyBox = new Sky("textures/sky.dds", 5000.0f);
+
+	// Create the terrain.
+	mTerrain = new Terrain();
+	InitInfo initInfo;
+	initInfo.HeightMapFilename = "textures/heightmap17_257.raw";
+	initInfo.LayerMapFilename0 = "textures/grass.dds";
+	initInfo.LayerMapFilename1 = "textures/darkdirt.dds";
+	initInfo.LayerMapFilename2 = "textures/stone.dds";
+	initInfo.LayerMapFilename3 = "textures/lightdirt.dds";
+	initInfo.LayerMapFilename4 = "textures/snow.dds";
+	initInfo.BlendMapFilename = "textures/blend.dds";
+	initInfo.HeightScale = 15.0f;
+	initInfo.HeightmapWidth = 257;
+	initInfo.HeightmapHeight = 257;
+	initInfo.CellSpacing = 0.5f;
+	mTerrain->Init(gGame->GetGraphics()->GetDevice(), gGame->GetGraphics()->GetContext(), initInfo);
 }
 
 //! Cleanup the object and light lists.
 World::~World()
 {
 	delete mSkyBox;
+	delete mTerrain;
 
 	// Delete all objects.
 	for(int i = 0; i < mObjectList.size(); i++)
@@ -50,6 +68,9 @@ void World::Update(float dt)
 //! Draws all objects.
 void World::Draw(Graphics* pGraphics)
 {
+	// Draw the terrain.
+	mTerrain->Draw(pGraphics);
+
 	mNumVisibleObjects = 0;
 	for(int i = 0; i < mObjectList.size(); i++)
 	{

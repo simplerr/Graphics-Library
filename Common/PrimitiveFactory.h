@@ -7,6 +7,7 @@
 using namespace std;
 
 class Primitive;
+class Terrain;
 
 /**
 	Handles creation of different primitives.
@@ -22,6 +23,7 @@ public:
 	Primitive* CreateGrid(float width, float depth, UINT m, UINT n);
 	Primitive* CreateQuad();
 	Primitive* CreateSphre(float radius, UINT sliceCount, UINT stackCount);
+	Primitive* CreateTerrain(Terrain* terrain);
 
 	// For grid landscapes.
 	float GetHeight(float x, float z);

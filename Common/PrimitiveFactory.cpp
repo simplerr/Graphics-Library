@@ -7,6 +7,7 @@
 #include "Primitive.h"
 #include "Vertex.h"
 #include "Graphics.h"
+#include "Terrain.h"
 
 PrimitiveFactory::PrimitiveFactory()
 {
@@ -21,9 +22,6 @@ PrimitiveFactory::~PrimitiveFactory()
 }
 
 //! Creates a box primitive.
-/**
-@note if a primitive of this type already is created then it returns a pointer to it (instancing)
-*/
 Primitive* PrimitiveFactory::CreateBox()
 {
 	// Already created a box primitive?
@@ -214,6 +212,78 @@ Primitive* PrimitiveFactory::CreateGrid(float width, float depth, UINT m, UINT n
 
 	mPrimitiveMap["grid"] = primitive;
 	return &mPrimitiveMap["grid"];
+}
+
+Primitive* PrimitiveFactory::CreateTerrain(Terrain* terrain)
+{
+	string name = terrain->GetInfo().HeightMapFilename;
+	if(mPrimitiveMap.find(name) != mPrimitiveMap.end())
+		return &mPrimitiveMap[name];
+
+	Primitive primitive;
+
+	InitInfo info = terrain->GetInfo();
+
+	UINT m = info.HeightmapWidth;
+	UINT n = info.HeightmapHeight;
+	UINT vertexCount = m * n;
+	UINT faceCount   = (m-1)*(n-1)*2;
+
+	float halfWidth = 0.5f * terrain->GetWidth();
+	float halfDepth = 0.5f * terrain->GetDepth();
+
+	float dx = info.CellSpacing;
+	float dz = info.CellSpacing;
+
+	float du = 1.0f / (m-1);
+	float dv = 1.0f / (n-1);
+
+	// Create the vertices.
+	vector<Vertex> vertices;
+	vertices.resize(vertexCount);
+	for(UINT i = 0; i < m; ++i)
+	{
+		float z = halfDepth - i*dz;
+		for(UINT j = 0; j < n; ++j)
+		{
+			float x = -halfWidth + j*dx;
+
+			vertices[i*n+j].Pos		= XMFLOAT3(x, terrain->GetHeight(x, z), z);
+			vertices[i*n+j].Normal	= XMFLOAT3(0, 1, 0);
+			vertices[i*n+j].Tangent = XMFLOAT3(1.0f, 0.0f, 0.0f);
+			vertices[i*n+j].Tex.x	= j*du;
+			vertices[i*n+j].Tex.y	= i*dv;
+		}
+	}
+ 
+	primitive.SetVertices(gGame->GetD3D()->GetDevice(), vertices, vertexCount);
+
+	// Create the indices.
+	vector<UINT> indices;
+	indices.resize(faceCount*3);
+
+	// Iterate over each quad and compute indices.
+	UINT k = 0;
+	for(UINT i = 0; i < m-1; ++i)
+	{
+		for(UINT j = 0; j < n-1; ++j)
+		{
+			indices[k]   = i*n+j;
+			indices[k+1] = i*n+j+1;
+			indices[k+2] = (i+1)*n+j;
+
+			indices[k+3] = (i+1)*n+j;
+			indices[k+4] = i*n+j+1;
+			indices[k+5] = (i+1)*n+j+1;
+
+			k += 6; // next quad
+		}
+	}
+
+	primitive.SetIndices(gGame->GetD3D()->GetDevice(), &indices[0], faceCount*3);
+
+	mPrimitiveMap[name] = primitive;
+	return &mPrimitiveMap[name];
 }
 
 // From Lunas book.

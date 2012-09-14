@@ -5,14 +5,17 @@
 #include <dxerr.h>
 #include <assert.h>
 #include <Windows.h>
+#include <string>
 #include <vector>
 #include <xnamath.h>
 #include <D3DX10math.h>
 #include "xnacollision.h"
 
+using namespace XNA;
+using namespace std;
+
 class Light;
 class Object3D;
-using namespace XNA;
 
 struct Ray
 {
@@ -25,6 +28,13 @@ struct BoundingSphere
 	BoundingSphere() : center(0.0f, 0.0f, 0.0f), radius(0.0f) {}
 	XMFLOAT3 center;
 	float radius;
+};
+
+class d3dHelper
+{
+public:
+	//! Loads and creates a SRV to a 2d texture array.
+	static ID3D11ShaderResourceView* CreateTexture2DArraySRV(ID3D11Device* device, ID3D11DeviceContext* context, vector<string>& filenames);
 };
 
 // Typedef for convenience

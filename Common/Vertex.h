@@ -31,3 +31,13 @@ struct BillboardVertex
 	XMFLOAT2 Size;
 	BillboardManager* Manager;
 };
+
+//struct TerrainVertex
+//{
+//	TerrainVertex() {}
+//	TerrainVertex(float px, float py, float pz, float u, float v) 
+//		: Pos(px, py, pz), Tex(u, v) {}
+//
+//	XMFLOAT3 Pos;
+//	XMFLOAT2 Tex;
+//};

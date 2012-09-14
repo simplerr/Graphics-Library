@@ -34,7 +34,10 @@ void Light::SetRange(float range)
 
 void Light::SetDirection(XMFLOAT3 direction)
 {
-	mDirection = direction;
+	// Normalize the direction.
+	XMVECTOR dir = XMLoadFloat3(&direction);
+	dir = XMVector3Normalize(dir);
+	XMStoreFloat3(&mDirection, dir);
 }
 	
 void Light::SetDirection(float x, float y, float z)

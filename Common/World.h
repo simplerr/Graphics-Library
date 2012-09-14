@@ -10,6 +10,7 @@ class Object3D;
 class Light;
 class Sky;
 class BillboardManager;
+class Terrain;
 
 class World
 {
@@ -30,6 +31,7 @@ private:
 	ObjectList	mObjectList;
 	LightList	mLightList;//LightList mLightList;	
 	Sky*		mSkyBox;
+	Terrain*	mTerrain;
 	Object3D*	mDebugObject;
 	int			mNumVisibleObjects;
 };

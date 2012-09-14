@@ -19,6 +19,7 @@
 #include "Sky.h"
 #include "ShadowMap.h"
 #include "Object3D.h"
+#include "Terrain.h"
 
 //! Constructor. The Init() function handles the initialization.
 Graphics::Graphics()
@@ -356,6 +357,16 @@ Camera*	Graphics::GetCamera()
 ShadowMap* Graphics::GetShadowMap()
 {
 	return mShadowMap;
+}
+
+LightList* Graphics::GetLightList()
+{
+	return mLightList;
+}
+
+XMFLOAT4 Graphics::GetFogColor()
+{
+	return mFogColor;
 }
 
 //! Sets which render target to use.
