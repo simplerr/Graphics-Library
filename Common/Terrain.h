@@ -6,6 +6,7 @@
 class Primitive;
 class Graphics;
 
+//! Stores the init information for a terrain.
 struct InitInfo
 	{
 		string HeightMapFilename;
@@ -21,6 +22,10 @@ struct InitInfo
 		float CellSpacing;
 	};
 
+/**
+	This class represents the basic terrain and gets loaded from a heightmap.
+	It contains a blend map and support up to 4 different textures.
+*/
 class Terrain
 {
 public:
@@ -30,9 +35,6 @@ public:
 	void Init(ID3D11Device* device, ID3D11DeviceContext* context, const InitInfo& initInfo);
 	void Draw(Graphics* pGraphics);
 
-	/*void		SetWorld(XMMATRIX world);
-
-	XMMATRIX	GetWorld();*/
 	InitInfo	GetInfo();
 	Primitive*	GetPrimitive();
 	float		GetWidth();

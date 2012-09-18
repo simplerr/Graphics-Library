@@ -1,6 +1,10 @@
+ #include "LightHelper.fx"
  
-#include "LightHelper.fx"
- 
+/*
+	This effect is used when rendering the terrain.
+	It's very similar to Basic.fx.
+*/
+
 cbuffer cbPerFrame
 {
 	// Lights & num lights.
@@ -16,7 +20,7 @@ cbuffer cbPerFrame
 	float gTexelCellSpaceU;
 	float gTexelCellSpaceV;
 	float gWorldCellSpace;
-	float gTexScale = 1.0f;
+	float gTexScale = 1.0f;	// Default = 1.0f
 };
 
 cbuffer cbPerObject
@@ -33,18 +37,18 @@ Texture2D gBlendMap;
 Texture2D gHeightMap;
 Texture2D gShadowMap;
 
+//! Used when sampling the layers and blend map.
 SamplerState samLinear
 {
 	Filter = MIN_MAG_MIP_LINEAR;
-
 	AddressU = WRAP;
 	AddressV = WRAP;
 };
 
+//! Used when sampling the height map.
 SamplerState samHeightmap
 {
 	Filter = MIN_MAG_LINEAR_MIP_POINT;
-
 	AddressU = CLAMP;
 	AddressV = CLAMP;
 };
@@ -57,10 +61,10 @@ SamplerComparisonState samShadow
 	AddressV = BORDER;
 	AddressW = BORDER;
 	BorderColor = float4(0.0f, 0.0f, 0.0f, 0.0f);
-
     ComparisonFunc = LESS;
 };
 
+//! Input to the vertex shader.
 struct VertexIn
 {
 	float3 PosL		: POSITION;
@@ -69,6 +73,7 @@ struct VertexIn
 	float3 TangentL	: TANGENT;
 };
 
+//! Output from the vertex shader -> input for the pixel shader.
 struct VertexOut
 {
 	float4 PosH		: SV_POSITION;
@@ -98,11 +103,6 @@ VertexOut VS(VertexIn vin)
 
 float4 PS(VertexOut pin) : SV_Target
 {
-    // Blend the layers on top of each other.
-    float4 texColor1 = gLayerMapArray.Sample( samLinear, float3(pin.Tex, 0.0f) );
-
-	//return texColor1 * gBlendMap.Sample( samLinear, pin.Tex ).r;
-
 	// Estimate normal and tangent using central differences.
 	float2 leftTex   = pin.Tex + float2(-gTexelCellSpaceU, 0.0f);
 	float2 rightTex  = pin.Tex + float2(gTexelCellSpaceU, 0.0f);
@@ -127,10 +127,9 @@ float4 PS(VertexOut pin) : SV_Target
 	// Normalize.
 	toEye /= distToEye;
 	
-	//
-	// Texturing
-	//
-	
+	/* Texturing */
+
+	// Scale the textures by gTexScale.
 	float2 scaledTex = pin.Tex * gTexScale;
 
 	// Sample layers in texture array.

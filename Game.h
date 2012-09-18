@@ -9,6 +9,7 @@ class RenderTarget;
 class Primitive;
 class Texture2D;
 class ShadowMap;
+class ModelImporter;
 
 class Game : public Runnable
 {
@@ -30,4 +31,5 @@ private:
 	Object3D*  mObject;
 	Object3D*  mObject2;
 	Object3D*  mTerrain;
+	ModelImporter* mModelImporter;
 };

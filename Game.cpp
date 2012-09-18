@@ -17,7 +17,8 @@
 #include "Common\Effects.h"
 #include "Common\RenderStates.h"
 #include "Common\ShadowMap.h"
-
+#include "Common\ModelImporter.h"
+ 
 // Set globals to nullptrs
 Runnable*			gGame				= nullptr;
 PrimitiveFactory*	gPrimitiveFactory	= nullptr;
@@ -37,7 +38,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance, PSTR cmdLine, in
 	gGame = &game;
 
 	// Create the primitive factory.
-	gPrimitiveFactory = new PrimitiveFactory();
+	gPrimitiveFactory = new PrimitiveFactory();	
 
 	// Init the app.
 	game.Init();
@@ -59,6 +60,7 @@ Game::~Game()
 	delete gPrimitiveFactory;
 	delete gInput;
 	delete mWorld;
+	delete mModelImporter;
 }
 
 void Game::Init()
@@ -74,22 +76,14 @@ void Game::Init()
 	GetGraphics()->SetLightList(mWorld->GetLights());
 
 	// Add some objects.
-	/*mTerrain = new Object3D();
-
-	mTerrain->SetPrimitive(gPrimitiveFactory->CreateGrid(160.0f, 160.0f, 50, 50));
-	mTerrain->LoadTexture("textures/grass.png", 15.0f);
-	mTerrain->LoadNormalMap("textures/grass_nmap.png");
-
-	mWorld->AddObject(mTerrain);*/
-	
 	mObject = new Object3D();
 
 	// Load the effect and the primitive.
 	mObject->SetPrimitive(gPrimitiveFactory->CreateBox());
-	mObject->LoadTexture("textures/crate.dds");
-	mObject->LoadNormalMap("textures/crate_nmap.dds");
+	//mObject->LoadTexture("textures/crate.dds");
+	//mObject->LoadNormalMap("textures/crate_nmap.dds");
 	mObject->SetPosition(XMFLOAT3(0, 15, 0));
-	mObject->SetScale(XMFLOAT3(1, 10, 10));
+	//mObject->SetScale(XMFLOAT3(1, 10, 10));
 	mObject->SetRotation(XMFLOAT3(0.2f, 0.2f, 0.2f));
 
 	mWorld->AddObject(mObject);
@@ -99,15 +93,15 @@ void Game::Init()
 	// Load the effect and the primitive.
 	mObject2->SetPrimitive(gPrimitiveFactory->CreateBox());
 	mObject2->LoadTexture("textures/crate.dds");
-	mObject2->SetPosition(XMFLOAT3(0, 15, 30));
+	mObject2->SetPosition(XMFLOAT3(0, 25, 0));
 	mObject2->SetScale(XMFLOAT3(3, 7, 5));
 	mObject2->SetRotation(XMFLOAT3(0, 0, 0.2f));
 
-	mWorld->AddObject(mObject2);
+	//mWorld->AddObject(mObject2);
 
 	// Add some lights.
 	mLight = new Light();
-	mLight->SetMaterials(Colors::White*0.3f, Colors::White*0.6f, Colors::White*0.0f);
+	mLight->SetMaterials(Colors::White*0.2f, Colors::White*1.0f, Colors::White*0.0f);
 	mLight->SetDirection(0.5f, -0.5f, 0.5f);
 	mLight->SetType(DIRECTIONAL_LIGHT);
 	mLight->SetPosition(0, 5, 5);
@@ -117,18 +111,6 @@ void Game::Init()
 	
 	// Add test billboards.
 	billboard = GetGraphics()->AddBillboard(XMFLOAT3(0, 10, 0), XMFLOAT2(5, 5), "textures\\crate.dds");
-	srand(time(0));
-	/*for(int i = 0; i < 500; i++) {
-		XMFLOAT3 pos(rand() % 50 - 20, rand() % 30, rand() % 50 - 25);
-		XMFLOAT2 size(rand() % 5 + 0.5f, rand() % 5 + 0.5f);
-		GetGraphics()->AddBillboard(pos, size, "textures\\grass.png");
-	}
-
-	for(int i = 0; i < 500; i++) {
-		XMFLOAT3 pos(rand() % 50 - 20 - 50, rand() % 30, rand() % 50 - 25);
-		XMFLOAT2 size(rand() % 5 + 0.5f, rand() % 5 + 0.5f);
-		GetGraphics()->AddBillboard(pos, size, "textures\\crate.dds");
-	}*/
 
 	// Testing...
 	mRenderTarget	= new RenderTarget(GetGraphics(), 256, 256);
@@ -136,16 +118,17 @@ void Game::Init()
 
 	float blendFactor[] = {0.0f, 0.0f, 0.0f, 0.0f};
 	GetGraphics()->GetContext()->OMSetBlendState(RenderStates::TransparentBS, blendFactor, 0xffffffff);
+
+	// Assimp testing.
+	mModelImporter = new ModelImporter();
+	mObject->SetPrimitive(mModelImporter->LoadModel("teapot.obj"));
 }
 	
 void Game::Update(float dt)
 {
 	gInput->Update(dt);
 	GetGraphics()->Update(dt);
-
-	/*Camera* camera = GetGraphics()->GetCamera();
-	mLight->SetPosition(camera->GetPosition());
-	mLight->SetDirection(camera->GetDirection());*/
+	mWorld->Update(dt);
 
 	static float speed = 0.05;
 	if(gInput->KeyDown('1'))
@@ -177,33 +160,6 @@ void Game::Update(float dt)
 		mObject->SetPosition(mObject->GetPosition() + XMFLOAT3(0, 0, 0.03));
 	if(gInput->KeyDown('B'))
 		mObject->SetPosition(mObject->GetPosition() - XMFLOAT3(0, 0, 0.03));
-
-	/*static char buffer[16];
-	sprintf(buffer, "Inside frustum: %i", mWorld->GetVisibleObjects());
-	SetWindowText(GetHwnd(), buffer);*/
-
-	// Collision?
-	/*if(XNA::IntersectAxisAlignedBoxAxisAlignedBox(&mObject->GetBoundingBox(), &mObject2->GetBoundingBox()))
-		SetWindowText(GetHwnd(), "Collision!");
-	else
-		SetWindowText(GetHwnd(), "No collision!");*/
-	
-	// Frustum test
-	/*Frustum frustum = GetGraphics()->GetCamera()->GetFrustum();
-	if(XNA::IntersectAxisAlignedBoxFrustum(&mObject->GetBoundingBox(), &frustum))
-		SetWindowText(GetHwnd(), "Inside frustum!");
-	else
-		SetWindowText(GetHwnd(), "Outside frustum!");*/
-
-	/*Ray ray = gInput->GetWorldPickingRay();
-	float dist;
-	if(IntersectRayAxisAlignedBox(XMLoadFloat3(&ray.origin), XMLoadFloat3(&ray.direction), &mObject->GetBoundingBox(), &dist)) {
-		char buffer[256];
-		sprintf(buffer, "Intersect! Dist = %f", dist);
-		SetWindowText(GetHwnd(), buffer);
-	}
-	else
-		SetWindowText(GetHwnd(), "No intersection!");*/
 }
 	
 void Game::Draw(Graphics* pGraphics)
@@ -221,12 +177,6 @@ void Game::Draw(Graphics* pGraphics)
 	// Draw all objects.
 	mWorld->Draw(pGraphics);
 	pGraphics->DrawBillboards();
-
-	// Draw the blur texture.
-	//pGraphics->ApplyBlur(mRenderTarget->GetRenderTargetTexture(), 4);
-	//Texture2D tex;
-	//tex.shaderResourceView = pGraphics->GetShadowMap()->GetSRV();
-	//pGraphics->DrawScreenQuad(&tex, 400, 300, 256, 256);
 
 	// Present the backbuffer.
 	pGraphics->Present();

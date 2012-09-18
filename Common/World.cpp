@@ -59,6 +59,11 @@ World::~World()
 //! Updates all objects.
 void World::Update(float dt)
 {
+	// [TODO]!!
+	//XMFLOAT3 pos = gGame->GetGraphics()->GetCamera()->GetPosition();
+	//gGame->GetGraphics()->GetCamera()->SetPosition(XMFLOAT3(pos.x, mTerrain->GetHeight(pos.x, pos.z)+3, pos.z));
+	//gGame->GetGraphics()->GetCamera()->SetTarget(gGame->GetGraphics()->GetCamera()->GetPosition() + gGame->GetGraphics()->GetCamera()->GetDirection());
+
 	for(int i = 0; i < mObjectList.size(); i++)
 	{
 		mObjectList[i]->Update(dt);
@@ -75,11 +80,11 @@ void World::Draw(Graphics* pGraphics)
 	for(int i = 0; i < mObjectList.size(); i++)
 	{
 		// Don't draw the object if it's outside the cameras frustum.
-		Frustum frustum = pGraphics->GetCamera()->GetFrustum();
-		if(XNA::IntersectAxisAlignedBoxFrustum(&mObjectList[i]->GetBoundingBox(), &frustum)) {
+		//Frustum frustum = pGraphics->GetCamera()->GetFrustum();
+		//if(XNA::IntersectAxisAlignedBoxFrustum(&mObjectList[i]->GetBoundingBox(), &frustum)) {
 			mObjectList[i]->Draw(pGraphics);
 			mNumVisibleObjects++;
-		}
+		//}
 	}
 
 	for(int i = 0; i < mLightList.size(); i++)

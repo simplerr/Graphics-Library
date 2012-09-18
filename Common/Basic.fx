@@ -106,7 +106,7 @@ VertexOut VS(VertexIn vin)
 	return vout;
 }
 
-//! Pixel shader that applies ligthing and fogging.
+//! Pixel shader that applies ligthing, fogging, normal mapping and shadow mapping.
 float4 PS(VertexOut pin) : SV_Target
 {
 	// Interpolating normal can unnormalize it, so normalize it.

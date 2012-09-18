@@ -23,12 +23,16 @@ Terrain::~Terrain()
 	ReleaseCOM(mHeightMapSRV);
 }
 
+//! Loads the heightmap, builds all the SRVs.
 void Terrain::Init(ID3D11Device* device, ID3D11DeviceContext* context, const InitInfo& initInfo)
 {
 	mInfo = initInfo;
 
+	// Load the heightmap from a .RAW file and smooth it out.
 	LoadHeightmap();
 	Smooth();
+
+	// Build the heightmap SRV.
 	BuildHeightmapSRV(device);
 
 	// Build the terrain primitive.
@@ -47,6 +51,7 @@ void Terrain::Init(ID3D11Device* device, ID3D11DeviceContext* context, const Ini
 	HR(D3DX11CreateShaderResourceViewFromFile(device, mInfo.BlendMapFilename.c_str(), 0, 0, &mBlendMapSRV, 0));
 }
 	
+//! Draw the terrain with texture blending and shadowmapping.
 void Terrain::Draw(Graphics* pGraphics)
 {
 	ID3D11DeviceContext* context = pGraphics->GetContext();
@@ -55,6 +60,7 @@ void Terrain::Draw(Graphics* pGraphics)
 	context->IASetInputLayout(Effects::TerrainFX->GetInputLayout());
 	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
+	// Set all effect variables.
 	Camera* camera = pGraphics->GetCamera();
 	XMMATRIX view = XMLoadFloat4x4(&camera->GetViewMatrix());
 	XMMATRIX proj = XMLoadFloat4x4(&camera->GetProjectionMatrix());
@@ -65,24 +71,29 @@ void Terrain::Draw(Graphics* pGraphics)
 	Effects::TerrainFX->SetFogStart(1000.0f);
 	Effects::TerrainFX->SetFogRange(50.0f);
 	Effects::TerrainFX->SetMaterial(Material(Colors::White));
-
+	Effects::TerrainFX->SetTextureScale(20.0f);
 	Effects::TerrainFX->SetTexelCellSpaceU(1.0f / mInfo.HeightmapWidth);
 	Effects::TerrainFX->SetTexelCellSpaceV(1.0f / mInfo.HeightmapHeight);
 	Effects::TerrainFX->SetWorldCellSpace(mInfo.CellSpacing);
 
+	// The blend texture SRVs..
 	Effects::TerrainFX->SetLayerMapArray(mLayerTextureArraySRV);
 	Effects::TerrainFX->SetBlendMap(mBlendMapSRV);
 	Effects::TerrainFX->SetHeightMap(mHeightMapSRV);
 
+	// Set the shadow map and the shadow transform.
 	ShadowMap* shadowMap = pGraphics->GetShadowMap();
 	Effects::TerrainFX->SetShadowMap(shadowMap->GetSRV());
 	Effects::TerrainFX->SetShadowTransform(XMLoadFloat4x4(&shadowMap->GetShadowTransform()));
-	Effects::TerrainFX->SetTextureScale(20.0f);
+	
+	// Apply them.
 	Effects::TerrainFX->Apply();
 
+	// Draw the primitive.
 	mPrimitive->Draw(pGraphics->GetContext());
 }
 
+//! Loads a heightmap from a .RAW file.
 void Terrain::LoadHeightmap()
 {
 	// A height for each vertex
@@ -109,6 +120,7 @@ void Terrain::LoadHeightmap()
 	}
 }
 	
+//! Smooths out the heightmap by averaging nearby heights. 
 void Terrain::Smooth()
 {
 	std::vector<float> dest(mHeightMap.size());
@@ -125,12 +137,14 @@ void Terrain::Smooth()
 	mHeightMap = dest;
 }
 	
+//! Returns true if (i, j) is inside the heightmap.
 bool Terrain::InBounds(int i, int j)
 {
 	// True if ij are valid indices; false otherwise.
 	return i >= 0 && i < (int)mInfo.HeightmapHeight && j >= 0 && j < (int)mInfo.HeightmapWidth;
 }
 	
+//! Returns the average height for (i, j) in 3x3.
 float Terrain::Average(int i, int j)
 {
 	// Function computes the average height of the ij element.
@@ -166,18 +180,21 @@ float Terrain::Average(int i, int j)
 	return avg / num;
 }
 
+//! Returns the width, in world coordinates.
 float Terrain::GetWidth()
 {
 	// Total terrain width.
 	return (mInfo.HeightmapWidth-1)*mInfo.CellSpacing;
 }
 
+//! Returns the depth, in world coordinates.
 float Terrain::GetDepth()
 {
 	// Total terrain depth.
 	return (mInfo.HeightmapHeight-1)*mInfo.CellSpacing;
 }
 
+//! Returns the height at (x, z).
 float Terrain::GetHeight(float x, float z)
 {
 	// Transform from terrain local space to "cell" space.
@@ -234,6 +251,10 @@ void Terrain::BuildHeightmapSRV(ID3D11Device* device)
 	texDesc.CPUAccessFlags = 0;
 	texDesc.MiscFlags = 0;
 
+	/**
+		The tricky part here is that we copy the values from the vector<float> heightmap into a ID3D11Texture2D.
+	*/
+
 	// HALF is defined in xnamath.h, for storing 16-bit float.
 	std::vector<HALF> hmap(mHeightMap.size());
 	std::transform(mHeightMap.begin(), mHeightMap.end(), hmap.begin(), XMConvertFloatToHalf);
@@ -260,21 +281,13 @@ void Terrain::BuildHeightmapSRV(ID3D11Device* device)
 	ReleaseCOM(hmapTex);
 }
 
-//XMMATRIX Terrain::GetWorld()
-//{
-//	return XMLoadFloat4x4(&mWorldMatrix);
-//}
-//	
-//void Terrain::SetWorld(XMMATRIX world)
-//{
-//	XMStoreFloat4x4(&mWorldMatrix, world);
-//}
-
+//! Returns the InitInfo member.
 InitInfo Terrain::GetInfo()
 {
 	return mInfo;
 }
 
+//! Returns the terrain primitive.
 Primitive* Terrain::GetPrimitive()
 {
 	return mPrimitive;

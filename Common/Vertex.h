@@ -8,6 +8,8 @@ class BillboardManager;
 struct Vertex
 {
 	Vertex() {}
+	Vertex(float px, float py, float pz, float nx, float ny, float nz)
+		: Pos(px, py, pz), Normal(nx, ny, nz) {}
 	Vertex(float px, float py, float pz, float nx, float ny, float nz, float tx, float ty, float tz, float u, float v) 
 		: Pos(px, py, pz), Normal(nx, ny, nz), Tangent(tx, ty, tz), Tex(u, v) {}
 
@@ -31,13 +33,3 @@ struct BillboardVertex
 	XMFLOAT2 Size;
 	BillboardManager* Manager;
 };
-
-//struct TerrainVertex
-//{
-//	TerrainVertex() {}
-//	TerrainVertex(float px, float py, float pz, float u, float v) 
-//		: Pos(px, py, pz), Tex(u, v) {}
-//
-//	XMFLOAT3 Pos;
-//	XMFLOAT2 Tex;
-//};

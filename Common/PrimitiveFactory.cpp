@@ -73,9 +73,9 @@ Primitive* PrimitiveFactory::CreateBox()
 	v[23] = Vertex(+w2, -h2, +d2, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
 
 	// Set the primitives vertices.
-    primitive.SetVertices(gGame->GetD3D()->GetDevice(), v, 24);
+    primitive.SetVertices(gGame->GetD3D()->GetDevice(), v);
 
-	UINT i[36];
+	vector<UINT> i(36);
 
 	// Fill in the front face index data
 	i[0] = 0; i[1] = 1; i[2] = 2;
@@ -102,7 +102,7 @@ Primitive* PrimitiveFactory::CreateBox()
 	i[33] = 20; i[34] = 22; i[35] = 23;
 
 	// Set the indices.
-	primitive.SetIndices(gGame->GetD3D()->GetDevice(), i, 36);
+	primitive.SetIndices(gGame->GetD3D()->GetDevice(), i);
 
 	// Add to the primitive map.
 	mPrimitiveMap["box"] = primitive;
@@ -126,9 +126,9 @@ Primitive* PrimitiveFactory::CreateQuad()
 	vertices[2] = Vertex(+1.0f, +1.0f, 0.0f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 	vertices[3] = Vertex(+1.0f, -1.0f, 0.0f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f);
 
-	primitive.SetVertices(gGame->GetD3D()->GetDevice(), vertices, 4);
+	primitive.SetVertices(gGame->GetD3D()->GetDevice(), vertices);
 
-	UINT indices[6];
+	vector<UINT> indices(6);
 
 	indices[0] = 0;
 	indices[1] = 1;
@@ -137,7 +137,7 @@ Primitive* PrimitiveFactory::CreateQuad()
 	indices[4] = 2;
 	indices[5] = 3;
 
-	primitive.SetIndices(gGame->GetD3D()->GetDevice(), indices, 6);
+	primitive.SetIndices(gGame->GetD3D()->GetDevice(), indices);
 
 	// Add to the primitive map.
 	mPrimitiveMap["quad"] = primitive;
@@ -184,7 +184,7 @@ Primitive* PrimitiveFactory::CreateGrid(float width, float depth, UINT m, UINT n
 		}
 	}
  
-	primitive.SetVertices(gGame->GetD3D()->GetDevice(), vertices, vertexCount);
+	primitive.SetVertices(gGame->GetD3D()->GetDevice(), vertices);
 
 	// Create the indices.
 	vector<UINT> indices;
@@ -208,7 +208,7 @@ Primitive* PrimitiveFactory::CreateGrid(float width, float depth, UINT m, UINT n
 		}
 	}
 
-	primitive.SetIndices(gGame->GetD3D()->GetDevice(), &indices[0], faceCount*3);
+	primitive.SetIndices(gGame->GetD3D()->GetDevice(), indices);
 
 	mPrimitiveMap["grid"] = primitive;
 	return &mPrimitiveMap["grid"];
@@ -256,7 +256,7 @@ Primitive* PrimitiveFactory::CreateTerrain(Terrain* terrain)
 		}
 	}
  
-	primitive.SetVertices(gGame->GetD3D()->GetDevice(), vertices, vertexCount);
+	primitive.SetVertices(gGame->GetD3D()->GetDevice(), vertices);
 
 	// Create the indices.
 	vector<UINT> indices;
@@ -280,7 +280,7 @@ Primitive* PrimitiveFactory::CreateTerrain(Terrain* terrain)
 		}
 	}
 
-	primitive.SetIndices(gGame->GetD3D()->GetDevice(), &indices[0], faceCount*3);
+	primitive.SetIndices(gGame->GetD3D()->GetDevice(), indices);
 
 	mPrimitiveMap[name] = primitive;
 	return &mPrimitiveMap[name];
@@ -344,7 +344,7 @@ Primitive* PrimitiveFactory::CreateSphre(float radius, UINT sliceCount, UINT sta
 
 	vertices.push_back( bottomVertex );
 
-	primitive.SetVertices(gGame->GetGraphics()->GetDevice(), vertices, vertices.size());
+	primitive.SetVertices(gGame->GetGraphics()->GetDevice(), vertices);
 
 	//
 	// Compute indices for top stack.  The top stack was written first to the vertex buffer
@@ -398,7 +398,7 @@ Primitive* PrimitiveFactory::CreateSphre(float radius, UINT sliceCount, UINT sta
 		indices.push_back(baseIndex+i+1);
 	}
 
-	primitive.SetIndices(gGame->GetGraphics()->GetDevice(), &indices[0], indices.size());
+	primitive.SetIndices(gGame->GetGraphics()->GetDevice(), indices);
 
 	mPrimitiveMap["sphre"] = primitive;
 	return &mPrimitiveMap["sphre"];

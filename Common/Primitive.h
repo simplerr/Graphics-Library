@@ -18,8 +18,8 @@ public:
 
 	void Cleanup();
 
-	void SetVertices(ID3D11Device* device, vector<Vertex> vertices, UINT count);
-	void SetIndices(ID3D11Device* device, const UINT* indices, UINT count);
+	void SetVertices(ID3D11Device* device, vector<Vertex> vertices);
+	void SetIndices(ID3D11Device* device, vector<UINT> indices);
 
 	void Draw(ID3D11DeviceContext* dc);
 
