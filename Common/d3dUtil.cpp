@@ -1,5 +1,23 @@
 #include "d3dUtil.h"
 #include <xnamath.h>
+#include "Runnable.h"
+#include "D3DCore.h"
+#include "Graphics.h"
+
+ID3D11Device* GetD3DDevice()
+{
+	return gGame->GetD3D()->GetDevice();
+}
+
+ID3D11DeviceContext* GetD3DContext()
+{
+	return gGame->GetD3D()->GetContext();
+}
+
+Graphics* GetGraphics()
+{
+	return gGame->GetGraphics();
+}
 
 //! Loads and creates a SRV to a 2d texture array.
 //! Taken from Frank Lunas book.

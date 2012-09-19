@@ -18,6 +18,7 @@
 #include "Common\RenderStates.h"
 #include "Common\ShadowMap.h"
 #include "Common\ModelImporter.h"
+#include "Common\Model.h"
  
 // Set globals to nullptrs
 Runnable*			gGame				= nullptr;
@@ -121,7 +122,7 @@ void Game::Init()
 
 	// Assimp testing.
 	mModelImporter = new ModelImporter();
-	mObject->SetPrimitive(mModelImporter->LoadModel("teapot.obj"));
+	mModel = mModelImporter->LoadModel("models/sword/uld-sword.obj");
 }
 	
 void Game::Update(float dt)
@@ -177,6 +178,10 @@ void Game::Draw(Graphics* pGraphics)
 	// Draw all objects.
 	mWorld->Draw(pGraphics);
 	pGraphics->DrawBillboards();
+
+	XMMATRIX world = XMMatrixScaling(15, 15, 15);
+	world *= XMMatrixTranslation(0, 20, 0);
+	mModel->Draw(pGraphics, world);
 
 	// Present the backbuffer.
 	pGraphics->Present();

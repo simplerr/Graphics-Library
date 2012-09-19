@@ -208,6 +208,7 @@ void BasicEffect::SetLights(LightList* lights)
 //! Sets the texture to use in the shader.
 void BasicEffect::SetTexture(Texture2D* texture)
 {
+	bool f = texture == nullptr ? false : true;
 	SetUseTexture(texture == nullptr ? false : true);
 	if(texture != nullptr) {
 		mfxTexture->SetResource(texture->shaderResourceView);

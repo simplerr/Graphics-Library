@@ -16,6 +16,11 @@ using namespace std;
 
 class Light;
 class Object3D;
+class Graphics;
+
+ID3D11Device*			GetD3DDevice();
+ID3D11DeviceContext*	GetD3DContext();
+Graphics*				GetGraphics();
 
 struct Ray
 {

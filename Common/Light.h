@@ -3,6 +3,7 @@
 #include <Windows.h>
 #include <vector>
 #include <xnamath.h>
+#include <assimp\material.h>
 
 using namespace std;
 
@@ -25,6 +26,23 @@ struct Material
 
 	Material(XMFLOAT4 color) {
 		ambient = diffuse = specular = color;
+	}
+
+	Material(aiColor4D ambient, aiColor4D diffuse, aiColor4D specular) {
+		this->ambient.x = ambient.r;
+		this->ambient.y = ambient.g;
+		this->ambient.z = ambient.b;
+		this->ambient.w = ambient.a;
+
+		this->diffuse.x = diffuse.r;
+		this->diffuse.y = diffuse.g;
+		this->diffuse.z = diffuse.b;
+		this->diffuse.w = diffuse.a;
+
+		this->specular.x = specular.r;
+		this->specular.y = specular.g;
+		this->specular.z = specular.b;
+		this->specular.w = specular.a;
 	}
 
 	XMFLOAT4 ambient;
