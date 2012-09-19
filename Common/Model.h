@@ -13,6 +13,8 @@ public:
 
 	void Draw(Graphics* pGraphics, CXMMATRIX world);
 	void AddMesh(Mesh* mesh);
+
+	vector<Mesh*>* GetMeshList();
 private:
 	vector<Mesh*> mMeshList;
 };

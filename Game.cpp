@@ -81,18 +81,11 @@ void Game::Init()
 
 	// Add some objects.
 	mObject = new Object3D();
-	//mObject->SetModel(mModelImporter->LoadModel("models/assassin/Crimson Assassin Athea.obj"));
-	//mObject->SetModel(mModelImporter->LoadModel("models/monster/monster.x"));
-
-	// Load the effect and the primitive.
+	mObject->SetModel(mModelImporter->LoadModel("models/assassin/Crimson Assassin Athea.obj"));
 	mObject->SetPrimitive(gPrimitiveFactory->CreateBox());
-	//mObject->LoadTexture("textures/crate.dds");
-	//mObject->LoadNormalMap("textures/crate_nmap.dds");
 	mObject->SetPosition(XMFLOAT3(0, 15, 0));
 	mObject->SetScale(XMFLOAT3(0.1, 0.1, 0.1));
-	mObject->SetRotation(XMFLOAT3(0.2f, 0.2f, 0.2f));
-
-	//mWorld->AddObject(mObject);
+	mWorld->AddObject(mObject);
 
 	mObject2 = new Object3D();
 
@@ -124,13 +117,6 @@ void Game::Init()
 
 	float blendFactor[] = {0.0f, 0.0f, 0.0f, 0.0f};
 	GetGraphics()->GetContext()->OMSetBlendState(RenderStates::TransparentBS, blendFactor, 0xffffffff);
-
-	// Assimp testing.
-	//mModel = mModelImporter->LoadModel("models/sword/uld-sword.obj");
-	//mModel = mModelImporter->LoadModel("models/Patrick/patrick_bind.obj");
-	//mModel = mModelImporter->LoadModel("models/bandit_male/bandit_male.obj");
-	mModel = mModelImporter->LoadModel("models/monster/monster.x");
-	mModel2 = mModelImporter->LoadModel("models/monster/monster.x");
 }
 	
 void Game::Update(float dt)
@@ -186,14 +172,6 @@ void Game::Draw(Graphics* pGraphics)
 	// Draw all objects.
 	mWorld->Draw(pGraphics);
 	pGraphics->DrawBillboards();
-
-	XMMATRIX world = XMMatrixScaling(0.15, 0.15, 0.15) * XMMatrixRotationY(3.14);
-	world *= XMMatrixTranslation(0, 20, 0);
-	mModel->Draw(pGraphics, world);
-
-	world = XMMatrixScaling(0.15, 0.15, 0.15) * XMMatrixRotationY(3.14);
-	world *= XMMatrixTranslation(0, 20, 30);
-	mModel2->Draw(pGraphics, world);
 
 	// Present the backbuffer.
 	pGraphics->Present();

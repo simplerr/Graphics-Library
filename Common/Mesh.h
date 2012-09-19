@@ -20,6 +20,10 @@ public:
 	void SetMaterial(Material material);
 	void SetTexture(Texture2D* texture);
 	void LoadTexture(string filename);
+
+	ID3D11Buffer* GetVertexBuffer();
+	ID3D11Buffer* GetIndexBuffer();
+	int GetNumIndices();
 private:
 	ID3D11Buffer*	mVertexBuffer;
 	ID3D11Buffer*	mIndexBuffer;

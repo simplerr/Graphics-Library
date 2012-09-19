@@ -33,8 +33,10 @@ public:
 	XMFLOAT3 GetRotation();
 	XMFLOAT3 GetScale();
 	Material GetMaterial();
+	Model* GetModel();
 	AxisAlignedBox GetBoundingBox();
 	Primitive* GetPrimitive();
+	
 
 	void SetModel(Model* model);
 	void LoadTexture(string filename, float scale = 1.0f);

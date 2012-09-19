@@ -33,10 +33,11 @@ void Object3D::Update(float dt)
 void Object3D::Draw(Graphics* pGraphics)
 {
 	// Draw the model.
-	mModel->Draw(pGraphics, GetWorldMatrix());
-
+	if(mModel != 0)
+		mModel->Draw(pGraphics, GetWorldMatrix());
+	else
 	// Draw the primitive with the BasicFX effect.
-	//pGraphics->DrawPrimitive(mPrimitive, GetWorldMatrix(), mTexture, mNormalMap, GetMaterial(), Effects::BasicFX);
+		pGraphics->DrawPrimitive(mPrimitive, GetWorldMatrix(), mTexture, mNormalMap, GetMaterial(), Effects::BasicFX);
 	//pGraphics->DrawBoundingBox(&GetBoundingBox(), GetWorldMatrix(), Colors::Blue);
 }
 
@@ -106,6 +107,11 @@ XMMATRIX Object3D::GetWorldMatrix()
 	S = XMMatrixScaling(mScale.x, mScale.y, mScale.z);
 
 	return S*R*T;
+}
+
+Model* Object3D::GetModel()
+{
+	return mModel;
 }
 
 Material Object3D::GetMaterial()

@@ -101,7 +101,8 @@ Model* ModelImporter::LoadModel(string filename)
 			if(_stricmp(path.C_Str(), "") != 0)
 				mesh->LoadTexture(path.C_Str());
 
-			mesh->SetMaterial(Material(Colors::White));//, diffuse, specular));
+			// [NOTE] The material should probably be white instead!
+			mesh->SetMaterial(Material(ambient, diffuse, specular));
 
 			// Add the mesh to the model.
 			model->AddMesh(mesh);

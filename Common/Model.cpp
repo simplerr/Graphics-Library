@@ -31,6 +31,9 @@ void Model::Draw(Graphics* pGraphics, CXMMATRIX world)
 	Effects::BasicFX->SetNormalMap(0);
 	Effects::BasicFX->SetShadowMap(pGraphics->GetShadowMap()->GetSRV());
 	Effects::BasicFX->SetShadowTransform(world * XMLoadFloat4x4(&pGraphics->GetShadowMap()->GetShadowTransform()));
+	Effects::BasicFX->SetFogColor(pGraphics->GetFogColor());
+	Effects::BasicFX->SetFogStart(1000.0f);
+	Effects::BasicFX->SetFogRange(50.0f);
 
 	// Loop through and draw each mesh.
 	for(int i = 0; i < mMeshList.size(); i++)
@@ -42,4 +45,9 @@ void Model::Draw(Graphics* pGraphics, CXMMATRIX world)
 void Model::AddMesh(Mesh* mesh)
 {
 	mMeshList.push_back(mesh);
+}
+
+vector<Mesh*>* Model::GetMeshList()
+{
+	return &mMeshList;
 }

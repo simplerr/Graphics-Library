@@ -92,3 +92,17 @@ void Mesh::SetTexture(Texture2D* texture)
 	mTexture = texture;
 }
 
+ID3D11Buffer* Mesh::GetVertexBuffer()
+{
+	return mVertexBuffer;
+}
+	
+ID3D11Buffer* Mesh::GetIndexBuffer()
+{
+	return mIndexBuffer;
+}
+
+int Mesh::GetNumIndices()
+{
+	return mNumIndices;
+}
