@@ -15,9 +15,10 @@ public:
 	~ModelImporter();
 
 	Model* LoadModel(string filename);
+private:
 	int FindValidPath(aiString* p_szString);
 	bool TryLongerPath(char* szTemp,aiString* p_szString);
 private:
-	map<string, Primitive*> mModelMap;
+	map<string, Model*> mModelMap;
 	string mFilename;
 };

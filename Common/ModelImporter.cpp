@@ -26,6 +26,10 @@ ModelImporter::~ModelImporter()
 
 Model* ModelImporter::LoadModel(string filename)
 {
+	// Is the model already loaded?
+	if(mModelMap.find(filename) != mModelMap.end())
+		return mModelMap[filename];
+
 	Assimp::Importer	importer;
 	mFilename =	filename;
 	Model* model = NULL;
@@ -44,6 +48,8 @@ Model* ModelImporter::LoadModel(string filename)
 		aiProcess_SplitLargeMeshes		|
 		aiProcess_ConvertToLeftHanded	|
 		aiProcess_SortByPType);
+
+	string error = importer.GetErrorString();
 
 	// Successfully loaded the scene.
 	if(scene)
@@ -92,7 +98,7 @@ Model* ModelImporter::LoadModel(string filename)
 			mesh->SetVertices(GetD3DDevice(), vertices);
 			mesh->SetIndices(GetD3DDevice(), indices);
 
-			//if(scene->HasTextures())
+			if(_stricmp(path.C_Str(), "") != 0)
 				mesh->LoadTexture(path.C_Str());
 
 			mesh->SetMaterial(Material(ambient, diffuse, specular));
@@ -102,7 +108,9 @@ Model* ModelImporter::LoadModel(string filename)
 		}
 	}
 
-	return model;
+	// Add to the model map and return it.
+	mModelMap[filename] = model;
+	return mModelMap[filename];
 }
 
 int ModelImporter::FindValidPath(aiString* p_szString)

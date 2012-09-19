@@ -102,7 +102,7 @@ void Game::Init()
 
 	// Add some lights.
 	mLight = new Light();
-	mLight->SetMaterials(Colors::White*0.2f, Colors::White*1.0f, Colors::White*0.0f);
+	mLight->SetMaterials(Colors::White*0.4f, Colors::White*1.0f, Colors::White*0.0f);
 	mLight->SetDirection(0.5f, -0.5f, 0.5f);
 	mLight->SetType(DIRECTIONAL_LIGHT);
 	mLight->SetPosition(0, 5, 5);
@@ -122,7 +122,11 @@ void Game::Init()
 
 	// Assimp testing.
 	mModelImporter = new ModelImporter();
-	mModel = mModelImporter->LoadModel("models/sword/uld-sword.obj");
+	//mModel = mModelImporter->LoadModel("models/sword/uld-sword.obj");
+	//mModel = mModelImporter->LoadModel("models/Patrick/patrick_bind.obj");
+	//mModel = mModelImporter->LoadModel("models/bandit_male/bandit_male.obj");
+	mModel = mModelImporter->LoadModel("models/monster/monster.x");
+	mModel2 = mModelImporter->LoadModel("models/monster/monster.x");
 }
 	
 void Game::Update(float dt)
@@ -179,9 +183,13 @@ void Game::Draw(Graphics* pGraphics)
 	mWorld->Draw(pGraphics);
 	pGraphics->DrawBillboards();
 
-	XMMATRIX world = XMMatrixScaling(15, 15, 15);
+	XMMATRIX world = XMMatrixScaling(0.15, 0.15, 0.15) * XMMatrixRotationY(3.14);
 	world *= XMMatrixTranslation(0, 20, 0);
 	mModel->Draw(pGraphics, world);
+
+	world = XMMatrixScaling(0.15, 0.15, 0.15) * XMMatrixRotationY(3.14);
+	world *= XMMatrixTranslation(0, 20, 30);
+	mModel2->Draw(pGraphics, world);
 
 	// Present the backbuffer.
 	pGraphics->Present();

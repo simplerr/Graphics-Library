@@ -34,4 +34,5 @@ private:
 	Object3D*  mTerrain;
 	ModelImporter* mModelImporter;
 	Model* mModel;
+	Model* mModel2;
 };
