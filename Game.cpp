@@ -73,21 +73,26 @@ void Game::Init()
 	mWorld = new World();
 	mWorld->Init();
 
+	// Create the model importer.
+	mModelImporter = new ModelImporter();
+
 	// Connect the graphics light list to the one in World.
 	GetGraphics()->SetLightList(mWorld->GetLights());
 
 	// Add some objects.
 	mObject = new Object3D();
+	//mObject->SetModel(mModelImporter->LoadModel("models/assassin/Crimson Assassin Athea.obj"));
+	//mObject->SetModel(mModelImporter->LoadModel("models/monster/monster.x"));
 
 	// Load the effect and the primitive.
 	mObject->SetPrimitive(gPrimitiveFactory->CreateBox());
 	//mObject->LoadTexture("textures/crate.dds");
 	//mObject->LoadNormalMap("textures/crate_nmap.dds");
 	mObject->SetPosition(XMFLOAT3(0, 15, 0));
-	//mObject->SetScale(XMFLOAT3(1, 10, 10));
+	mObject->SetScale(XMFLOAT3(0.1, 0.1, 0.1));
 	mObject->SetRotation(XMFLOAT3(0.2f, 0.2f, 0.2f));
 
-	mWorld->AddObject(mObject);
+	//mWorld->AddObject(mObject);
 
 	mObject2 = new Object3D();
 
@@ -121,7 +126,6 @@ void Game::Init()
 	GetGraphics()->GetContext()->OMSetBlendState(RenderStates::TransparentBS, blendFactor, 0xffffffff);
 
 	// Assimp testing.
-	mModelImporter = new ModelImporter();
 	//mModel = mModelImporter->LoadModel("models/sword/uld-sword.obj");
 	//mModel = mModelImporter->LoadModel("models/Patrick/patrick_bind.obj");
 	//mModel = mModelImporter->LoadModel("models/bandit_male/bandit_male.obj");

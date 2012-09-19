@@ -11,6 +11,7 @@ using namespace XNA;
 class Graphics;
 class BasicEffect;
 class Primitive;
+class Model;
 struct Texture2D;
 
 /**
@@ -35,6 +36,7 @@ public:
 	AxisAlignedBox GetBoundingBox();
 	Primitive* GetPrimitive();
 
+	void SetModel(Model* model);
 	void LoadTexture(string filename, float scale = 1.0f);
 	void SetTexture(Texture2D* texture);
 	void LoadNormalMap(string filename);
@@ -48,6 +50,7 @@ private:
 	Texture2D*	mTexture;
 	Texture2D*	mNormalMap;
 	Primitive*	mPrimitive;
+	Model*		mModel;
 	Material	mMaterial;
 	XMFLOAT3	mPosition;
 	XMFLOAT3	mRotation;

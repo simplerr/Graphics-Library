@@ -5,10 +5,12 @@
 #include "Primitive.h"
 #include "PrimitiveFactory.h"
 #include "D3DCore.h"
+#include "Model.h"
 
 Object3D::Object3D()
 {
 	mPrimitive	= nullptr;
+	mModel		= nullptr;
 	mTexture	= nullptr;
 	mNormalMap	= nullptr;
 
@@ -30,8 +32,11 @@ void Object3D::Update(float dt)
 	
 void Object3D::Draw(Graphics* pGraphics)
 {
+	// Draw the model.
+	mModel->Draw(pGraphics, GetWorldMatrix());
+
 	// Draw the primitive with the BasicFX effect.
-	pGraphics->DrawPrimitive(mPrimitive, GetWorldMatrix(), mTexture, mNormalMap, GetMaterial(), Effects::BasicFX);
+	//pGraphics->DrawPrimitive(mPrimitive, GetWorldMatrix(), mTexture, mNormalMap, GetMaterial(), Effects::BasicFX);
 	//pGraphics->DrawBoundingBox(&GetBoundingBox(), GetWorldMatrix(), Colors::Blue);
 }
 
@@ -39,6 +44,11 @@ void Object3D::Draw(Graphics* pGraphics)
 void Object3D::LoadTexture(string filename, float scale)
 {
 	mTexture = gGame->GetGraphics()->LoadTexture(filename, scale);
+}
+
+void Object3D::SetModel(Model* model)
+{
+	mModel = model;
 }
 
 //! Sets the texture to pass to the shader.

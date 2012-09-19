@@ -30,7 +30,7 @@ Model* ModelImporter::LoadModel(string filename)
 	if(mModelMap.find(filename) != mModelMap.end())
 		return mModelMap[filename];
 
-	Assimp::Importer	importer;
+	Assimp::Importer importer;
 	mFilename =	filename;
 	Model* model = NULL;
 
@@ -101,7 +101,7 @@ Model* ModelImporter::LoadModel(string filename)
 			if(_stricmp(path.C_Str(), "") != 0)
 				mesh->LoadTexture(path.C_Str());
 
-			mesh->SetMaterial(Material(ambient, diffuse, specular));
+			mesh->SetMaterial(Material(Colors::White));//, diffuse, specular));
 
 			// Add the mesh to the model.
 			model->AddMesh(mesh);
