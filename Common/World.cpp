@@ -9,6 +9,7 @@
 #include "Camera.h"
 #include "Sky.h"
 #include "Terrain.h"
+#include "Model.h"
 
 World::World()
 {
@@ -17,9 +18,8 @@ World::World()
 
 void World::Init()
 {
-	mDebugObject = new Object3D();
-	mDebugObject->SetPrimitive(gPrimitiveFactory->CreateBox());
-	mDebugObject->LoadTexture("textures/crate.dds");
+	mDebugObject = new Object3D(gPrimitiveFactory->CreateBox());
+	mDebugObject->SetTexture("textures/crate.dds");
 
 	// Create the sky box.
 	mSkyBox = new Sky("textures/sky.dds", 5000.0f);

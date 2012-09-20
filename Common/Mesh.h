@@ -21,10 +21,8 @@ public:
 	void SetTexture(Texture2D* texture);
 	void LoadTexture(string filename);
 
-	Primitive* GetPrimitive();
-	ID3D11Buffer* GetVertexBuffer();
-	ID3D11Buffer* GetIndexBuffer();
-	int GetNumIndices();
+	Primitive*		GetPrimitive();
+	Material		GetMaterial();
 private:
 	Primitive*		mPrimitive;
 	Texture2D*		mTexture;

@@ -16,9 +16,11 @@ PrimitiveFactory::PrimitiveFactory()
 	
 PrimitiveFactory::~PrimitiveFactory()
 {
-	// Release the buffers.
-	for(auto iter = mPrimitiveMap.begin(); iter != mPrimitiveMap.end(); iter++) 
-		(*iter).second->Cleanup();
+	// Cleanup all the primitives.
+	for(auto iter = mPrimitiveMap.begin(); iter != mPrimitiveMap.end(); iter++) {
+		//(*iter).second->Cleanup();
+		//delete (*iter).second;
+	}
 }
 
 //! Adds a primitive to the map.

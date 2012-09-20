@@ -80,23 +80,10 @@ void Game::Init()
 	GetGraphics()->SetLightList(mWorld->GetLights());
 
 	// Add some objects.
-	mObject = new Object3D();
-	mObject->SetModel(mModelImporter->LoadModel("models/assassin/Crimson Assassin Athea.obj"));
-	mObject->SetPrimitive(gPrimitiveFactory->CreateBox());
+	mObject = new Object3D(mModelImporter, "models/assassin/Crimson Assassin Athea.obj");
 	mObject->SetPosition(XMFLOAT3(0, 15, 0));
 	mObject->SetScale(XMFLOAT3(0.1, 0.1, 0.1));
 	mWorld->AddObject(mObject);
-
-	mObject2 = new Object3D();
-
-	// Load the effect and the primitive.
-	mObject2->SetPrimitive(gPrimitiveFactory->CreateBox());
-	mObject2->LoadTexture("textures/crate.dds");
-	mObject2->SetPosition(XMFLOAT3(0, 25, 0));
-	mObject2->SetScale(XMFLOAT3(3, 7, 5));
-	mObject2->SetRotation(XMFLOAT3(0, 0, 0.2f));
-
-	//mWorld->AddObject(mObject2);
 
 	// Add some lights.
 	mLight = new Light();

@@ -183,6 +183,11 @@ XMFLOAT4 operator*(const XMFLOAT4 a, const float b)
 	return XMFLOAT4(a.x * b, a.y * b, a.z * b, a.w * b);
 }
 
+XMFLOAT3 operator*(const XMFLOAT3 a, const float b)
+{
+	return XMFLOAT3(a.x * b, a.y * b, a.z * b);
+}
+
 XMFLOAT2 operator+(const XMFLOAT2 a, const XMFLOAT2 b)
 {
 	XMVECTOR first = XMLoadFloat2(&a);

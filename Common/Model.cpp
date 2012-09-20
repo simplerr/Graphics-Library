@@ -52,7 +52,7 @@ void Model::AddMesh(Mesh* mesh)
 	mMeshList.push_back(mesh);
 }
 
-vector<Mesh*>* Model::GetMeshList()
+MeshList* Model::GetMeshList()
 {
 	return &mMeshList;
 }

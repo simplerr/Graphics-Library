@@ -50,3 +50,8 @@ Primitive* Mesh::GetPrimitive()
 {
 	return mPrimitive;
 }
+
+Material Mesh::GetMaterial()
+{
+	return mMaterial;
+}

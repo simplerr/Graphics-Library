@@ -5,6 +5,8 @@
 class Graphics;
 class Mesh;
 
+typedef vector<Mesh*> MeshList;
+
 class Model
 {
 public:
@@ -15,7 +17,7 @@ public:
 	void Cleanup();
 	void AddMesh(Mesh* mesh);
 
-	vector<Mesh*>* GetMeshList();
+	MeshList* GetMeshList();
 private:
-	vector<Mesh*> mMeshList;
+	MeshList mMeshList;
 };

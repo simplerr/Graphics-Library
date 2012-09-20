@@ -22,7 +22,11 @@ ModelImporter::ModelImporter(PrimitiveFactory* primitiveFactory)
 
 ModelImporter::~ModelImporter()
 {
-
+	// Cleanup all the meshes.
+	for(auto iter = mModelMap.begin(); iter != mModelMap.end(); iter++) {
+		(*iter).second->Cleanup();
+		delete (*iter).second;
+	}
 }
 
 Model* ModelImporter::LoadModel(string filename)
@@ -94,11 +98,11 @@ Model* ModelImporter::LoadModel(string filename)
 			material->Get(AI_MATKEY_COLOR_DIFFUSE, diffuse);
 			material->Get(AI_MATKEY_COLOR_SPECULAR, specular);
 
-			// Create the mesh.
+			// Create the mesh and its primitive.
 			Mesh* mesh = new Mesh();
 			Primitive* primitive = new Primitive(GetD3DDevice(), vertices, indices);
-			mPrimtiveFactory->AddPrimitive(path.C_Str(), primitive);
 			mesh->SetPrimitive(primitive);
+			mPrimtiveFactory->AddPrimitive(path.C_Str(), primitive);
 
 			if(_stricmp(path.C_Str(), "") != 0)
 				mesh->LoadTexture(path.C_Str());

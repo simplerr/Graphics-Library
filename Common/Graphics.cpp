@@ -286,7 +286,7 @@ void Graphics::FillShadowMap(ObjectList* objects)
 		// Draw all the meshes.
 		vector<Mesh*>* meshList = object->GetModel()->GetMeshList();
 		for(int j = 0; j < meshList->size(); j++)
-			meshList->operator[](i)->GetPrimitive()->Draw(GetContext());
+			meshList->operator[](j)->GetPrimitive()->Draw(GetContext());
 	}
 
 	// Restore the rasterizer state.
