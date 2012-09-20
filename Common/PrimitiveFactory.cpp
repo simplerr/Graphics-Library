@@ -18,7 +18,7 @@ PrimitiveFactory::~PrimitiveFactory()
 {
 	// Release the buffers.
 	for(auto iter = mPrimitiveMap.begin(); iter != mPrimitiveMap.end(); iter++) 
-		(*iter).second.Cleanup();
+		(*iter).second->Cleanup();
 }
 
 //! Adds a primitive to the map.

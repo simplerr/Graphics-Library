@@ -51,7 +51,6 @@ public:
 private:
 	Texture2D*	mTexture;
 	Texture2D*	mNormalMap;
-	Primitive*	mPrimitive;
 	Model*		mModel;
 	Material	mMaterial;
 	XMFLOAT3	mPosition;

@@ -286,20 +286,7 @@ void Graphics::FillShadowMap(ObjectList* objects)
 		// Draw all the meshes.
 		vector<Mesh*>* meshList = object->GetModel()->GetMeshList();
 		for(int j = 0; j < meshList->size(); j++)
-		{
-			Mesh* mesh = meshList->operator[](i);	
-			ID3D11Buffer* vb = mesh->GetVertexBuffer();
-			ID3D11Buffer* ib = mesh->GetIndexBuffer();
-
-			// Set the vertex and index buffers to the Input Assembler stage.
-			UINT stride = sizeof(Vertex);
-			UINT offset = 0;
-			GetContext()->IASetVertexBuffers(0, 1, &vb, &stride, &offset);
-			GetContext()->IASetIndexBuffer(ib, DXGI_FORMAT_R32_UINT, 0);	// [NOTE] Important with right format!! 16 or 32!
-
-			// Draw the mesh.
-			GetContext()->DrawIndexed(mesh->GetNumIndices(), 0, 0);
-		}
+			meshList->operator[](i)->GetPrimitive()->Draw(GetContext());
 	}
 
 	// Restore the rasterizer state.

@@ -4,13 +4,7 @@
 #include <vector>
 
 using namespace std;
-
-Primitive::Primitive(ID3D11Device* device, vector<Vertex> vertices, vector<UINT> indices)
-{
-	SetVertices(device, vertices);
-	SetIndices(device, indices);
-}
-	'
+	
 Primitive::Primitive()
 {
 
@@ -35,30 +29,6 @@ void Primitive::Draw(ID3D11DeviceContext* dc)
 	dc->IASetVertexBuffers(0, 1, &mVertexBuffer, &stride, &offset);
 	dc->IASetIndexBuffer(mIndexBuffer, DXGI_FORMAT_R32_UINT, 0);	// [NOTE] Important with right format!! 16 or 32!
 	dc->DrawIndexed(mNumIndices, 0, 0);
-}
-	
-void Primitive::SetVertices(ID3D11Device* device, vector<Vertex> vertices)
-{
-	// Fill out the D3D11_BUFFER_DESC struct.
-	D3D11_BUFFER_DESC vbd;
-    vbd.Usage = D3D11_USAGE_IMMUTABLE;
-	vbd.ByteWidth = sizeof(Vertex) * vertices.size();
-    vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-    vbd.CPUAccessFlags = 0;
-    vbd.MiscFlags = 0;
-	vbd.StructureByteStride = 0;
-
-	// Set the init data.
-    D3D11_SUBRESOURCE_DATA initData;
-    initData.pSysMem = &vertices[0];
-
-	// Create the vertex buffer.
-	HR(device->CreateBuffer(&vbd, &initData, &mVertexBuffer));
-
-	mNumVertices = vertices.size();
-
-	// Compute the AABB.
-	XNA::ComputeBoundingAxisAlignedBoxFromPoints(&mBoundingBox, vertices.size(), &vertices[0].Pos, sizeof(Vertex));
 }
 	
 void Primitive::SetIndices(ID3D11Device* device, vector<UINT> indices)

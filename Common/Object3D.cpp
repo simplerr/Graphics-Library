@@ -9,7 +9,6 @@
 
 Object3D::Object3D()
 {
-	mPrimitive	= nullptr;
 	mModel		= nullptr;
 	mTexture	= nullptr;
 	mNormalMap	= nullptr;
@@ -35,10 +34,6 @@ void Object3D::Draw(Graphics* pGraphics)
 	// Draw the model.
 	if(mModel != 0)
 		mModel->Draw(pGraphics, GetWorldMatrix());
-	else
-	// Draw the primitive with the BasicFX effect.
-		pGraphics->DrawPrimitive(mPrimitive, GetWorldMatrix(), mTexture, mNormalMap, GetMaterial(), Effects::BasicFX);
-	//pGraphics->DrawBoundingBox(&GetBoundingBox(), GetWorldMatrix(), Colors::Blue);
 }
 
 //! Loads the texture to pass to the shader.
@@ -77,10 +72,10 @@ void Object3D::SetMaterial(Material material)
 //! Sets the primitive to use when drawing.
 void Object3D::SetPrimitive(Primitive* primitive)
 {
-	if(mPrimitive != nullptr)
+	/*if(mPrimitive != nullptr)
 		mPrimitive->Cleanup();
 
-	mPrimitive = primitive;
+	mPrimitive = primitive;*/
 }
 
 void Object3D::SetPosition(XMFLOAT3 position)
@@ -136,13 +131,14 @@ XMFLOAT3 Object3D::GetScale()
 
 Primitive* Object3D::GetPrimitive()
 {
-	return mPrimitive;
+	//return mPrimitive;
+	return 0;
 }
 
 //! Returns the bounding box in WORLD space.
 AxisAlignedBox Object3D::GetBoundingBox()
 {
-	AxisAlignedBox aabb = mPrimitive->GetBoundingBox();
+	AxisAlignedBox aabb;// = mPrimitive->GetBoundingBox();
 
 	// Break up the world matrix into it's components.
 	XMVECTOR scale, rotation, translation;

@@ -9,7 +9,7 @@
 Sky::Sky(string texture, float radius)
 {
 	mTexture = gGame->GetGraphics()->LoadTexture(texture);
-	mPrimitive = gPrimitiveFactory->CreateSphre(5000.0f, 30, 30);
+	mPrimitive = gPrimitiveFactory->CreateSphere(5000.0f, 30, 30);
 }
 	
 Sky::~Sky()

@@ -74,7 +74,7 @@ void Game::Init()
 	mWorld->Init();
 
 	// Create the model importer.
-	mModelImporter = new ModelImporter();
+	mModelImporter = new ModelImporter(gPrimitiveFactory);
 
 	// Connect the graphics light list to the one in World.
 	GetGraphics()->SetLightList(mWorld->GetLights());

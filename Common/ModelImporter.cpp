@@ -96,8 +96,9 @@ Model* ModelImporter::LoadModel(string filename)
 
 			// Create the mesh.
 			Mesh* mesh = new Mesh();
-			mesh->SetVertices(GetD3DDevice(), vertices);
-			mesh->SetIndices(GetD3DDevice(), indices);
+			Primitive* primitive = new Primitive(GetD3DDevice(), vertices, indices);
+			mPrimtiveFactory->AddPrimitive(path.C_Str(), primitive);
+			mesh->SetPrimitive(primitive);
 
 			if(_stricmp(path.C_Str(), "") != 0)
 				mesh->LoadTexture(path.C_Str());
