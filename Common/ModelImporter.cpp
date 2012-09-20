@@ -5,6 +5,7 @@
 #include "ModelImporter.h"
 #include "Vertex.h"
 #include "Primitive.h"
+#include "PrimitiveFactory.h"
 #include "Runnable.h"
 #include "Graphics.h"
 #include <assimp\cimport.h>
@@ -14,9 +15,9 @@
 #include "Mesh.h"
 #include "Light.h"
 
-ModelImporter::ModelImporter()
+ModelImporter::ModelImporter(PrimitiveFactory* primitiveFactory)
 {
-	
+	mPrimtiveFactory = primitiveFactory;	
 }
 
 ModelImporter::~ModelImporter()

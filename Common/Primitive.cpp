@@ -5,11 +5,17 @@
 
 using namespace std;
 
+Primitive::Primitive(ID3D11Device* device, vector<Vertex> vertices, vector<UINT> indices)
+{
+	SetVertices(device, vertices);
+	SetIndices(device, indices);
+}
+	'
 Primitive::Primitive()
 {
 
 }
-	
+
 Primitive::~Primitive()
 {
 

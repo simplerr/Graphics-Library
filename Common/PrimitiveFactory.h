@@ -19,17 +19,15 @@ public:
 	PrimitiveFactory();
 	~PrimitiveFactory();
 
+	void AddPrimitive(string name, Primitive* primitive);
+
 	Primitive* CreateBox();
 	Primitive* CreateGrid(float width, float depth, UINT m, UINT n);
 	Primitive* CreateQuad();
-	Primitive* CreateSphre(float radius, UINT sliceCount, UINT stackCount);
+	Primitive* CreateSphere(float radius, UINT sliceCount, UINT stackCount);
 	Primitive* CreateTerrain(Terrain* terrain);
-
-	// For grid landscapes.
-	float GetHeight(float x, float z);
-	XMFLOAT3 GetHillNormal(float x, float z);
 private:
-	map<string, Primitive> mPrimitiveMap;
+	map<string, Primitive*> mPrimitiveMap;
 };
 
 extern PrimitiveFactory* gPrimitiveFactory;

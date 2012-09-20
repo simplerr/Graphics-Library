@@ -12,6 +12,7 @@ public:
 	~Model();
 
 	void Draw(Graphics* pGraphics, CXMMATRIX world);
+	void Cleanup();
 	void AddMesh(Mesh* mesh);
 
 	vector<Mesh*>* GetMeshList();

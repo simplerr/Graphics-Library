@@ -6,6 +6,7 @@
 
 class Graphics;
 class Texture2D;
+class Primitive;
 
 class Mesh
 {
@@ -25,12 +26,13 @@ public:
 	ID3D11Buffer* GetIndexBuffer();
 	int GetNumIndices();
 private:
-	ID3D11Buffer*	mVertexBuffer;
-	ID3D11Buffer*	mIndexBuffer;
+	Primitive*		mPrimitive;
+		ID3D11Buffer*	mVertexBuffer;
+		ID3D11Buffer*	mIndexBuffer;
+		AxisAlignedBox	mBoundingBox;
+		UINT			mNumVertices;
+		UINT			mNumIndices;
 	Texture2D*		mTexture;
 	Material		mMaterial;
-	AxisAlignedBox	mBoundingBox;
-	UINT			mNumVertices;
-	UINT			mNumIndices;
 	vector<Vertex>	mVertices;
 };

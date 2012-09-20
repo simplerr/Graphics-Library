@@ -15,6 +15,11 @@ Model::~Model()
 
 }
 
+void Model::Cleanup()
+{
+
+}
+
 void Model::Draw(Graphics* pGraphics, CXMMATRIX world)
 {
 	// Set the input layout and the primitive topology.

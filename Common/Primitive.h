@@ -13,6 +13,7 @@ struct Vertex;
 class Primitive
 {
 public:
+	Primitive(ID3D11Device* device, vector<Vertex> vertices, vector<UINT> indices);
 	Primitive();
 	~Primitive();
 

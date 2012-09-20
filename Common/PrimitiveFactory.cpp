@@ -21,115 +21,105 @@ PrimitiveFactory::~PrimitiveFactory()
 		(*iter).second.Cleanup();
 }
 
-//! Creates a box primitive.
+//! Adds a primitive to the map.
+void PrimitiveFactory::AddPrimitive(string name, Primitive* primitive)
+{
+	mPrimitiveMap[name] = primitive;
+}
+
+//! Creates a box.
 Primitive* PrimitiveFactory::CreateBox()
 {
 	// Already created a box primitive?
 	if(mPrimitiveMap.find("box") != mPrimitiveMap.end())
-		return &mPrimitiveMap["box"];
+		return mPrimitiveMap["box"];
 
-	Primitive primitive;
+	vector<Vertex> vertices(24);
+	vector<UINT> indices(36);
 
 	// Create the vertices.
-    vector<Vertex> v;
-	v.resize(24);
 	float w2, h2, d2;
 	w2 = h2 = d2 = 1.0f;
 
 	// Fill in the front face vertex data.
-	v[0] = Vertex(-w2, -h2, -d2, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
-	v[1] = Vertex(-w2, +h2, -d2, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-	v[2] = Vertex(+w2, +h2, -d2, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f);
-	v[3] = Vertex(+w2, -h2, -d2, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f);
+	vertices[0] = Vertex(-w2, -h2, -d2, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+	vertices[1] = Vertex(-w2, +h2, -d2, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+	vertices[2] = Vertex(+w2, +h2, -d2, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+	vertices[3] = Vertex(+w2, -h2, -d2, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f);
 
 	// Fill in the back face vertex data.
-	v[4] = Vertex(-w2, -h2, +d2, 0.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f);
-	v[5] = Vertex(+w2, -h2, +d2, 0.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
-	v[6] = Vertex(+w2, +h2, +d2, 0.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-	v[7] = Vertex(-w2, +h2, +d2, 0.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+	vertices[4] = Vertex(-w2, -h2, +d2, 0.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f);
+	vertices[5] = Vertex(+w2, -h2, +d2, 0.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+	vertices[6] = Vertex(+w2, +h2, +d2, 0.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+	vertices[7] = Vertex(-w2, +h2, +d2, 0.0f, 0.0f, 1.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 
 	// Fill in the top face vertex data.
-	v[8]  = Vertex(-w2, +h2, -d2, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
-	v[9]  = Vertex(-w2, +h2, +d2, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-	v[10] = Vertex(+w2, +h2, +d2, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f);
-	v[11] = Vertex(+w2, +h2, -d2, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f);
+	vertices[8]  = Vertex(-w2, +h2, -d2, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+	vertices[9]  = Vertex(-w2, +h2, +d2, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+	vertices[10] = Vertex(+w2, +h2, +d2, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+	vertices[11] = Vertex(+w2, +h2, -d2, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f);
 
 	// Fill in the bottom face vertex data.
-	v[12] = Vertex(-w2, -h2, -d2, 0.0f, -1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f);
-	v[13] = Vertex(+w2, -h2, -d2, 0.0f, -1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
-	v[14] = Vertex(+w2, -h2, +d2, 0.0f, -1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
-	v[15] = Vertex(-w2, -h2, +d2, 0.0f, -1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+	vertices[12] = Vertex(-w2, -h2, -d2, 0.0f, -1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f, 1.0f);
+	vertices[13] = Vertex(+w2, -h2, -d2, 0.0f, -1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+	vertices[14] = Vertex(+w2, -h2, +d2, 0.0f, -1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
+	vertices[15] = Vertex(-w2, -h2, +d2, 0.0f, -1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 
 	// Fill in the left face vertex data.
-	v[16] = Vertex(-w2, -h2, +d2, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f);
-	v[17] = Vertex(-w2, +h2, +d2, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f);
-	v[18] = Vertex(-w2, +h2, -d2, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f);
-	v[19] = Vertex(-w2, -h2, -d2, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f);
+	vertices[16] = Vertex(-w2, -h2, +d2, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 1.0f);
+	vertices[17] = Vertex(-w2, +h2, +d2, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f);
+	vertices[18] = Vertex(-w2, +h2, -d2, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f);
+	vertices[19] = Vertex(-w2, -h2, -d2, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 1.0f, 1.0f);
 
 	// Fill in the right face vertex data.
-	v[20] = Vertex(+w2, -h2, -d2, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f);
-	v[21] = Vertex(+w2, +h2, -d2, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f);
-	v[22] = Vertex(+w2, +h2, +d2, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f);
-	v[23] = Vertex(+w2, -h2, +d2, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
-
-	// Set the primitives vertices.
-    primitive.SetVertices(gGame->GetD3D()->GetDevice(), v);
-
-	vector<UINT> i(36);
+	vertices[20] = Vertex(+w2, -h2, -d2, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f);
+	vertices[21] = Vertex(+w2, +h2, -d2, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f);
+	vertices[22] = Vertex(+w2, +h2, +d2, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f);
+	vertices[23] = Vertex(+w2, -h2, +d2, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f);
 
 	// Fill in the front face index data
-	i[0] = 0; i[1] = 1; i[2] = 2;
-	i[3] = 0; i[4] = 2; i[5] = 3;
+	indices[0] = 0; indices[1] = 1; indices[2] = 2;
+	indices[3] = 0; indices[4] = 2; indices[5] = 3;
 
 	// Fill in the back face index data
-	i[6] = 4; i[7]  = 5; i[8]  = 6;
-	i[9] = 4; i[10] = 6; i[11] = 7;
+	indices[6] = 4; indices[7]  = 5; indices[8]  = 6;
+	indices[9] = 4; indices[10] = 6; indices[11] = 7;
 
 	// Fill in the top face index data
-	i[12] = 8; i[13] =  9; i[14] = 10;
-	i[15] = 8; i[16] = 10; i[17] = 11;
+	indices[12] = 8; indices[13] =  9; indices[14] = 10;
+	indices[15] = 8; indices[16] = 10; indices[17] = 11;
 
 	// Fill in the bottom face index data
-	i[18] = 12; i[19] = 13; i[20] = 14;
-	i[21] = 12; i[22] = 14; i[23] = 15;
+	indices[18] = 12; indices[19] = 13; indices[20] = 14;
+	indices[21] = 12; indices[22] = 14; indices[23] = 15;
 
 	// Fill in the left face index data
-	i[24] = 16; i[25] = 17; i[26] = 18;
-	i[27] = 16; i[28] = 18; i[29] = 19;
+	indices[24] = 16; indices[25] = 17; indices[26] = 18;
+	indices[27] = 16; indices[28] = 18; indices[29] = 19;
 
 	// Fill in the right face index data
-	i[30] = 20; i[31] = 21; i[32] = 22;
-	i[33] = 20; i[34] = 22; i[35] = 23;
-
-	// Set the indices.
-	primitive.SetIndices(gGame->GetD3D()->GetDevice(), i);
+	indices[30] = 20; indices[31] = 21; indices[32] = 22;
+	indices[33] = 20; indices[34] = 22; indices[35] = 23;
 
 	// Add to the primitive map.
-	mPrimitiveMap["box"] = primitive;
-
-	// Return adress to newly added primitive.
-	return &mPrimitiveMap["box"];
+	AddPrimitive("box", new Primitive(GetD3DDevice(), vertices, indices));
+	return mPrimitiveMap["box"];
 }
 
+//! Creates a quad.
 Primitive* PrimitiveFactory::CreateQuad()
 {
 	// Already created a box primitive?
 	if(mPrimitiveMap.find("quad") != mPrimitiveMap.end())
-		return &mPrimitiveMap["quad"];
+		return mPrimitiveMap["quad"];
 
-	Primitive primitive;
-
-	vector<Vertex> vertices;
-	vertices.resize(4);
+	vector<Vertex> vertices(4);
 	vertices[0] = Vertex(-1.0f, -1.0f, 0.0f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
 	vertices[1] = Vertex(-1.0f, +1.0f, 0.0f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f);
 	vertices[2] = Vertex(+1.0f, +1.0f, 0.0f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 	vertices[3] = Vertex(+1.0f, -1.0f, 0.0f, 0.0f, 0.0f, -1.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f);
 
-	primitive.SetVertices(gGame->GetD3D()->GetDevice(), vertices);
-
 	vector<UINT> indices(6);
-
 	indices[0] = 0;
 	indices[1] = 1;
 	indices[2] = 2;
@@ -137,19 +127,16 @@ Primitive* PrimitiveFactory::CreateQuad()
 	indices[4] = 2;
 	indices[5] = 3;
 
-	primitive.SetIndices(gGame->GetD3D()->GetDevice(), indices);
-
 	// Add to the primitive map.
-	mPrimitiveMap["quad"] = primitive;
-
-	// Return the adress to the newly added primitive.
-	return &mPrimitiveMap["quad"];
+	AddPrimitive("quad", new Primitive(GetD3DDevice(), vertices, indices));
+	return mPrimitiveMap["quad"];
 }
 
+//! Creates a grid.
 Primitive* PrimitiveFactory::CreateGrid(float width, float depth, UINT m, UINT n)
 {
 	if(mPrimitiveMap.find("grid") != mPrimitiveMap.end())
-		return &mPrimitiveMap["grid"];
+		return mPrimitiveMap["grid"];
 
 	UINT vertexCount = m*n;
 	UINT faceCount   = (m-1)*(n-1)*2;
@@ -163,11 +150,8 @@ Primitive* PrimitiveFactory::CreateGrid(float width, float depth, UINT m, UINT n
 	float du = 1.0f / (n-1);
 	float dv = 1.0f / (m-1);
 
-	Primitive primitive;
-
 	// Create the vertices.
-	vector<Vertex> vertices;
-	vertices.resize(vertexCount);
+	vector<Vertex> vertices(vertexCount);
 	for(UINT i = 0; i < m; ++i)
 	{
 		float z = halfDepth - i*dz;
@@ -176,19 +160,15 @@ Primitive* PrimitiveFactory::CreateGrid(float width, float depth, UINT m, UINT n
 			float x = -halfWidth + j*dx;
 
 			vertices[i*n+j].Pos		= XMFLOAT3(x, 0.0f, z);
-			vertices[i*n+j].Pos.y	= GetHeight(x, z);
-			vertices[i*n+j].Normal	= GetHillNormal(x, z);
+			vertices[i*n+j].Normal	= XMFLOAT3(0, 1, 0);
 			vertices[i*n+j].Tangent = XMFLOAT3(1.0f, 0.0f, 0.0f);
 			vertices[i*n+j].Tex.x	= j*du;
 			vertices[i*n+j].Tex.y	= i*dv;
 		}
 	}
- 
-	primitive.SetVertices(gGame->GetD3D()->GetDevice(), vertices);
 
 	// Create the indices.
-	vector<UINT> indices;
-	indices.resize(faceCount*3);
+	vector<UINT> indices(faceCount*3);
 
 	// Iterate over each quad and compute indices.
 	UINT k = 0;
@@ -208,19 +188,17 @@ Primitive* PrimitiveFactory::CreateGrid(float width, float depth, UINT m, UINT n
 		}
 	}
 
-	primitive.SetIndices(gGame->GetD3D()->GetDevice(), indices);
-
-	mPrimitiveMap["grid"] = primitive;
-	return &mPrimitiveMap["grid"];
+	// Add to the primitive map.
+	AddPrimitive("grid", new Primitive(GetD3DDevice(), vertices, indices));
+	return mPrimitiveMap["grid"];
 }
 
+//! Creates a terrain.
 Primitive* PrimitiveFactory::CreateTerrain(Terrain* terrain)
 {
 	string name = terrain->GetInfo().HeightMapFilename;
 	if(mPrimitiveMap.find(name) != mPrimitiveMap.end())
-		return &mPrimitiveMap[name];
-
-	Primitive primitive;
+		return mPrimitiveMap[name];
 
 	InitInfo info = terrain->GetInfo();
 
@@ -239,8 +217,7 @@ Primitive* PrimitiveFactory::CreateTerrain(Terrain* terrain)
 	float dv = 1.0f / (n-1);
 
 	// Create the vertices.
-	vector<Vertex> vertices;
-	vertices.resize(vertexCount);
+	vector<Vertex> vertices(vertexCount);
 	for(UINT i = 0; i < m; ++i)
 	{
 		float z = halfDepth - i*dz;
@@ -255,12 +232,9 @@ Primitive* PrimitiveFactory::CreateTerrain(Terrain* terrain)
 			vertices[i*n+j].Tex.y	= i*dv;
 		}
 	}
- 
-	primitive.SetVertices(gGame->GetD3D()->GetDevice(), vertices);
 
 	// Create the indices.
-	vector<UINT> indices;
-	indices.resize(faceCount*3);
+	vector<UINT> indices(faceCount*3);
 
 	// Iterate over each quad and compute indices.
 	UINT k = 0;
@@ -280,19 +254,17 @@ Primitive* PrimitiveFactory::CreateTerrain(Terrain* terrain)
 		}
 	}
 
-	primitive.SetIndices(gGame->GetD3D()->GetDevice(), indices);
-
-	mPrimitiveMap[name] = primitive;
-	return &mPrimitiveMap[name];
+	// Add to the primitive map.
+	AddPrimitive(name, new Primitive(GetD3DDevice(), vertices, indices));
+	return mPrimitiveMap[name];
 }
 
 // From Lunas book.
-Primitive* PrimitiveFactory::CreateSphre(float radius, UINT sliceCount, UINT stackCount)
+Primitive* PrimitiveFactory::CreateSphere(float radius, UINT sliceCount, UINT stackCount)
 {
-	if(mPrimitiveMap.find("sphre") != mPrimitiveMap.end())
-		return &mPrimitiveMap["sphre"];
+	if(mPrimitiveMap.find("sphere") != mPrimitiveMap.end())
+		return mPrimitiveMap["sphere"];
 
-	Primitive primitive;
 	vector<Vertex> vertices;
 	vector<UINT> indices;
 
@@ -343,8 +315,6 @@ Primitive* PrimitiveFactory::CreateSphre(float radius, UINT sliceCount, UINT sta
 	}
 
 	vertices.push_back( bottomVertex );
-
-	primitive.SetVertices(gGame->GetGraphics()->GetDevice(), vertices);
 
 	//
 	// Compute indices for top stack.  The top stack was written first to the vertex buffer
@@ -398,27 +368,7 @@ Primitive* PrimitiveFactory::CreateSphre(float radius, UINT sliceCount, UINT sta
 		indices.push_back(baseIndex+i+1);
 	}
 
-	primitive.SetIndices(gGame->GetGraphics()->GetDevice(), indices);
-
-	mPrimitiveMap["sphre"] = primitive;
-	return &mPrimitiveMap["sphre"];
-}
-
-float PrimitiveFactory::GetHeight(float x, float z)
-{
-	return 0.3f*(z*sinf(0.1f*x) + x*cosf(0.1f*z));
-}
-
-XMFLOAT3 PrimitiveFactory::GetHillNormal(float x, float z)
-{
-	// n = (-df/dx, 1, -df/dz)
-	XMFLOAT3 n(
-		-0.03f*z*cosf(0.1f*x) - 0.3f*cosf(0.1f*z),
-		1.0f,
-		-0.3f*sinf(0.1f*x) + 0.03f*x*sinf(0.1f*z));
-	
-	XMVECTOR unitNormal = XMVector3Normalize(XMLoadFloat3(&n));
-	XMStoreFloat3(&n, unitNormal);
-
-	return n;
+	// Add to the primitive map.
+	AddPrimitive("sphere", new Primitive(GetD3DDevice(), vertices, indices));
+	return mPrimitiveMap["sphere"];
 }
