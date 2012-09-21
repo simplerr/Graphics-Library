@@ -17,7 +17,8 @@ Model::~Model()
 
 void Model::Cleanup()
 {
-
+	for(int i = 0; i < mMeshList.size(); i++) 
+		delete mMeshList[i];
 }
 
 void Model::Draw(Graphics* pGraphics, CXMMATRIX world)

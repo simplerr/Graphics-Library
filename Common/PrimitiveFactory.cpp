@@ -18,8 +18,8 @@ PrimitiveFactory::~PrimitiveFactory()
 {
 	// Cleanup all the primitives.
 	for(auto iter = mPrimitiveMap.begin(); iter != mPrimitiveMap.end(); iter++) {
-		//(*iter).second->Cleanup();
-		//delete (*iter).second;
+		(*iter).second->Cleanup();
+		delete (*iter).second;
 	}
 }
 

@@ -27,12 +27,8 @@ private:
 	World* mWorld;
 	Light* mLight;
 	Light* mLight2;
-	RenderTarget* mRenderTarget;
-	Primitive* mPrimitive;
 	Object3D*  mObject;
 	Object3D*  mObject2;
 	Object3D*  mTerrain;
 	ModelImporter* mModelImporter;
-	Model* mModel;
-	Model* mModel2;
 };

@@ -1,4 +1,4 @@
-#include <crtdbg.h>
+#include <crtdbg.h> 
 #include <assert.h>
 #include <time.h>
 #include "Game.h"
@@ -19,7 +19,8 @@
 #include "Common\ShadowMap.h"
 #include "Common\ModelImporter.h"
 #include "Common\Model.h"
- 
+#include "vld.h"
+
 // Set globals to nullptrs
 Runnable*			gGame				= nullptr;
 PrimitiveFactory*	gPrimitiveFactory	= nullptr;
@@ -31,9 +32,9 @@ BillboardVertex* billboard;
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance, PSTR cmdLine, int showCmd)
 {
 	// Enable run-time memory check for debug builds.
-	#if defined(DEBUG) | defined(_DEBUG)
+	/*#if defined(DEBUG) | defined(_DEBUG)
 		_CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
-	#endif
+	#endif*/
 
 	Game game(hInstance, "Graphics Library", 800, 600);
 	gGame = &game;
@@ -97,10 +98,6 @@ void Game::Init()
 	
 	// Add test billboards.
 	billboard = GetGraphics()->AddBillboard(XMFLOAT3(0, 10, 0), XMFLOAT2(5, 5), "textures\\crate.dds");
-
-	// Testing...
-	mRenderTarget	= new RenderTarget(GetGraphics(), 256, 256);
-	mPrimitive		= gPrimitiveFactory->CreateQuad();
 
 	float blendFactor[] = {0.0f, 0.0f, 0.0f, 0.0f};
 	GetGraphics()->GetContext()->OMSetBlendState(RenderStates::TransparentBS, blendFactor, 0xffffffff);

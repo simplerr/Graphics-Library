@@ -46,6 +46,7 @@ World::~World()
 {
 	delete mSkyBox;
 	delete mTerrain;
+	delete mDebugObject;
 
 	// Delete all objects.
 	for(int i = 0; i < mObjectList.size(); i++)

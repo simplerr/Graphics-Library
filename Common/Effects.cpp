@@ -95,7 +95,7 @@ Effect::Effect(string filename, string technique)
 	
 Effect::~Effect()
 {
-
+	ReleaseCOM(mEffect);
 }
 
 //! Applies the effect to the render pipeline.

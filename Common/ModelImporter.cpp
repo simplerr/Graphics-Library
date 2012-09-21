@@ -24,8 +24,8 @@ ModelImporter::~ModelImporter()
 {
 	// Cleanup all the meshes.
 	for(auto iter = mModelMap.begin(); iter != mModelMap.end(); iter++) {
-		(*iter).second->Cleanup();
-		delete (*iter).second;
+		//(*iter).second->Cleanup();
+		//delete (*iter).second;
 	}
 }
 
