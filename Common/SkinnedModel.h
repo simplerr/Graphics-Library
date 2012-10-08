@@ -18,6 +18,8 @@ public:
 	void Update(float dt);
 	void Draw(Graphics* pGraphics, CXMMATRIX world);
 	void Cleanup();
+	void Save(string filename);
+	void Load(string filename);
 	void AddMesh(SkinnedMesh* mesh);
 	void SetAnimator(SceneAnimator* animator);
 

@@ -92,13 +92,8 @@ SkinnedModel* ModelImporter::LoadSkinnedModel(string filename)
 	importer.SetPropertyInteger(AI_CONFIG_PP_SBP_REMOVE, aiPrimitiveType_LINE);
 
 	// Load scene from the file.
-	const aiScene* scene = importer.ReadFile(filename, 
-		aiProcess_CalcTangentSpace		| 
-		aiProcess_Triangulate			| 
-		aiProcess_GenSmoothNormals		|
-		aiProcess_SplitLargeMeshes		|
-		aiProcess_ConvertToLeftHanded	|
-		aiProcess_SortByPType);
+	const aiScene* scene = importer.ReadFile(filename, aiProcess_CalcTangentSpace | aiProcess_Triangulate | aiProcess_GenSmoothNormals		
+		| aiProcess_SplitLargeMeshes | aiProcess_ConvertToLeftHanded | aiProcess_SortByPType);
 
 	if(scene)
 	{
@@ -159,13 +154,10 @@ SkinnedModel* ModelImporter::LoadSkinnedModel(string filename)
 
 			// Create the mesh and its primitive.
 			SkinnedMesh* mesh = new SkinnedMesh();
-			//mesh->SetBoneInfos(boneInfos);
-			mesh->SetVertices(GetD3DDevice(), &vertices[0], vertices.size());
-			mesh->SetIndices(GetD3DDevice(), indices);
 
-			/*Primitive* primitive = new Primitive(GetD3DDevice(), vertices, indices);
+			Primitive* primitive = new Primitive(GetD3DDevice(), vertices, indices);
 			mesh->SetPrimitive(primitive);
-			mPrimtiveFactory->AddPrimitive(path.C_Str(), primitive);*/
+			mPrimtiveFactory->AddPrimitive(path.C_Str(), primitive);
 
 			if(_stricmp(path.C_Str(), "") != 0)
 				mesh->LoadTexture(path.C_Str());

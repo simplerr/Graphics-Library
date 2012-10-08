@@ -30,15 +30,12 @@ public:
 	void SetTexture(Texture2D* texture);
 	void LoadTexture(string filename);
 
-	void SetVertices(ID3D11Device* device, const SkinnedVertex* vertices, int size);
-	void SetIndices(ID3D11Device* device, vector<UINT> indices);
+	void Save(ofstream& fout);
+	void Load(ifstream& fin);
 
 	Primitive*		GetPrimitive();
 	Material		GetMaterial();
 private:
-	ID3D11Buffer*	mVertexBuffer;
-	ID3D11Buffer*	mIndexBuffer;
-	UINT			mNumIndices;
 	Primitive*		mPrimitive;
 	Texture2D*		mTexture;
 	Material		mMaterial;

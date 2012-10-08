@@ -58,6 +58,25 @@ void SkinnedModel::Draw(Graphics* pGraphics, CXMMATRIX world)
 	}
 }
 
+void SkinnedModel::Save(string filename)
+{
+	ofstream fout(filename, ios::binary);
+
+	// Save the meshes.
+	for(int i = 0; i < mMeshList.size(); i++)
+		mMeshList[i]->Save(fout);
+
+	// Save the animations.
+	mAnimator->Save(fout);
+
+	fout.close();
+}
+	
+void SkinnedModel::Load(string filename)
+{
+
+}
+
 void SkinnedModel::SetAnimator(SceneAnimator* animator)
 {
 	mAnimator = animator;
