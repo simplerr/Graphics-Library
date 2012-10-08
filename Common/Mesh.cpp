@@ -23,7 +23,7 @@ void Mesh::Draw(Graphics* pGraphics)
 	Effects::BasicFX->Apply();
 
 	// Draw the mesh primitive.
-	mPrimitive->Draw(pGraphics->GetContext());
+	mPrimitive->Draw<Vertex>(pGraphics->GetContext());
 }
 
 void Mesh::SetPrimitive(Primitive* primitive)

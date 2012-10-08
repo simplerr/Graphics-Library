@@ -154,10 +154,12 @@ BasicEffect::~BasicEffect()
 void BasicEffect::Init()
 {
 	// Connect handlers to the effect variables.
+	mfxSkinnedTech		 = mEffect->GetTechniqueByName("SkinnedTech");
 	mfxWVP				 = mEffect->GetVariableByName("gWorldViewProj")->AsMatrix();
 	mfxWorld			 = mEffect->GetVariableByName("gWorld")->AsMatrix();
 	mfxWorldInvTranspose = mEffect->GetVariableByName("gWorldInvTranspose")->AsMatrix();
 	mfxTexTransform		 = mEffect->GetVariableByName("gTexTransform")->AsMatrix();
+	mfxBoneTransforms	 = mEffect->GetVariableByName("gBoneTransforms")->AsMatrix();
 	mfxShadowTransform   = mEffect->GetVariableByName("gShadowTransform")->AsMatrix();
 	mfxEyePosW			 = mEffect->GetVariableByName("gEyePosW")->AsVector();
 	mfxLights			 = mEffect->GetVariableByName("gLights");
@@ -177,18 +179,20 @@ void BasicEffect::Init()
 void BasicEffect::CreateInputLayout()
 {
 	// Create the vertex input layout.
-	D3D11_INPUT_ELEMENT_DESC vertexDesc[] =
+	D3D11_INPUT_ELEMENT_DESC vertexDesc[6] =
 	{
-		{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"NORMAL",   0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"TEXCOORD",   0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 32, D3D11_INPUT_PER_VERTEX_DATA, 0}
+		{"POSITION",     0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT ,  D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"NORMAL",       0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT , D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TEXCOORD",     0, DXGI_FORMAT_R32G32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT , D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TANGENT",      0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT , D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"WEIGHTS",      0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT , D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"BONEINDICES",  0, DXGI_FORMAT_R8G8B8A8_UINT,   0, D3D11_APPEND_ALIGNED_ELEMENT , D3D11_INPUT_PER_VERTEX_DATA, 0}
 	};
 
 	// Create the input layout.
     D3DX11_PASS_DESC passDesc;
     mTech->GetPassByIndex(0)->GetDesc(&passDesc);
-	HR(gGame->GetD3D()->GetDevice()->CreateInputLayout(vertexDesc, 4, passDesc.pIAInputSignature, 
+	HR(gGame->GetD3D()->GetDevice()->CreateInputLayout(vertexDesc, 6, passDesc.pIAInputSignature, 
 		passDesc.IAInputSignatureSize, &mInputLayout));
 }
 
@@ -224,6 +228,11 @@ void BasicEffect::SetNormalMap(Texture2D* normalMap)
 	if(normalMap != nullptr) {
 		mfxNormalMap->SetResource(normalMap->shaderResourceView);
 	}
+}
+
+ID3DX11EffectTechnique* BasicEffect::GetSkinnedTech()
+{
+	return mfxSkinnedTech;
 }
 
 #pragma endregion

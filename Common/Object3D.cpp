@@ -49,7 +49,7 @@ void Object3D::Draw(Graphics* pGraphics)
 	// Draw the model.
 	mModel->Draw(pGraphics, GetWorldMatrix());
 
-	pGraphics->DrawBoundingBox(&GetBoundingBox(), GetWorldMatrix(), Material(Colors::Blue));
+	//pGraphics->DrawBoundingBox(&GetBoundingBox(), GetWorldMatrix(), Material(Colors::Blue));
 }
 
 //! Loads the texture to pass to the shader.

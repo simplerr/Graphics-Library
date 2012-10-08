@@ -90,7 +90,7 @@ void Terrain::Draw(Graphics* pGraphics)
 	Effects::TerrainFX->Apply();
 
 	// Draw the primitive.
-	mPrimitive->Draw(pGraphics->GetContext());
+	mPrimitive->Draw<Vertex>(pGraphics->GetContext());
 }
 
 //! Loads a heightmap from a .RAW file.

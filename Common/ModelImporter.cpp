@@ -14,10 +14,18 @@
 #include "Model.h"
 #include "Mesh.h"
 #include "Light.h"
+#include "SkinnedModel.h"
+#include "SkinnedMesh.h"
+#include <fstream>
+#include "cAnimationController.h"
+
+ofstream fout("dasd.txt");
+int counter = 0;
 
 ModelImporter::ModelImporter(PrimitiveFactory* primitiveFactory)
 {
 	mPrimtiveFactory = primitiveFactory;	
+	LoadSkinnedModel("models/monster/monster.x");
 }
 
 ModelImporter::~ModelImporter()
@@ -27,6 +35,155 @@ ModelImporter::~ModelImporter()
 		//(*iter).second->Cleanup();
 		//delete (*iter).second;
 	}
+}
+
+vector<Weights> ModelImporter::CalculateWeights(aiMesh* mesh)
+{
+	vector<Weights> weights(mesh->mNumVertices);
+
+	// Loop through all bones.
+	for(int i = 0; i < mesh->mNumBones; i++)
+	{
+		// Loop through all the vertices the bone affects.
+		for(int j = 0; j < mesh->mBones[i]->mNumWeights; j++)
+		{
+			aiVertexWeight weight = mesh->mBones[i]->mWeights[j];
+			weights[weight.mVertexId].boneIndices.push_back(i);
+			weights[weight.mVertexId].weights.push_back(mesh->mBones[i]->mWeights[j].mWeight);
+		}
+	}
+
+	return weights;
+}
+
+void ModelImporter::CalculateBoneInfo(map<string, BoneInfo>& boneInfos, aiNode* node)
+{
+	if(node->mParent != NULL) {
+		if(string(node->mName.C_Str()) == "Bip01_Spine")
+			int sada = 1;
+
+		if(boneInfos.find(node->mName.C_Str()) != boneInfos.end()) {
+			fout << node->mName.C_Str() << endl;	
+			//fout << counter << endl;
+			counter++;
+		}
+
+		boneInfos[node->mName.C_Str()].parent = node->mParent->mName.C_Str();	
+	}
+	else
+		boneInfos[node->mName.C_Str()].parent = "SCENE_ROOT";
+
+	boneInfos[node->mName.C_Str()].toParentTransform = ToXMFloat4X4(node->mTransformation);
+
+	for(int i = 0; i < node->mNumChildren; i++)
+		CalculateBoneInfo(boneInfos, node->mChildren[i]);
+}
+
+SkinnedModel* ModelImporter::LoadSkinnedModel(string filename)
+{
+	Assimp::Importer importer;
+	mFilename =	filename;
+	SkinnedModel* model = NULL;
+
+	// Important! Makes sure that if the angle between two face normals is > 80 they are not smoothed together.
+	// Since the angle between a cubes face normals is 90 the lighting looks very bad if we don't specify this.
+	importer.SetPropertyFloat(AI_CONFIG_PP_GSN_MAX_SMOOTHING_ANGLE, 80.0f);	
+	importer.SetPropertyInteger(AI_CONFIG_IMPORT_TER_MAKE_UVS, 1);
+	importer.SetPropertyInteger(AI_CONFIG_PP_SBP_REMOVE, aiPrimitiveType_LINE);
+
+	// Load scene from the file.
+	const aiScene* scene = importer.ReadFile(filename, 
+		aiProcess_CalcTangentSpace		| 
+		aiProcess_Triangulate			| 
+		aiProcess_GenSmoothNormals		|
+		aiProcess_SplitLargeMeshes		|
+		aiProcess_ConvertToLeftHanded	|
+		aiProcess_SortByPType);
+
+	if(scene)
+	{
+		// Create the model that is getting filled out.
+		model = new SkinnedModel();
+
+		// Loop through all meshes.
+		for(int j = 0; j < scene->mNumMeshes; j++)
+		{
+			aiMesh* assimpMesh = scene->mMeshes[j];
+
+			// Calculate vertex weight and bone indices.
+			vector<Weights> weights = CalculateWeights(assimpMesh);
+
+			vector<SkinnedVertex> vertices;
+			vector<UINT> indices;
+
+			// Add vertices to the vertex list.
+			for(int i = 0; i < assimpMesh->mNumVertices; i++) 
+			{
+				aiVector3D v = assimpMesh->mVertices[i];
+				aiVector3D n = assimpMesh->mNormals[i];
+				aiVector3D t = assimpMesh->mTextureCoords[0][i];
+				n = n.Normalize();
+
+				// Pos, normal and texture coordinates.
+				SkinnedVertex vertex(v.x, v.y, v.z, n.x, n.y, n.z, 0, 0, 1, t.x, t.y);
+
+				// Bone indices and weights.
+				for(int k = 0; k < weights[i].boneIndices.size(); k++) 
+					vertex.BoneIndices[k] = weights[i].boneIndices[k];
+
+				vertex.Weights.x = weights[i].weights.size() >= 1 ? weights[i].weights[0] : 0;
+				vertex.Weights.y = weights[i].weights.size() >= 2 ? weights[i].weights[1] : 0;
+				vertex.Weights.z = weights[i].weights.size() >= 3 ? weights[i].weights[2] : 0;
+
+				vertices.push_back(vertex);
+			}
+
+			// Add indices to the index list.
+			for(int i = 0; i < assimpMesh->mNumFaces; i++) 
+				for(int k = 0; k < assimpMesh->mFaces[i].mNumIndices; k++) 
+					indices.push_back(assimpMesh->mFaces[i].mIndices[k]);
+
+			// Get the path to the texture in the directory.
+			aiString path;
+			aiMaterial* material = scene->mMaterials[assimpMesh->mMaterialIndex];
+			material->Get(AI_MATKEY_TEXTURE_DIFFUSE(0), path);
+			FindValidPath(&path);
+
+			// Extract all the ambient, diffuse and specular colors.
+			aiColor4D ambient, diffuse, specular;
+			material->Get(AI_MATKEY_COLOR_AMBIENT, ambient);
+			material->Get(AI_MATKEY_COLOR_DIFFUSE, diffuse);
+			material->Get(AI_MATKEY_COLOR_SPECULAR, specular);
+				
+			ambient = aiColor4D(1.0f, 1.0f, 1.0f, 1.0f);
+
+			// Create the mesh and its primitive.
+			SkinnedMesh* mesh = new SkinnedMesh();
+			//mesh->SetBoneInfos(boneInfos);
+			mesh->SetVertices(GetD3DDevice(), &vertices[0], vertices.size());
+			mesh->SetIndices(GetD3DDevice(), indices);
+
+			/*Primitive* primitive = new Primitive(GetD3DDevice(), vertices, indices);
+			mesh->SetPrimitive(primitive);
+			mPrimtiveFactory->AddPrimitive(path.C_Str(), primitive);*/
+
+			if(_stricmp(path.C_Str(), "") != 0)
+				mesh->LoadTexture(path.C_Str());
+
+			// [NOTE] The material should probably be white instead!
+			mesh->SetMaterial(Material(ambient, diffuse, specular));
+
+			// Add the mesh to the model.
+			model->AddMesh(mesh);
+
+			// Create the animator.
+			SceneAnimator* animator = new SceneAnimator();
+			animator->Init(scene);
+			model->SetAnimator(animator);
+		}
+	}
+
+	return model;
 }
 
 Model* ModelImporter::LoadModel(string filename)
@@ -56,6 +213,8 @@ Model* ModelImporter::LoadModel(string filename)
 
 	string error = importer.GetErrorString();
 
+	ofstream fout("dbg1.txt");
+
 	// Successfully loaded the scene.
 	if(scene)
 	{
@@ -75,6 +234,8 @@ Model* ModelImporter::LoadModel(string filename)
 				aiVector3D v = assimpMesh->mVertices[i];
 				aiVector3D n = assimpMesh->mNormals[i];
 				aiVector3D t = assimpMesh->mTextureCoords[0][i];
+
+				fout << "x: " << v.x << "y: " << v.y << "z: " << v.z << endl;
 
 				n = n.Normalize();
 				Vertex vertex(v.x, v.y, v.z, n.x, n.y, n.z, 0, 0, 0, t.x, t.y);

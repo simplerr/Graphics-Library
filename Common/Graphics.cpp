@@ -143,7 +143,7 @@ void Graphics::DrawPrimitive(Primitive* primitive, CXMMATRIX worldMatrix, Textur
 	SetEffectParameters(effect, worldMatrix, texture, normalMap, material);
 
 	// Draw the primitive.
-	primitive->Draw(context);
+	primitive->Draw<Vertex>(context);
 }
 
 //! Draws all the billboards.
@@ -207,7 +207,7 @@ void Graphics::DrawScreenQuad(Texture2D* texture, float x, float y, float width,
 	Effects::BasicFX->Apply();
 
 	// Draw the primitive.
-	mScreenQuad->Draw(context);
+	mScreenQuad->Draw<Vertex>(context);
 }
 
 void Graphics::DrawBoundingBox(AxisAlignedBox* aabb, CXMMATRIX worldMatrix, Material material, float transparency)
@@ -286,7 +286,7 @@ void Graphics::FillShadowMap(ObjectList* objects)
 		// Draw all the meshes.
 		vector<Mesh*>* meshList = object->GetModel()->GetMeshList();
 		for(int j = 0; j < meshList->size(); j++)
-			meshList->operator[](j)->GetPrimitive()->Draw(GetContext());
+			meshList->operator[](j)->GetPrimitive()->Draw<Vertex>(GetContext());
 	}
 
 	// Restore the rasterizer state.

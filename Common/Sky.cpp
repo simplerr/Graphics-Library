@@ -34,7 +34,7 @@ void Sky::Draw()
 	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	Effects::SkyFX->GetTech()->GetPassByIndex(0)->Apply(0, context);
-	mPrimitive->Draw(context);
+	mPrimitive->Draw<Vertex>(context);
 
-	mPrimitive->Draw(context);
+	mPrimitive->Draw<Vertex>(context);
 }

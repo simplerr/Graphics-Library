@@ -94,6 +94,7 @@ public:
 	void SetWorld(CXMMATRIX matrix)					{ mfxWorld->SetMatrix(reinterpret_cast<const float*>(&matrix)); }
 	void SetWorldInvTranspose(CXMMATRIX matrix)		{ mfxWorldInvTranspose->SetMatrix(reinterpret_cast<const float*>(&matrix)); }
 	void SetEyePosition(XMFLOAT3 eyePos)			{ mfxEyePosW->SetRawValue(&eyePos, 0, sizeof(XMFLOAT3)); }
+	void SetBoneTransforms(const XMFLOAT4X4* M, int cnt) { mfxBoneTransforms->SetMatrixArray(reinterpret_cast<const float*>(M), 0, cnt); }
 	void SetMaterial(Material material)				{ mfxMaterial->SetRawValue(&material, 0, sizeof(material)); }
 	void SetUseTexture(bool use)					{ mfxUseTexture->SetRawValue(&use, 0, sizeof(bool)); }
 	void SetUseNormalMap(bool use)					{ mfxUseNormalMap->SetRawValue(&use, 0, sizeof(bool)) ;}
@@ -106,6 +107,7 @@ public:
 	void SetNormalMap(Texture2D* normalMap);
 	void SetLights(LightList* lights);
 
+	ID3DX11EffectTechnique* GetSkinnedTech();
 private:
 	// Handles to effect variables.
 	ID3DX11EffectMatrixVariable* mfxWVP;
@@ -127,6 +129,10 @@ private:
 	ID3DX11EffectScalarVariable* mfxFogStart;
 	ID3DX11EffectScalarVariable* mfxFogRange;
 	ID3DX11EffectVectorVariable* mfxFogColor;
+
+	// Skinning.
+	ID3DX11EffectTechnique*		 mfxSkinnedTech;
+	ID3DX11EffectMatrixVariable* mfxBoneTransforms;
 };
 
 #pragma endregion

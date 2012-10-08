@@ -208,6 +208,33 @@ XMFLOAT2 operator-(const XMFLOAT2 a, const XMFLOAT2 b)
 	return result;
 }
 
+XMFLOAT4X4 ToXMFloat4X4(aiMatrix4x4 ai)
+{
+	XMFLOAT4X4 xm;
+
+	xm._11 = ai.a1;
+	xm._12 = ai.a2;
+	xm._13 = ai.a3;
+	xm._14 = ai.a4;
+
+	xm._21 = ai.b1;
+	xm._22 = ai.b2;
+	xm._23 = ai.b3;
+	xm._24 = ai.b4;
+
+	xm._31 = ai.c1;
+	xm._32 = ai.c2;
+	xm._33 = ai.c3;
+	xm._34 = ai.c4;
+
+	xm._41 = ai.d1;
+	xm._42 = ai.d2;
+	xm._43 = ai.d3;
+	xm._44 = ai.d4;
+
+	return xm;
+}
+
 //-----------------------------------------------------------------------------
 // Transform an axis aligned box by an angle preserving transform.
 //-----------------------------------------------------------------------------

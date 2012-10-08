@@ -95,7 +95,7 @@ void World::Draw(Graphics* pGraphics)
 		//mDebugObject->Draw(pGraphics);
 	}
 
-	mSkyBox->Draw();
+	//mSkyBox->Draw();
 }
 
 //! Adds a object to the object list.

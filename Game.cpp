@@ -19,6 +19,7 @@
 #include "Common\ShadowMap.h"
 #include "Common\ModelImporter.h"
 #include "Common\Model.h"
+#include "Common\SkinnedModel.h"
 #include "vld.h"
 
 // Set globals to nullptrs
@@ -81,14 +82,14 @@ void Game::Init()
 	GetGraphics()->SetLightList(mWorld->GetLights());
 
 	// Add some objects.
-	mObject = new Object3D(mModelImporter, "models/assassin/Crimson Assassin Athea.obj");
+	mObject = new Object3D(gPrimitiveFactory->CreateBox());// mModelImporter, "models/monster/monster.x");
 	mObject->SetPosition(XMFLOAT3(0, 15, 0));
 	mObject->SetScale(XMFLOAT3(0.1, 0.1, 0.1));
 	mWorld->AddObject(mObject);
 
 	// Add some lights.
 	mLight = new Light();
-	mLight->SetMaterials(Colors::White*0.4f, Colors::White*1.0f, Colors::White*0.0f);
+	mLight->SetMaterials(Colors::White*0.2f, Colors::White*1.0f, Colors::White*0.0f);
 	mLight->SetDirection(0.5f, -0.5f, 0.5f);
 	mLight->SetType(DIRECTIONAL_LIGHT);
 	mLight->SetPosition(0, 5, 5);
@@ -101,6 +102,8 @@ void Game::Init()
 
 	float blendFactor[] = {0.0f, 0.0f, 0.0f, 0.0f};
 	GetGraphics()->GetContext()->OMSetBlendState(RenderStates::TransparentBS, blendFactor, 0xffffffff);
+
+	mSkinnedModel = mModelImporter->LoadSkinnedModel("models/monster/monster.x");
 }
 	
 void Game::Update(float dt)
@@ -108,6 +111,8 @@ void Game::Update(float dt)
 	gInput->Update(dt);
 	GetGraphics()->Update(dt);
 	mWorld->Update(dt);
+
+	mSkinnedModel->Update(dt);
 
 	static float speed = 0.05;
 	if(gInput->KeyDown('1'))
@@ -136,9 +141,9 @@ void Game::Update(float dt)
 	}
 
 	if(gInput->KeyDown('V'))
-		mObject->SetPosition(mObject->GetPosition() + XMFLOAT3(0, 0, 0.03));
+		mSkinnedModel->SetAnimation(0);
 	if(gInput->KeyDown('B'))
-		mObject->SetPosition(mObject->GetPosition() - XMFLOAT3(0, 0, 0.03));
+		mSkinnedModel->SetAnimation(1);
 }
 	
 void Game::Draw(Graphics* pGraphics)
@@ -154,9 +159,14 @@ void Game::Draw(Graphics* pGraphics)
 	pGraphics->FillShadowMap(mWorld->GetObjects());
 
 	// Draw all objects.
-	mWorld->Draw(pGraphics);
+	mWorld->Draw(pGraphics);	
 	pGraphics->DrawBillboards();
 
+	XMMATRIX world = XMMatrixIdentity();
+	world = XMMatrixScaling(0.2, 0.2, 0.2);
+	world *= XMMatrixTranslation(0, 30, 0);
+	mSkinnedModel->Draw(pGraphics, world);
+	
 	// Present the backbuffer.
 	pGraphics->Present();
 }

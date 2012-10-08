@@ -10,6 +10,7 @@
 #include <xnamath.h>
 #include <D3DX10math.h>
 #include "xnacollision.h"
+#include <assimp\Importer.hpp>
 
 using namespace XNA;
 using namespace std;
@@ -58,6 +59,8 @@ XMFLOAT2 operator-(const XMFLOAT2 a, const XMFLOAT2 b);
 
 XMFLOAT4 operator*(const XMFLOAT4 a, const float b);
 XMFLOAT3 operator*(const XMFLOAT3 a, const float b);
+
+XMFLOAT4X4 ToXMFloat4X4(aiMatrix4x4 ai);
 
 // Returns the inverse transpose.
 XMMATRIX InverseTranspose(CXMMATRIX M);

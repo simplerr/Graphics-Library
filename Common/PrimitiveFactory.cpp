@@ -163,7 +163,7 @@ Primitive* PrimitiveFactory::CreateGrid(float width, float depth, UINT m, UINT n
 
 			vertices[i*n+j].Pos		= XMFLOAT3(x, 0.0f, z);
 			vertices[i*n+j].Normal	= XMFLOAT3(0, 1, 0);
-			vertices[i*n+j].Tangent = XMFLOAT3(1.0f, 0.0f, 0.0f);
+			vertices[i*n+j].Tangent = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
 			vertices[i*n+j].Tex.x	= j*du;
 			vertices[i*n+j].Tex.y	= i*dv;
 		}
@@ -229,7 +229,7 @@ Primitive* PrimitiveFactory::CreateTerrain(Terrain* terrain)
 
 			vertices[i*n+j].Pos		= XMFLOAT3(x, terrain->GetHeight(x, z), z);
 			vertices[i*n+j].Normal	= XMFLOAT3(0, 1, 0);
-			vertices[i*n+j].Tangent = XMFLOAT3(1.0f, 0.0f, 0.0f);
+			vertices[i*n+j].Tangent = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
 			vertices[i*n+j].Tex.x	= j*du;
 			vertices[i*n+j].Tex.y	= i*dv;
 		}

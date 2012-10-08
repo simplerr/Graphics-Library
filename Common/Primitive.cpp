@@ -21,15 +21,6 @@ void Primitive::Cleanup()
 	ReleaseCOM(mVertexBuffer);
 	ReleaseCOM(mIndexBuffer);
 }
-
-void Primitive::Draw(ID3D11DeviceContext* dc)
-{
-	UINT stride = sizeof(Vertex);
-	UINT offset = 0;
-	dc->IASetVertexBuffers(0, 1, &mVertexBuffer, &stride, &offset);
-	dc->IASetIndexBuffer(mIndexBuffer, DXGI_FORMAT_R32_UINT, 0);	// [NOTE] Important with right format!! 16 or 32!
-	dc->DrawIndexed(mNumIndices, 0, 0);
-}
 	
 void Primitive::SetIndices(ID3D11Device* device, vector<UINT> indices)
 {
