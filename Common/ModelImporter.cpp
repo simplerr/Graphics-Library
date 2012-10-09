@@ -25,7 +25,6 @@ int counter = 0;
 ModelImporter::ModelImporter(PrimitiveFactory* primitiveFactory)
 {
 	mPrimtiveFactory = primitiveFactory;	
-	LoadSkinnedModel("models/monster/monster.x");
 }
 
 ModelImporter::~ModelImporter()
@@ -157,6 +156,8 @@ SkinnedModel* ModelImporter::LoadSkinnedModel(string filename)
 
 			Primitive* primitive = new Primitive(GetD3DDevice(), vertices, indices);
 			mesh->SetPrimitive(primitive);
+			mesh->SetVertices(vertices);
+			mesh->SetIndices(indices);
 			mPrimtiveFactory->AddPrimitive(path.C_Str(), primitive);
 
 			if(_stricmp(path.C_Str(), "") != 0)

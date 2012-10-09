@@ -60,7 +60,9 @@ Game::Game(HINSTANCE hInstance, string caption, int width, int height)
 	
 Game::~Game()
 {
-	delete gPrimitiveFactory;
+	//mSkinnedModel->Save("tiny.txt");
+
+	delete gPrimitiveFactory;	
 	delete gInput;
 	delete mWorld;
 	delete mModelImporter;
@@ -85,7 +87,7 @@ void Game::Init()
 	mObject = new Object3D(gPrimitiveFactory->CreateBox());// mModelImporter, "models/monster/monster.x");
 	mObject->SetPosition(XMFLOAT3(0, 15, 0));
 	mObject->SetScale(XMFLOAT3(0.1, 0.1, 0.1));
-	mWorld->AddObject(mObject);
+	//mWorld->AddObject(mObject);
 
 	// Add some lights.
 	mLight = new Light();
@@ -103,7 +105,9 @@ void Game::Init()
 	float blendFactor[] = {0.0f, 0.0f, 0.0f, 0.0f};
 	GetGraphics()->GetContext()->OMSetBlendState(RenderStates::TransparentBS, blendFactor, 0xffffffff);
 
-	mSkinnedModel = mModelImporter->LoadSkinnedModel("models/monster/monster.x");
+	//mSkinnedModel = mModelImporter->LoadSkinnedModel("models/tiny/tiny.x");
+	mSkinnedModel = new SkinnedModel();
+	mSkinnedModel->Load("monster.txt");
 }
 	
 void Game::Update(float dt)

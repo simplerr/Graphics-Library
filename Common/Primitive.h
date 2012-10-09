@@ -22,7 +22,7 @@ public:
 	void Cleanup();
 
 	template <class VertexType>
-	void SetVertices(ID3D11Device* device, const VertexType* vertices, int size);
+	void SetVertices(ID3D11Device* device, vector<VertexType> vertices, int size);
 	void SetIndices(ID3D11Device* device, vector<UINT> indices);
 
 	template <class VertexType>
@@ -30,9 +30,9 @@ public:
 
 	AxisAlignedBox GetBoundingBox();
 private:
-	ID3D11Buffer*	mVertexBuffer;
-	ID3D11Buffer*	mIndexBuffer;
-	AxisAlignedBox	mBoundingBox;
+	ID3D11Buffer*		  mVertexBuffer;
+	ID3D11Buffer*		  mIndexBuffer;
+	AxisAlignedBox		  mBoundingBox;
 	UINT mNumVertices;
 	UINT mNumIndices;
 };
@@ -43,7 +43,7 @@ private:
 template <class VertexType>
 Primitive::Primitive(ID3D11Device* device, vector<VertexType> vertices, vector<UINT> indices)
 {
-	SetVertices(device, &vertices[0], vertices.size());
+	SetVertices(device, vertices, vertices.size());
 	SetIndices(device, indices);
 }
 
@@ -58,7 +58,7 @@ void Primitive::Draw(ID3D11DeviceContext* dc)
 }
 
 template <class VertexType>
-void Primitive::SetVertices(ID3D11Device* device, const VertexType* vertices, int size)
+void Primitive::SetVertices(ID3D11Device* device, vector<VertexType> vertices, int size)
 {
 	// Fill out the D3D11_BUFFER_DESC struct.
 	D3D11_BUFFER_DESC vbd;
@@ -71,7 +71,7 @@ void Primitive::SetVertices(ID3D11Device* device, const VertexType* vertices, in
 
 	// Set the init data.
     D3D11_SUBRESOURCE_DATA initData;
-    initData.pSysMem = vertices;
+    initData.pSysMem = &vertices[0];
 
 	// Create the vertex buffer.
 	HR(device->CreateBuffer(&vbd, &initData, &mVertexBuffer));

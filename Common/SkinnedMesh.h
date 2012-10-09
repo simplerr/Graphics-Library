@@ -26,6 +26,8 @@ public:
 	void Draw(Graphics* pGraphics);
 
 	void SetPrimitive(Primitive* primitive);
+	void SetVertices(vector<SkinnedVertex> vertices);
+	void SetIndices(vector<UINT> indices);
 	void SetMaterial(Material material);
 	void SetTexture(Texture2D* texture);
 	void LoadTexture(string filename);
@@ -39,4 +41,6 @@ private:
 	Primitive*		mPrimitive;
 	Texture2D*		mTexture;
 	Material		mMaterial;
+	vector<SkinnedVertex> mVertices;
+	vector<UINT>		  mIndices;
 };

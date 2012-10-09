@@ -113,6 +113,7 @@ Texture2D* Graphics::LoadTexture(string filename, float scale)
 		Texture2D* texture2d = new Texture2D();
 		HR(D3DX11CreateShaderResourceViewFromFile(GetD3D()->GetDevice(), filename.c_str(), 0, 0, &texture2d->shaderResourceView, 0));
 		texture2d->scale = scale;
+		texture2d->name = filename;
 		mTextureMap[textureId] = texture2d;
 		return mTextureMap[textureId];
 	}

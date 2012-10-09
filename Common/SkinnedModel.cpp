@@ -14,7 +14,8 @@ SkinnedModel::SkinnedModel()
 	
 SkinnedModel::~SkinnedModel()
 {
-
+	Save("monster.txt");
+	delete mAnimator;
 }
 
 void SkinnedModel::Cleanup()
@@ -62,6 +63,8 @@ void SkinnedModel::Save(string filename)
 {
 	ofstream fout(filename, ios::binary);
 
+	fout << "#Meshes " << mMeshList.size() << "\r\n";
+
 	// Save the meshes.
 	for(int i = 0; i < mMeshList.size(); i++)
 		mMeshList[i]->Save(fout);
@@ -74,7 +77,34 @@ void SkinnedModel::Save(string filename)
 	
 void SkinnedModel::Load(string filename)
 {
+	ifstream fin(filename, ios::binary);
 
+	string ignore;
+	int numMeshes;
+	fin >> ignore >> numMeshes;
+
+	for(int i =  0; i < numMeshes; i++)
+	{
+		SkinnedMesh* mesh = new SkinnedMesh();
+		mesh->Load(fin);
+		AddMesh(mesh);
+	}
+
+	// The space after the last index.
+	fin >> ignore;	
+
+	// Make sure to start loading animation data from the right place.
+	// [NOTE] After some investigation it seems like it should be at the first '\f' character.
+	char x = fin.peek(); 
+	while(x != '\f') {
+		fin >> ignore;	
+		x = fin.peek(); 
+	}
+
+	mAnimator = new SceneAnimator();
+	mAnimator->Load(fin);
+
+	fin.close();
 }
 
 void SkinnedModel::SetAnimator(SceneAnimator* animator)

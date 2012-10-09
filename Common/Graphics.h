@@ -34,10 +34,12 @@ struct Texture2D
 	Texture2D() {
 		shaderResourceView = 0;
 		scale = 1.0f;
+		name = "none";
 	}
 
 	ID3D11ShaderResourceView* shaderResourceView;
 	float scale;
+	string name;
 };
 
 /**
