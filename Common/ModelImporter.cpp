@@ -36,7 +36,7 @@ ModelImporter::~ModelImporter()
 	}
 }
 
-vector<Weights> ModelImporter::CalculateWeights(aiMesh* mesh)
+vector<Weights> ModelImporter::CalculateWeights(aiMesh* mesh, SceneAnimator* animator)
 {
 	vector<Weights> weights(mesh->mNumVertices);
 
@@ -47,7 +47,10 @@ vector<Weights> ModelImporter::CalculateWeights(aiMesh* mesh)
 		for(int j = 0; j < mesh->mBones[i]->mNumWeights; j++)
 		{
 			aiVertexWeight weight = mesh->mBones[i]->mWeights[j];
-			weights[weight.mVertexId].boneIndices.push_back(i);
+
+			// Get the bone index from the animator by it's name.
+			int index = animator->GetBoneIndex(mesh->mBones[i]->mName.C_Str());
+			weights[weight.mVertexId].boneIndices.push_back(index);	
 			weights[weight.mVertexId].weights.push_back(mesh->mBones[i]->mWeights[j].mWeight);
 		}
 	}
@@ -91,8 +94,13 @@ SkinnedModel* ModelImporter::LoadSkinnedModel(string filename)
 	importer.SetPropertyInteger(AI_CONFIG_PP_SBP_REMOVE, aiPrimitiveType_LINE);
 
 	// Load scene from the file.
-	const aiScene* scene = importer.ReadFile(filename, aiProcess_CalcTangentSpace | aiProcess_Triangulate | aiProcess_GenSmoothNormals		
-		| aiProcess_SplitLargeMeshes | aiProcess_ConvertToLeftHanded | aiProcess_SortByPType);
+	const aiScene* scene = importer.ReadFile(filename, 
+		aiProcess_CalcTangentSpace | 
+		aiProcess_Triangulate | 
+		aiProcess_GenSmoothNormals | 
+		aiProcess_SplitLargeMeshes | 
+		aiProcess_ConvertToLeftHanded | 
+		aiProcess_SortByPType);
 
 	if(scene)
 	{
@@ -104,8 +112,13 @@ SkinnedModel* ModelImporter::LoadSkinnedModel(string filename)
 		{
 			aiMesh* assimpMesh = scene->mMeshes[j];
 
+			// Create the animator.
+			SceneAnimator* animator = new SceneAnimator();
+			animator->Init(scene);
+			model->SetAnimator(animator);
+
 			// Calculate vertex weight and bone indices.
-			vector<Weights> weights = CalculateWeights(assimpMesh);
+			vector<Weights> weights = CalculateWeights(assimpMesh, animator);
 
 			vector<SkinnedVertex> vertices;
 			vector<UINT> indices;
@@ -168,11 +181,6 @@ SkinnedModel* ModelImporter::LoadSkinnedModel(string filename)
 
 			// Add the mesh to the model.
 			model->AddMesh(mesh);
-
-			// Create the animator.
-			SceneAnimator* animator = new SceneAnimator();
-			animator->Init(scene);
-			model->SetAnimator(animator);
 		}
 	}
 

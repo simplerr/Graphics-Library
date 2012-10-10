@@ -11,6 +11,7 @@ class Primitive;
 class PrimitiveFactory;
 class Model;
 class SkinnedModel;
+class SceneAnimator;
 struct BoneInfo;
 
 struct Weights
@@ -28,7 +29,7 @@ public:
 	Model* LoadModel(string filename);
 	SkinnedModel* LoadSkinnedModel(string filename);
 
-	vector<Weights> CalculateWeights(aiMesh* mesh);
+	vector<Weights> CalculateWeights(aiMesh* mesh, SceneAnimator* animator);
 
 	void CalculateBoneInfo(map<string, BoneInfo>& boneInfos, aiNode* node);
 private:

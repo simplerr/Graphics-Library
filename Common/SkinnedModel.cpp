@@ -50,6 +50,10 @@ void SkinnedModel::Draw(Graphics* pGraphics, CXMMATRIX world)
 
 	// Bone transforms.
 	vector<XMFLOAT4X4> finalTransforms = mAnimator->GetTransforms(mElapsedTime);
+
+	/*for(int i = 0; i < finalTransforms.size(); i++)
+		XMStoreFloat4x4(&finalTransforms[i] , XMMatrixIdentity());*/
+
 	Effects::BasicFX->SetBoneTransforms(&finalTransforms[0], finalTransforms.size());
 
 	// Loop through and draw each mesh.
@@ -77,7 +81,7 @@ void SkinnedModel::Save(string filename)
 	
 void SkinnedModel::Load(string filename)
 {
-	ifstream fin(filename, ios::binary);
+	ifstream fin(filename, ios::binary | ios::in);
 
 	string ignore;
 	int numMeshes;

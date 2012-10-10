@@ -50,6 +50,9 @@ void SkinnedMesh::Save(ofstream& fout)
 
 	for(int i = 0; i < mVertices.size(); i++) 
 	{
+		/*fout.write(reinterpret_cast<char*>(&mVertices[i].Pos.x), sizeof(mVertices[i].Pos.x));
+		fout.write(reinterpret_cast<char*>(&mVertices[i].Pos.y), sizeof(mVertices[i].Pos.y));
+		fout.write(reinterpret_cast<char*>(&mVertices[i].Pos.z), sizeof(mVertices[i].Pos.z));*/
 		fout << "Pos: " << mVertices[i].Pos.x << " " << mVertices[i].Pos.y << " " << mVertices[i].Pos.z << "\r\n";
 		fout << "Normal: " << mVertices[i].Normal.x << " " << mVertices[i].Normal.y << " " << mVertices[i].Normal.z << "\r\n";
 		fout << "Tangent: " << mVertices[i].Tangent.x << " " << mVertices[i].Tangent.y << " " << mVertices[i].Tangent.z << "\r\n";
@@ -89,7 +92,6 @@ void SkinnedMesh::Load(ifstream& fin)
 		fin >> ignore >> vertex.Tex.x >> vertex.Tex.y;
 		int boneIds[4];
 		fin >> ignore >> boneIds[0] >> boneIds[1] >> boneIds[2] >> boneIds[3];
-		//fin >> ignore >> vertex.BoneIndices[0] >> vertex.BoneIndices[1] >> vertex.BoneIndices[2] >> vertex.BoneIndices[3];
 		fin >> ignore >> vertex.Weights.x >> vertex.Weights.y >> vertex.Weights.z;
 		fin >> ignore; // -
 
