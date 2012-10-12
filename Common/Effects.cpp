@@ -174,6 +174,7 @@ void BasicEffect::Init()
 	mfxShadowMap         = mEffect->GetVariableByName("gShadowMap")->AsShaderResource();
 	mfxUseNormalMap		 = mEffect->GetVariableByName("gUseNormalMap");
 	mfxUseAnimation		 = mEffect->GetVariableByName("gUseAnimation");
+	mfxRenderingToShadowMap = mEffect->GetVariableByName("gRenderingToShadowMap");
 }
 
 //! Creates the input layout that will get set before the Input-Assembler state. The EffectManager calls this function.

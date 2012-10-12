@@ -84,15 +84,15 @@ void Game::Init()
 	GetGraphics()->SetLightList(mWorld->GetLights());
 
 	// Add some objects.
-	//mObject = new StaticObject(mModelImporter, "models/monster/monster.x");
-	//mObject->SetPosition(XMFLOAT3(0, 30, 0));
-	//mObject->SetScale(XMFLOAT3(0.1, 0.1, 0.1));
-	//mWorld->AddObject(mObject);
+	/*mObject = new StaticObject(mModelImporter, "models/monster/monster.x");
+	mObject->SetPosition(XMFLOAT3(0, 30, 0));
+	mObject->SetScale(XMFLOAT3(0.1, 0.1, 0.1));
+	mWorld->AddObject(mObject);
 
-	//Object3D* object = new StaticObject(mModelImporter, "models/monster/monster.x");
-	//object->SetPosition(XMFLOAT3(0, 30, 20));
-	//object->SetScale(XMFLOAT3(0.1, 0.1, 0.1));
-	//mWorld->AddObject(object);
+	Object3D* object = new StaticObject(mModelImporter, "models/monster/monster.x");
+	object->SetPosition(XMFLOAT3(0, 30, 20));
+	object->SetScale(XMFLOAT3(0.1, 0.1, 0.1));
+	mWorld->AddObject(object);*/
 
 	// Add some lights.
 	mLight = new Light();
@@ -115,6 +115,13 @@ void Game::Init()
 	mAnimatedObject->SetPosition(XMFLOAT3(0, 30, 0));
 	mAnimatedObject->SetRotation(XMFLOAT3(0.7, 0.6, 0.6));
 	mWorld->AddObject(mAnimatedObject);
+
+	for(int i = 0; i < 10; i++)
+	{
+		AnimatedObject* obj = new AnimatedObject(mModelImporter, "models/smith/smith.x");
+		obj->SetPosition(XMFLOAT3(0, 30, i*20));
+		mWorld->AddObject(obj);
+	}
 }
 	
 void Game::Update(float dt)
@@ -147,6 +154,7 @@ void Game::Update(float dt)
 	}
 	else if(gInput->KeyDown(VK_RBUTTON)) {
 		mAnimatedObject->SetRotation(mAnimatedObject->GetRotation() - XMFLOAT3(0.003, 0.003, 0.003));
+		mAnimatedObject->SetScale(mAnimatedObject->GetScale() + XMFLOAT3(0.003, 0.003, 0.003));
 	}
 
 	if(gInput->KeyDown('V'))
@@ -165,7 +173,11 @@ void Game::Draw(Graphics* pGraphics)
 	pGraphics->GetContext()->PSSetShaderResources(0, 3, nullSRV);
 
 	// Draw depth values to the shadow map.
-	pGraphics->FillShadowMap(mWorld->GetObjects());
+	//pGraphics->FillShadowMap(mWorld->GetObjects());
+
+	/*Texture2D tex;
+	tex.shaderResourceView = pGraphics->GetShadowMap()->GetSRV();
+	pGraphics->DrawScreenQuad(&tex, 400, 300, 400, 200);*/
 
 	// Draw all objects.
 	mWorld->Draw(pGraphics);	

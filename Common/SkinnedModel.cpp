@@ -32,8 +32,17 @@ void SkinnedModel::Update(float dt)
 //! Draws all the skinned meshes. Sets the bone transforms to use in the shader.
 void SkinnedModel::Draw(Graphics* pGraphics, CXMMATRIX world)
 {
-	XMMATRIX view = XMLoadFloat4x4(&pGraphics->GetCamera()->GetViewMatrix());
-	XMMATRIX proj = XMLoadFloat4x4(&pGraphics->GetCamera()->GetProjectionMatrix());
+	XMMATRIX view, proj;
+	
+	if(!pGraphics->IsRenderingShadows()) {
+		view = XMLoadFloat4x4(&pGraphics->GetCamera()->GetViewMatrix());
+		proj = XMLoadFloat4x4(&pGraphics->GetCamera()->GetProjectionMatrix());
+	}
+	else {
+		view = XMLoadFloat4x4(&pGraphics->GetShadowMap()->GetLightView());
+		proj = XMLoadFloat4x4(&pGraphics->GetShadowMap()->GetLightProj());
+	}
+	
 	Effects::BasicFX->SetWorld(world);
 	Effects::BasicFX->SetWorldViewProj(world*view*proj);
 	Effects::BasicFX->SetWorldInvTranspose(InverseTranspose(world));

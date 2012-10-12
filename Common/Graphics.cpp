@@ -30,6 +30,7 @@ Graphics::Graphics()
 	// Set default values.
 	mD3DCore = nullptr;
 	mCamera = nullptr;
+	mRenderingShadows = false;
 
 	// Used for clear scene and fog.
 	SetFogColor(Colors::Silver);
@@ -257,6 +258,27 @@ void Graphics::SetEffectParameters(BasicEffect* effect, CXMMATRIX worldMatrix, T
 	effect->Apply();
 }
 
+void Graphics::ActiveShadowMap()
+{
+	// Sets render target to NULL and the DSV to the shadow maps. Enables depth writes to the DSV basicly.
+	GetShadowMap()->BindDepthStencil(GetContext());
+	Effects::BasicFX->SetRenderingToShadowMap(true);
+	mRenderingShadows = true;
+}
+
+void Graphics::DeactiveShadowMap()
+{
+	// Restore the rasterizer state.
+	GetContext()->RSSetState(0);
+
+	// Restore the render targets and viewport.
+	RestoreRenderTarget();
+	GetContext()->RSSetViewports(1, &GetD3D()->GetViewport());
+
+	Effects::BasicFX->SetRenderingToShadowMap(false);
+	mRenderingShadows = false;
+}
+
 //! Renders depth values from the light space to the shadow map texture.
 void Graphics::FillShadowMap(ObjectList* objects)
 {
@@ -422,4 +444,9 @@ float Graphics::GetClientWidth()
 float Graphics::GetClientHeight()
 {
 	return mD3DCore->GetClientHeight();
+}
+
+bool Graphics::IsRenderingShadows()
+{
+	return mRenderingShadows;
 }

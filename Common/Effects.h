@@ -107,6 +107,7 @@ public:
 	void SetTexture(Texture2D* texture);				
 	void SetNormalMap(Texture2D* normalMap);
 	void SetLights(LightList* lights);
+	void SetRenderingToShadowMap(bool active)		{ mfxRenderingToShadowMap->SetRawValue(&active, 0, sizeof(bool)) ;}
 
 	ID3DX11EffectTechnique* GetSkinnedTech();
 private:
@@ -125,6 +126,7 @@ private:
 	ID3DX11EffectShaderResourceVariable* mfxNormalMap;
 	ID3DX11EffectShaderResourceVariable* mfxShadowMap;
 	ID3DX11EffectVariable* mfxUseNormalMap;
+	ID3DX11EffectVariable* mfxRenderingToShadowMap;
 
 	// Fog.
 	ID3DX11EffectScalarVariable* mfxFogStart;

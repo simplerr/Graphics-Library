@@ -28,6 +28,7 @@ cbuffer cbPerObject
 	bool	 gUseTexture;
 	bool	 gUseNormalMap;
 	bool	 gUseAnimation;
+	bool	 gRenderingToShadowMap;
 };
 
 cbuffer cbSkinned
@@ -187,6 +188,9 @@ VertexOut SkinnedVS(SkinnedVertexIn vin)
 //! Pixel shader that applies ligthing, fogging, normal mapping and shadow mapping.
 float4 PS(VertexOut pin) : SV_Target
 {
+	if(gRenderingToShadowMap)
+		return float4(1.0f, 1.0f, 1.0f, 1.0f);
+
 	// Interpolating normal can unnormalize it, so normalize it.
     pin.NormalW = normalize(pin.NormalW); 
 
