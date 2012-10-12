@@ -19,6 +19,7 @@ SkinnedModel::~SkinnedModel()
 	for(int i = 0; i < mMeshList.size(); i++) 
 		delete mMeshList[i];
 
+	mAnimator->Release();
 	delete mAnimator;
 }
 

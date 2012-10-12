@@ -33,7 +33,6 @@ ModelImporter::~ModelImporter()
 
 	for(auto iter = mSkinnedModelMap.begin(); iter != mSkinnedModelMap.end(); iter++) 
 		delete (*iter).second;
-	
 }
 
 //! Loads and returns a skinned model from a file.
@@ -67,15 +66,15 @@ SkinnedModel* ModelImporter::LoadSkinnedModel(string filename)
 		// Create the model that is getting filled out.
 		model = new SkinnedModel();
 
+		// Create the animator.
+		SceneAnimator* animator = new SceneAnimator();
+		animator->Init(scene);
+		model->SetAnimator(animator);
+
 		// Loop through all meshes.
 		for(int j = 0; j < scene->mNumMeshes; j++)
 		{
 			aiMesh* assimpMesh = scene->mMeshes[j];
-
-			// Create the animator.
-			SceneAnimator* animator = new SceneAnimator();
-			animator->Init(scene);
-			model->SetAnimator(animator);
 
 			// Calculate vertex weight and bone indices.
 			vector<Weights> weights = CalculateWeights(assimpMesh, animator);
