@@ -23,10 +23,9 @@ SkinnedModel::~SkinnedModel()
 	delete mAnimator;
 }
 
-//! Increments the elapsed time counter used for animations.
 void SkinnedModel::Update(float dt)
 {
-	mElapsedTime += dt;
+
 }
 
 //! Draws all the skinned meshes. Sets the bone transforms to use in the shader.
@@ -146,4 +145,9 @@ void SkinnedModel::AddMesh(SkinnedMesh* mesh)
 SkinnedMeshList* SkinnedModel::GetMeshList()
 {
 	return &mMeshList;
+}
+
+void SkinnedModel::SetElapsedTime(float elapsedTime)
+{
+	mElapsedTime = elapsedTime;
 }

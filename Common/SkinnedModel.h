@@ -28,6 +28,7 @@ public:
 
 	void SetAnimation(string animation);
 	void SetAnimation(int index);
+	void SetElapsedTime(float elapsedTime);
 
 	SkinnedMeshList* GetMeshList();
 private:

@@ -21,5 +21,6 @@ public:
 	SkinnedModel* GetModel();
 private:
 	SkinnedModel* mSkinnedModel;
-	int	mCurrentAnimIndex;
+	int		mCurrentAnimIndex;
+	float	mElapsedTime;
 };

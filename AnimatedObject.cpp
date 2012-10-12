@@ -10,6 +10,8 @@ AnimatedObject::AnimatedObject(ModelImporter* importer, string filename)
 {
 	// Load the model.
 	mSkinnedModel = importer->LoadSkinnedModel(filename);
+	mElapsedTime = 0.0f;
+	mCurrentAnimIndex = 0;
 }
 
 //! Cleanup.
@@ -21,12 +23,16 @@ AnimatedObject::~AnimatedObject()
 //! Updates the object.
 void AnimatedObject::Update(float dt)
 {
+	// Increments the elapsed time counter used for animations. 
+	mElapsedTime += dt;
 	mSkinnedModel->Update(dt);
 }
 
 //! Draws the objects model.
 void AnimatedObject::Draw(Graphics* pGraphics)
 {
+	mSkinnedModel->SetAnimation(mCurrentAnimIndex);
+	mSkinnedModel->SetElapsedTime(mElapsedTime);
 	mSkinnedModel->Draw(pGraphics, GetWorldMatrix());
 	//pGraphics->DrawBoundingBox(&GetBoundingBox(), GetWorldMatrix(), Material(Colors::Green));
 }
@@ -34,7 +40,7 @@ void AnimatedObject::Draw(Graphics* pGraphics)
 //! Sets which animation to use by index.
 void AnimatedObject::SetAnimation(int index)
 {
-	mSkinnedModel->SetAnimation(index);
+	mCurrentAnimIndex = index;
 }
 
 //! Returns the bounding box in world space. [NOTE] Does not work [TODO].
