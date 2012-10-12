@@ -12,6 +12,7 @@ class ShadowMap;
 class ModelImporter;
 class Model;
 class SkinnedModel;
+class AnimatedObject;
 
 class Game : public Runnable
 {
@@ -28,9 +29,9 @@ private:
 	World* mWorld;
 	Light* mLight;
 	Light* mLight2;
-	StaticObject*  mObject;
-	StaticObject*  mObject2;
-	StaticObject*  mTerrain;
-	ModelImporter* mModelImporter;
-	SkinnedModel* mSkinnedModel;
+	StaticObject*	mObject;
+	StaticObject*	mObject2;
+	StaticObject*	mTerrain;
+	ModelImporter*	mModelImporter;
+	AnimatedObject* mAnimatedObject;
 };

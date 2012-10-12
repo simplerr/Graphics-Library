@@ -12,8 +12,8 @@ public:
 	StaticObject(ModelImporter* importer, string filename);
 	~StaticObject();
 
-	void Update(float dt);
-	void Draw(Graphics* pGraphics);
+	virtual void Update(float dt);
+	virtual void Draw(Graphics* pGraphics);
 
 	AxisAlignedBox GetBoundingBox();
 	StaticModel* GetModel();

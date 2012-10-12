@@ -21,6 +21,7 @@
 #include "Object3D.h"
 #include "World.h"
 #include "StaticObject.h"
+#include "AnimatedObject.h"
 #include "vld.h"
 
 // Set globals to nullptrs
@@ -83,19 +84,19 @@ void Game::Init()
 	GetGraphics()->SetLightList(mWorld->GetLights());
 
 	// Add some objects.
-	mObject = new StaticObject(mModelImporter, "models/monster/monster.x");
-	mObject->SetPosition(XMFLOAT3(0, 30, 0));
-	mObject->SetScale(XMFLOAT3(0.1, 0.1, 0.1));
-	mWorld->AddObject(mObject);
+	//mObject = new StaticObject(mModelImporter, "models/monster/monster.x");
+	//mObject->SetPosition(XMFLOAT3(0, 30, 0));
+	//mObject->SetScale(XMFLOAT3(0.1, 0.1, 0.1));
+	//mWorld->AddObject(mObject);
 
-	Object3D* object = new StaticObject(mModelImporter, "models/monster/monster.x");
-	object->SetPosition(XMFLOAT3(0, 30, 20));
-	object->SetScale(XMFLOAT3(0.1, 0.1, 0.1));
-	mWorld->AddObject(object);
+	//Object3D* object = new StaticObject(mModelImporter, "models/monster/monster.x");
+	//object->SetPosition(XMFLOAT3(0, 30, 20));
+	//object->SetScale(XMFLOAT3(0.1, 0.1, 0.1));
+	//mWorld->AddObject(object);
 
 	// Add some lights.
 	mLight = new Light();
-	mLight->SetMaterials(Colors::White*0.2f, Colors::White*1.0f, Colors::White*0.0f);
+	mLight->SetMaterials(Colors::White*0.5f, Colors::White*1.0f, Colors::White*0.0f);
 	mLight->SetDirection(0.5f, -0.5f, 0.5f);
 	mLight->SetType(DIRECTIONAL_LIGHT);
 	mLight->SetPosition(0, 5, 5);
@@ -109,9 +110,11 @@ void Game::Init()
 	float blendFactor[] = {0.0f, 0.0f, 0.0f, 0.0f};
 	GetGraphics()->GetContext()->OMSetBlendState(RenderStates::TransparentBS, blendFactor, 0xffffffff);
 
-	mSkinnedModel = mModelImporter->LoadSkinnedModel("models/smith/smith.x");
-	//mSkinnedModel = new SkinnedModel();
-	//mSkinnedModel->Load("smith.txt");
+	mAnimatedObject = new AnimatedObject(mModelImporter, "models/smith/smith.x");
+	mAnimatedObject->SetScale(XMFLOAT3(0.2f, 0.2f, 0.2f));
+	mAnimatedObject->SetPosition(XMFLOAT3(0, 30, 0));
+	mAnimatedObject->SetRotation(XMFLOAT3(0.7, 0.6, 0.6));
+	mWorld->AddObject(mAnimatedObject);
 }
 	
 void Game::Update(float dt)
@@ -120,21 +123,19 @@ void Game::Update(float dt)
 	GetGraphics()->Update(dt);
 	mWorld->Update(dt);
 
-	mSkinnedModel->Update(dt);
-
 	static float speed = 0.05;
 	if(gInput->KeyDown('1'))
-		mObject->SetPosition(mObject->GetPosition() + XMFLOAT3(speed, 0, 0));
+		mAnimatedObject->SetPosition(mAnimatedObject->GetPosition() + XMFLOAT3(speed, 0, 0));
 	else if(gInput->KeyDown('2'))
-		mObject->SetPosition(mObject->GetPosition() + XMFLOAT3(-speed, 0, 0));
+		mAnimatedObject->SetPosition(mAnimatedObject->GetPosition() + XMFLOAT3(-speed, 0, 0));
 	if(gInput->KeyDown('3'))
-		mObject->SetPosition(mObject->GetPosition() + XMFLOAT3(0, 0, speed));
+		mAnimatedObject->SetPosition(mAnimatedObject->GetPosition() + XMFLOAT3(0, 0, speed));
 	else if(gInput->KeyDown('4'))
-		mObject->SetPosition(mObject->GetPosition() + XMFLOAT3(0, 0, -speed));
+		mAnimatedObject->SetPosition(mAnimatedObject->GetPosition() + XMFLOAT3(0, 0, -speed));
 	if(gInput->KeyDown('5'))
-		mObject->SetPosition(mObject->GetPosition() + XMFLOAT3(0, speed, 0));
+		mAnimatedObject->SetPosition(mAnimatedObject->GetPosition() + XMFLOAT3(0, speed, 0));
 	else if(gInput->KeyDown('6'))
-		mObject->SetPosition(mObject->GetPosition() + XMFLOAT3(0, -speed, 0));
+		mAnimatedObject->SetPosition(mAnimatedObject->GetPosition() + XMFLOAT3(0, -speed, 0));
 
 	if(gInput->KeyDown('Z'))
 		mLight->SetDirection(mLight->GetDirection() + XMFLOAT3(0, 0.0000, 0.0005));
@@ -142,16 +143,16 @@ void Game::Update(float dt)
 		mLight->SetDirection(mLight->GetDirection() + XMFLOAT3(0, -0.0000, -0.0005));
 
 	if(gInput->KeyDown(VK_LBUTTON)) {
-		mObject->SetRotation(mObject->GetRotation() + XMFLOAT3(0.003, 0.003, 0.003));
+		mAnimatedObject->SetRotation(mAnimatedObject->GetRotation() + XMFLOAT3(0.003, 0.003, 0.003));
 	}
 	else if(gInput->KeyDown(VK_RBUTTON)) {
-		mObject->SetRotation(mObject->GetRotation() - XMFLOAT3(0.003, 0.003, 0.003));
+		mAnimatedObject->SetRotation(mAnimatedObject->GetRotation() - XMFLOAT3(0.003, 0.003, 0.003));
 	}
 
 	if(gInput->KeyDown('V'))
-		mSkinnedModel->SetAnimation(0);
+		mAnimatedObject->SetAnimation(0);
 	if(gInput->KeyDown('B'))
-		mSkinnedModel->SetAnimation(1);
+		mAnimatedObject->SetAnimation(1);
 }
 	
 void Game::Draw(Graphics* pGraphics)
@@ -170,11 +171,6 @@ void Game::Draw(Graphics* pGraphics)
 	mWorld->Draw(pGraphics);	
 	pGraphics->DrawBillboards();
 
-	XMMATRIX world = XMMatrixIdentity();
-	world = XMMatrixScaling(0.2, 0.2, 0.2);
-	world *= XMMatrixTranslation(0, 30, 0);
-	mSkinnedModel->Draw(pGraphics, world);
-	
 	// Present the backbuffer.
 	pGraphics->Present();
 }

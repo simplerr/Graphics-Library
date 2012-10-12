@@ -1,41 +1,46 @@
-#include "StaticObject.h"
+#include "AnimatedObject.h"
 #include "Common\ModelImporter.h"
-#include "Common\StaticModel.h"
-#include "Common\StaticMesh.h"
+#include "Common\SkinnedModel.h"
 #include "Common\Primitive.h"
 #include "Common\Graphics.h"
+#include "Common\SkinnedMesh.h"
 
-StaticObject::StaticObject(ModelImporter* importer, string filename)
+AnimatedObject::AnimatedObject(ModelImporter* importer, string filename)
 	: Object3D()
 {
 	// Load the model.
-	mModel = importer->LoadStaticModel(filename);
+	mSkinnedModel = importer->LoadSkinnedModel(filename);
 }
 
 //! Cleanup.
-StaticObject::~StaticObject()
+AnimatedObject::~AnimatedObject()
 {
 	
 }
 
 //! Updates the object.
-void StaticObject::Update(float dt)
+void AnimatedObject::Update(float dt)
 {
-
+	mSkinnedModel->Update(dt);
 }
 
 //! Draws the objects model.
-void StaticObject::Draw(Graphics* pGraphics)
+void AnimatedObject::Draw(Graphics* pGraphics)
 {
-	mModel->Draw(pGraphics, GetWorldMatrix());
-
-	pGraphics->DrawBoundingBox(&GetBoundingBox(), GetWorldMatrix(), Material(Colors::Blue));
+	mSkinnedModel->Draw(pGraphics, GetWorldMatrix());
+	//pGraphics->DrawBoundingBox(&GetBoundingBox(), GetWorldMatrix(), Material(Colors::Green));
 }
 
-//! Returns the bounding box in world space.
-AxisAlignedBox StaticObject::GetBoundingBox()
+//! Sets which animation to use by index.
+void AnimatedObject::SetAnimation(int index)
 {
-	MeshList* meshList = mModel->GetMeshList();
+	mSkinnedModel->SetAnimation(index);
+}
+
+//! Returns the bounding box in world space. [NOTE] Does not work [TODO].
+AxisAlignedBox AnimatedObject::GetBoundingBox()
+{
+	SkinnedMeshList* meshList = mSkinnedModel->GetMeshList();
 	AxisAlignedBox aabb = (*meshList)[0]->GetPrimitive()->GetBoundingBox();
 	XMFLOAT3 min = aabb.Center - aabb.Extents;
 	XMFLOAT3 max = aabb.Center + aabb.Extents;
@@ -63,7 +68,7 @@ AxisAlignedBox StaticObject::GetBoundingBox()
 }
 
 //! Returns the model.
-StaticModel* StaticObject::GetModel()
+SkinnedModel* AnimatedObject::GetModel()
 {
-	return mModel;
+	return mSkinnedModel;
 }
