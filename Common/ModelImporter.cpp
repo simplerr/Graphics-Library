@@ -11,78 +11,38 @@
 #include <assimp\cimport.h>
 #include <assimp\material.h>
 #include <assimp\ai_assert.h>
-#include "Model.h"
-#include "Mesh.h"
+#include "StaticModel.h"
+#include "StaticMesh.h"
 #include "Light.h"
 #include "SkinnedModel.h"
 #include "SkinnedMesh.h"
 #include <fstream>
 #include "cAnimationController.h"
 
-ofstream fout("dasd.txt");
-int counter = 0;
-
 ModelImporter::ModelImporter(PrimitiveFactory* primitiveFactory)
 {
 	mPrimtiveFactory = primitiveFactory;	
 }
 
+//! Cleanup.
 ModelImporter::~ModelImporter()
 {
-	// Cleanup all the meshes.
-	for(auto iter = mModelMap.begin(); iter != mModelMap.end(); iter++) {
-		//(*iter).second->Cleanup();
-		//delete (*iter).second;
-	}
+	// Cleanup all the models.
+	for(auto iter = mStaticModelMap.begin(); iter != mStaticModelMap.end(); iter++) 
+		delete (*iter).second;
+
+	for(auto iter = mSkinnedModelMap.begin(); iter != mSkinnedModelMap.end(); iter++) 
+		delete (*iter).second;
+	
 }
 
-vector<Weights> ModelImporter::CalculateWeights(aiMesh* mesh, SceneAnimator* animator)
-{
-	vector<Weights> weights(mesh->mNumVertices);
-
-	// Loop through all bones.
-	for(int i = 0; i < mesh->mNumBones; i++)
-	{
-		// Loop through all the vertices the bone affects.
-		for(int j = 0; j < mesh->mBones[i]->mNumWeights; j++)
-		{
-			aiVertexWeight weight = mesh->mBones[i]->mWeights[j];
-
-			// Get the bone index from the animator by it's name.
-			int index = animator->GetBoneIndex(mesh->mBones[i]->mName.C_Str());
-			weights[weight.mVertexId].boneIndices.push_back(index);	
-			weights[weight.mVertexId].weights.push_back(mesh->mBones[i]->mWeights[j].mWeight);
-		}
-	}
-
-	return weights;
-}
-
-void ModelImporter::CalculateBoneInfo(map<string, BoneInfo>& boneInfos, aiNode* node)
-{
-	if(node->mParent != NULL) {
-		if(string(node->mName.C_Str()) == "Bip01_Spine")
-			int sada = 1;
-
-		if(boneInfos.find(node->mName.C_Str()) != boneInfos.end()) {
-			fout << node->mName.C_Str() << endl;	
-			//fout << counter << endl;
-			counter++;
-		}
-
-		boneInfos[node->mName.C_Str()].parent = node->mParent->mName.C_Str();	
-	}
-	else
-		boneInfos[node->mName.C_Str()].parent = "SCENE_ROOT";
-
-	boneInfos[node->mName.C_Str()].toParentTransform = ToXMFloat4X4(node->mTransformation);
-
-	for(int i = 0; i < node->mNumChildren; i++)
-		CalculateBoneInfo(boneInfos, node->mChildren[i]);
-}
-
+//! Loads and returns a skinned model from a file.
 SkinnedModel* ModelImporter::LoadSkinnedModel(string filename)
 {
+	// Is the model already loaded?
+	if(mSkinnedModelMap.find(filename) != mSkinnedModelMap.end())
+		return mSkinnedModelMap[filename];
+
 	Assimp::Importer importer;
 	mFilename =	filename;
 	SkinnedModel* model = NULL;
@@ -162,8 +122,6 @@ SkinnedModel* ModelImporter::LoadSkinnedModel(string filename)
 			material->Get(AI_MATKEY_COLOR_DIFFUSE, diffuse);
 			material->Get(AI_MATKEY_COLOR_SPECULAR, specular);
 				
-			ambient = aiColor4D(1.0f, 1.0f, 1.0f, 1.0f);
-
 			// Create the mesh and its primitive.
 			SkinnedMesh* mesh = new SkinnedMesh();
 
@@ -176,26 +134,29 @@ SkinnedModel* ModelImporter::LoadSkinnedModel(string filename)
 			if(_stricmp(path.C_Str(), "") != 0)
 				mesh->LoadTexture(path.C_Str());
 
-			// [NOTE] The material should probably be white instead!
-			mesh->SetMaterial(Material(ambient, diffuse, specular));
+			// [NOTE] The material is set to white.
+			mesh->SetMaterial(Material(Colors::White));
 
 			// Add the mesh to the model.
 			model->AddMesh(mesh);
 		}
 	}
 
-	return model;
+	// Add the newly created mesh to the map and return it.
+	mSkinnedModelMap[filename] = model;
+	return mSkinnedModelMap[filename] ;
 }
 
-Model* ModelImporter::LoadModel(string filename)
+//! Loads and returns a static model from a file.
+StaticModel* ModelImporter::LoadStaticModel(string filename)
 {
 	// Is the model already loaded?
-	if(mModelMap.find(filename) != mModelMap.end())
-		return mModelMap[filename];
+	if(mStaticModelMap.find(filename) != mStaticModelMap.end())
+		return mStaticModelMap[filename];
 
 	Assimp::Importer importer;
 	mFilename =	filename;
-	Model* model = NULL;
+	StaticModel* model = NULL;
 
 	// Important! Makes sure that if the angle between two face normals is > 80 they are not smoothed together.
 	// Since the angle between a cubes face normals is 90 the lighting looks very bad if we don't specify this.
@@ -212,15 +173,11 @@ Model* ModelImporter::LoadModel(string filename)
 		aiProcess_ConvertToLeftHanded	|
 		aiProcess_SortByPType);
 
-	string error = importer.GetErrorString();
-
-	ofstream fout("dbg1.txt");
-
 	// Successfully loaded the scene.
 	if(scene)
 	{
 		// Create the model that is getting filled out.
-		model = new Model();
+		model = new StaticModel();
 
 		// Loop through all meshes.
 		for(int i = 0; i < scene->mNumMeshes; i++)
@@ -235,8 +192,6 @@ Model* ModelImporter::LoadModel(string filename)
 				aiVector3D v = assimpMesh->mVertices[i];
 				aiVector3D n = assimpMesh->mNormals[i];
 				aiVector3D t = assimpMesh->mTextureCoords[0][i];
-
-				fout << "x: " << v.x << "y: " << v.y << "z: " << v.z << endl;
 
 				n = n.Normalize();
 				Vertex vertex(v.x, v.y, v.z, n.x, n.y, n.z, 0, 0, 0, t.x, t.y);
@@ -261,7 +216,7 @@ Model* ModelImporter::LoadModel(string filename)
 			material->Get(AI_MATKEY_COLOR_SPECULAR, specular);
 
 			// Create the mesh and its primitive.
-			Mesh* mesh = new Mesh();
+			StaticMesh* mesh = new StaticMesh();
 			Primitive* primitive = new Primitive(GetD3DDevice(), vertices, indices);
 			mesh->SetPrimitive(primitive);
 			mPrimtiveFactory->AddPrimitive(path.C_Str(), primitive);
@@ -269,8 +224,8 @@ Model* ModelImporter::LoadModel(string filename)
 			if(_stricmp(path.C_Str(), "") != 0)
 				mesh->LoadTexture(path.C_Str());
 
-			// [NOTE] The material should probably be white instead!
-			mesh->SetMaterial(Material(ambient, diffuse, specular));
+			// [NOTE] The material is set to white.
+			mesh->SetMaterial(Material(Colors::White)); //Material(ambient, diffuse, specular)
 
 			// Add the mesh to the model.
 			model->AddMesh(mesh);
@@ -278,10 +233,34 @@ Model* ModelImporter::LoadModel(string filename)
 	}
 
 	// Add to the model map and return it.
-	mModelMap[filename] = model;
-	return mModelMap[filename];
+	mStaticModelMap[filename] = model;
+	return mStaticModelMap[filename];
 }
 
+//! Calculates the bone weights for each vertex.
+vector<Weights> ModelImporter::CalculateWeights(aiMesh* mesh, SceneAnimator* animator)
+{
+	vector<Weights> weights(mesh->mNumVertices);
+
+	// Loop through all bones.
+	for(int i = 0; i < mesh->mNumBones; i++)
+	{
+		// Loop through all the vertices the bone affects.
+		for(int j = 0; j < mesh->mBones[i]->mNumWeights; j++)
+		{
+			aiVertexWeight weight = mesh->mBones[i]->mWeights[j];
+
+			// Get the bone index from the animator by it's name.
+			int index = animator->GetBoneIndex(mesh->mBones[i]->mName.C_Str());
+			weights[weight.mVertexId].boneIndices.push_back(index);	
+			weights[weight.mVertexId].weights.push_back(mesh->mBones[i]->mWeights[j].mWeight);
+		}
+	}
+
+	return weights;
+}
+
+//! Hax function... not mine.
 int ModelImporter::FindValidPath(aiString* p_szString)
 {
 	ai_assert(NULL != p_szString);
@@ -381,6 +360,7 @@ int ModelImporter::FindValidPath(aiString* p_szString)
 	return 1;
 }
 
+//! Hax function... not mine.
 bool ModelImporter::TryLongerPath(char* szTemp,aiString* p_szString)
 {
 	char szTempB[MAX_PATH];

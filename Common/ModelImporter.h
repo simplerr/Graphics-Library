@@ -9,7 +9,8 @@ using namespace std;
 
 class Primitive;
 class PrimitiveFactory;
-class Model;
+class StaticModel;
+class SkinnedModel;
 class SkinnedModel;
 class SceneAnimator;
 struct BoneInfo;
@@ -20,23 +21,25 @@ struct Weights
 	vector<float>	weights;
 };
 
+/**
+	Loads models and stores them to support instancing.
+*/
 class ModelImporter
 {
 public:
 	ModelImporter(PrimitiveFactory* primitiveFactory);
 	~ModelImporter();
 
-	Model* LoadModel(string filename);
-	SkinnedModel* LoadSkinnedModel(string filename);
+	StaticModel*	LoadStaticModel(string filename);
+	SkinnedModel*	LoadSkinnedModel(string filename);
 
+private:
 	vector<Weights> CalculateWeights(aiMesh* mesh, SceneAnimator* animator);
-
-	void CalculateBoneInfo(map<string, BoneInfo>& boneInfos, aiNode* node);
+	int				FindValidPath(aiString* p_szString);
+	bool			TryLongerPath(char* szTemp,aiString* p_szString);
 private:
-	int FindValidPath(aiString* p_szString);
-	bool TryLongerPath(char* szTemp,aiString* p_szString);
-private:
-	map<string, Model*> mModelMap;
+	map<string, StaticModel*>	mStaticModelMap;
+	map<string, SkinnedModel*>	mSkinnedModelMap;
 	PrimitiveFactory*	mPrimtiveFactory;
 	string				mFilename;
 };

@@ -18,7 +18,7 @@
 #include "Common\RenderStates.h"
 #include "Common\ShadowMap.h"
 #include "Common\ModelImporter.h"
-#include "Common\Model.h"
+#include "Common\StaticModel.h"
 #include "Common\SkinnedModel.h"
 #include "vld.h"
 
@@ -60,8 +60,6 @@ Game::Game(HINSTANCE hInstance, string caption, int width, int height)
 	
 Game::~Game()
 {
-	//mSkinnedModel->Save("monster.txt");
-
 	delete gPrimitiveFactory;	
 	delete gInput;
 	delete mWorld;
@@ -84,10 +82,15 @@ void Game::Init()
 	GetGraphics()->SetLightList(mWorld->GetLights());
 
 	// Add some objects.
-	mObject = new Object3D(gPrimitiveFactory->CreateBox());// mModelImporter, "models/monster/monster.x");
-	mObject->SetPosition(XMFLOAT3(0, 15, 0));
+	mObject = new Object3D(mModelImporter, "models/monster/monster.x");
+	mObject->SetPosition(XMFLOAT3(0, 30, 0));
 	mObject->SetScale(XMFLOAT3(0.1, 0.1, 0.1));
-	//mWorld->AddObject(mObject);
+	mWorld->AddObject(mObject);
+
+	Object3D* object = new Object3D(mModelImporter, "models/monster/monster.x");
+	object->SetPosition(XMFLOAT3(0, 30, 20));
+	object->SetScale(XMFLOAT3(0.1, 0.1, 0.1));
+	mWorld->AddObject(object);
 
 	// Add some lights.
 	mLight = new Light();
@@ -105,9 +108,9 @@ void Game::Init()
 	float blendFactor[] = {0.0f, 0.0f, 0.0f, 0.0f};
 	GetGraphics()->GetContext()->OMSetBlendState(RenderStates::TransparentBS, blendFactor, 0xffffffff);
 
-	//mSkinnedModel = mModelImporter->LoadSkinnedModel("models/monster/monster.x");
-	mSkinnedModel = new SkinnedModel();
-	mSkinnedModel->Load("monster.txt");
+	mSkinnedModel = mModelImporter->LoadSkinnedModel("models/smith/smith.x");
+	//mSkinnedModel = new SkinnedModel();
+	//mSkinnedModel->Load("smith.txt");
 }
 	
 void Game::Update(float dt)

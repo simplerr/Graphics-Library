@@ -5,23 +5,23 @@
 #include "Primitive.h"
 #include "PrimitiveFactory.h"
 #include "D3DCore.h"
-#include "Model.h"
-#include "Mesh.h"
+#include "StaticModel.h"
+#include "StaticMesh.h"
 #include "ModelImporter.h"
 
 Object3D::Object3D(ModelImporter* importer, string filename)
 {
 	mNormalMap	= nullptr;
-	mModel = importer->LoadModel(filename);
+	mModel = importer->LoadStaticModel(filename);
 
 	SetDefaultOrientation();
 }
 
 Object3D::Object3D(Primitive* primitive)
 {
-	mNormalMap	= nullptr;
-	mModel		= new Model();
-	Mesh* mesh	= new Mesh();
+	mNormalMap			= nullptr;
+	mModel				= new StaticModel();
+	StaticMesh* mesh	= new StaticMesh();
 	mesh->SetPrimitive(primitive);
 	mesh->SetMaterial(Material(Colors::White));
 	mModel->AddMesh(mesh);
@@ -32,8 +32,7 @@ Object3D::Object3D(Primitive* primitive)
 
 Object3D::~Object3D()
 {
-	mModel->Cleanup();
-	delete mModel;
+	// [NOTE] Don't have to delete the model. ModelImporter does that.
 }
 
 void Object3D::Update(float dt)
@@ -64,7 +63,7 @@ void Object3D::SetTexture(string filename, float scale)
 }
 
 //! Sets the model.
-void Object3D::SetModel(Model* model)
+void Object3D::SetModel(StaticModel* model)
 {
 	mModel = model;
 }
@@ -135,7 +134,7 @@ XMMATRIX Object3D::GetWorldMatrix()
 }
 
 //! Returns the model.
-Model* Object3D::GetModel()
+StaticModel* Object3D::GetModel()
 {
 	return mModel;
 }

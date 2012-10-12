@@ -27,7 +27,6 @@ struct Material;
 struct Texture2D;
 struct BillboardVertex;
 
-
 //! Represents a 2D texture.
 struct Texture2D
 {

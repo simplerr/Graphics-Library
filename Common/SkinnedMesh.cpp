@@ -11,35 +11,33 @@ SkinnedMesh::SkinnedMesh()
 	mPrimitive = nullptr;
 }
 
+//! Cleanup.
 SkinnedMesh::~SkinnedMesh()
 {
 
 }
 
+//! Draws the mesh. The shader uses bone transforms set by the mesh owner SkinnedModel.
 void SkinnedMesh::Draw(Graphics* pGraphics)
 {
-	// Set the material properties for this SkinnedMesh.
+	// Set the material properties for this skinned mesh.
 	Effects::BasicFX->SetMaterial(mMaterial);
 	Effects::BasicFX->SetTexture(mTexture);
-	Effects::BasicFX->GetSkinnedTech()->GetPassByIndex(0)->Apply(0, GetD3DContext());
+	Effects::BasicFX->GetSkinnedTech()->GetPassByIndex(0)->Apply(0, GetD3DContext());	// Currently makes no difference.[NOTE][TODO]
 
 	ID3D11DeviceContext* dc = pGraphics->GetContext();
 
+	// Set the input layout and the primitive topology.
 	UINT stride = sizeof(SkinnedVertex);
 	UINT offset = 0;
-	// Set the input layout and the primitive topology.
 	dc->IASetInputLayout(Effects::BasicFX->GetInputLayout());
 	dc->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	// Draw the SkinnedMesh primitive.
+	// Draw the mesh with SkinnedVertex vertices that contains skinning data.
 	mPrimitive->Draw<SkinnedVertex>(pGraphics->GetContext());
 }
 
-void SkinnedMesh::Update(float dt)
-{
-	
-}
-
+//! Saves the mesh to a file.[TODO]
 void SkinnedMesh::Save(ofstream& fout)
 {
 	fout << "-Mesh-\r\n";
@@ -70,6 +68,7 @@ void SkinnedMesh::Save(ofstream& fout)
 	fout << "\r\n";
 }
 	
+//! Loads the mesh from a file.[TODO]
 void SkinnedMesh::Load(ifstream& fin)
 {
 	string ignore, texture;
@@ -124,42 +123,49 @@ void SkinnedMesh::Load(ifstream& fin)
 	SetMaterial(Material(Colors::White));
 }
 
-
+//! Sets the primitive.
 void SkinnedMesh::SetPrimitive(Primitive* primitive)
 {
 	mPrimitive = primitive;
 }
 
+// Sets the vertices, needed when saving to file.
 void SkinnedMesh::SetVertices(vector<SkinnedVertex> vertices)
 {
 	mVertices = vertices;
 }
-	
+
+// Sets the indices, needed when saving to file.
 void SkinnedMesh::SetIndices(vector<UINT> indices)
 {
 	mIndices = indices;
 }
 
+//! Sets the texture by calling Graphics::LoadTexture(...).
 void SkinnedMesh::LoadTexture(string filename)
 {
 	mTexture = GetGraphics()->LoadTexture(filename);
 }
 
+//! Sets the material.
 void SkinnedMesh::SetMaterial(Material material)
 {
 	mMaterial = material;
 }
 	
+//! Sets the texture.
 void SkinnedMesh::SetTexture(Texture2D* texture)
 {
 	mTexture = texture;
 }
 
+//! Returns the primitive.
 Primitive* SkinnedMesh::GetPrimitive()
 {
 	return mPrimitive;
 }
 
+//! Returns the material.
 Material SkinnedMesh::GetMaterial()
 {
 	return mMaterial;

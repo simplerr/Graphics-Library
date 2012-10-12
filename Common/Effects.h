@@ -98,6 +98,7 @@ public:
 	void SetMaterial(Material material)				{ mfxMaterial->SetRawValue(&material, 0, sizeof(material)); }
 	void SetUseTexture(bool use)					{ mfxUseTexture->SetRawValue(&use, 0, sizeof(bool)); }
 	void SetUseNormalMap(bool use)					{ mfxUseNormalMap->SetRawValue(&use, 0, sizeof(bool)) ;}
+	void SetUseAnimation(bool use)					{ mfxUseAnimation->SetRawValue(&use, 0, sizeof(bool)) ;}
 	void SetFogRange(float range)					{ mfxFogRange->SetFloat(range); }
 	void SetFogStart(float start)					{ mfxFogStart->SetFloat(start); }
 	void SetFogColor(XMFLOAT4 color)				{ mfxFogColor->SetFloatVector((const float*)&color); }
@@ -133,6 +134,7 @@ private:
 	// Skinning.
 	ID3DX11EffectTechnique*		 mfxSkinnedTech;
 	ID3DX11EffectMatrixVariable* mfxBoneTransforms;
+	ID3DX11EffectVariable*		 mfxUseAnimation;
 };
 
 #pragma endregion

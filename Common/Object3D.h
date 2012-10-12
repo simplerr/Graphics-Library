@@ -11,7 +11,7 @@ using namespace XNA;
 class Graphics;
 class BasicEffect;
 class Primitive;
-class Model;
+class StaticModel;
 class ModelImporter;
 struct Texture2D;
 
@@ -30,7 +30,7 @@ public:
 	void Draw(Graphics* pGraphics);
 
 	// Getters & setters.
-	Model*	 GetModel();
+	StaticModel*	 GetModel();
 	XMMATRIX GetWorldMatrix();
 	XMFLOAT3 GetPosition();
 	XMFLOAT3 GetRotation();
@@ -38,7 +38,7 @@ public:
 	Material GetMaterial();
 	AxisAlignedBox GetBoundingBox();
 	
-	void SetModel(Model* model);
+	void SetModel(StaticModel* model);
 	void SetTexture(string filename, float scale = 1.0f);
 	void SetNormalMap(string filename);
 	void SetTexture(Texture2D* texture);
@@ -49,7 +49,7 @@ public:
 	void SetMaterial(Material material);
 	void SetDefaultOrientation();
 private:
-	Model*		mModel;
+	StaticModel*	mModel;
 	Texture2D*	mNormalMap;
 	XMFLOAT3	mPosition;
 	XMFLOAT3	mRotation;

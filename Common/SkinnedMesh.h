@@ -9,20 +9,16 @@ class Graphics;
 class Texture2D;
 class Primitive;
 
-struct BoneInfo
-{
-	XMFLOAT4X4	offsetTransform;
-	XMFLOAT4X4  toParentTransform;
-	string		parent;
-};
-
+/**
+	A part of a skinned model that's rendered with the same texture and material.
+	Contains a Primitive with the vertices and indices.
+*/
 class SkinnedMesh
 {
 public:
 	SkinnedMesh();
 	~SkinnedMesh();
 
-	void Update(float dt);
 	void Draw(Graphics* pGraphics);
 
 	void SetPrimitive(Primitive* primitive);

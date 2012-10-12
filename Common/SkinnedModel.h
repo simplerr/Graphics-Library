@@ -9,6 +9,10 @@ class SceneAnimator;
 
 typedef vector<SkinnedMesh*> SkinnedMeshList;
 
+/**
+	Contains a list of skinned meshes representing an animated model,
+	and a SceneAnimator that calculates the bone transforms.
+*/
 class SkinnedModel
 {
 public:
@@ -17,7 +21,6 @@ public:
 
 	void Update(float dt);
 	void Draw(Graphics* pGraphics, CXMMATRIX world);
-	void Cleanup();
 	void Save(string filename);
 	void Load(string filename);
 	void AddMesh(SkinnedMesh* mesh);

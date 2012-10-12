@@ -9,7 +9,7 @@
 #include "Camera.h"
 #include "Sky.h"
 #include "Terrain.h"
-#include "Model.h"
+#include "StaticModel.h"
 
 World::World()
 {

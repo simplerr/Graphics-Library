@@ -20,8 +20,8 @@
 #include "ShadowMap.h"
 #include "Object3D.h"
 #include "Terrain.h"
-#include "Mesh.h"
-#include "Model.h"
+#include "StaticMesh.h"
+#include "StaticModel.h"
 
 //! Constructor. The Init() function handles the initialization.
 Graphics::Graphics()
@@ -285,7 +285,7 @@ void Graphics::FillShadowMap(ObjectList* objects)
 		Effects::BuildShadowMapFX->Apply();
 
 		// Draw all the meshes.
-		vector<Mesh*>* meshList = object->GetModel()->GetMeshList();
+		vector<StaticMesh*>* meshList = object->GetModel()->GetMeshList();
 		for(int j = 0; j < meshList->size(); j++)
 			meshList->operator[](j)->GetPrimitive()->Draw<Vertex>(GetContext());
 	}

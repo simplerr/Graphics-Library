@@ -5,6 +5,7 @@
 #include "ShadowMap.h"
 #include "SkinnedMesh.h"
 #include "cAnimationController.h"
+#include "Input.h"
 
 SkinnedModel::SkinnedModel()
 {
@@ -12,26 +13,22 @@ SkinnedModel::SkinnedModel()
 	mElapsedTime = 0.0f;
 }
 	
+//! Cleaunp.
 SkinnedModel::~SkinnedModel()
-{
-	Save("monster.txt");
-	delete mAnimator;
-}
-
-void SkinnedModel::Cleanup()
 {
 	for(int i = 0; i < mMeshList.size(); i++) 
 		delete mMeshList[i];
+
+	delete mAnimator;
 }
 
+//! Increments the elapsed time counter used for animations.
 void SkinnedModel::Update(float dt)
 {
-	for(int i = 0; i < mMeshList.size(); i++) 
-		mMeshList[i]->Update(dt);
-
 	mElapsedTime += dt;
 }
 
+//! Draws all the skinned meshes. Sets the bone transforms to use in the shader.
 void SkinnedModel::Draw(Graphics* pGraphics, CXMMATRIX world)
 {
 	XMMATRIX view = XMLoadFloat4x4(&pGraphics->GetCamera()->GetViewMatrix());
@@ -47,12 +44,10 @@ void SkinnedModel::Draw(Graphics* pGraphics, CXMMATRIX world)
 	Effects::BasicFX->SetFogColor(pGraphics->GetFogColor());
 	Effects::BasicFX->SetFogStart(1000.0f);
 	Effects::BasicFX->SetFogRange(50.0f);
+	Effects::BasicFX->SetUseAnimation(true);
 
 	// Bone transforms.
-	vector<XMFLOAT4X4> finalTransforms = mAnimator->GetTransforms(mElapsedTime);
-
-	/*for(int i = 0; i < finalTransforms.size(); i++)
-		XMStoreFloat4x4(&finalTransforms[i] , XMMatrixIdentity());*/
+	vector<XMFLOAT4X4> finalTransforms = mAnimator->GetTransforms(mElapsedTime);	//mElapsedTime
 
 	Effects::BasicFX->SetBoneTransforms(&finalTransforms[0], finalTransforms.size());
 
@@ -63,6 +58,7 @@ void SkinnedModel::Draw(Graphics* pGraphics, CXMMATRIX world)
 	}
 }
 
+//! Saves the model to a file.[TODO]
 void SkinnedModel::Save(string filename)
 {
 	ofstream fout(filename, ios::binary);
@@ -79,6 +75,7 @@ void SkinnedModel::Save(string filename)
 	fout.close();
 }
 	
+//! Loads the  model from a file.[TODO]
 void SkinnedModel::Load(string filename)
 {
 	ifstream fin(filename, ios::binary | ios::in);
@@ -111,26 +108,31 @@ void SkinnedModel::Load(string filename)
 	fin.close();
 }
 
+//! Sets the animation controller.
 void SkinnedModel::SetAnimator(SceneAnimator* animator)
 {
 	mAnimator = animator;
 }
 
+//! Sets which animation to use by name.
 void SkinnedModel::SetAnimation(string animation)
 {
 	mAnimator->SetAnimation(animation);
 }
 	
+//! Sets which animation to use by index.
 void SkinnedModel::SetAnimation(int index)
 {
 	mAnimator->SetAnimIndex(index);
 }
 
+//! Adds a mesh to the list.
 void SkinnedModel::AddMesh(SkinnedMesh* mesh)
 {
 	mMeshList.push_back(mesh);
 }
 
+//! Returns the mesh list.
 SkinnedMeshList* SkinnedModel::GetMeshList()
 {
 	return &mMeshList;
