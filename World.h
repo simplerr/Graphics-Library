@@ -2,7 +2,7 @@
 
 #include <vector>
 #include <map>
-#include "d3dUtil.h"
+#include "Common\d3dUtil.h"
 using namespace std;
 
 class Graphics;

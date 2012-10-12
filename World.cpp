@@ -1,15 +1,15 @@
 #include "World.h"
 #include "Object3D.h"
-#include "Light.h"
-#include "PrimitiveFactory.h"
-#include "Runnable.h"
+#include "Common\Light.h"
+#include "Common\PrimitiveFactory.h"
+#include "Common\Runnable.h"
 #include "Effects.h"
-#include "Graphics.h"
-#include "xnacollision.h"
-#include "Camera.h"
-#include "Sky.h"
-#include "Terrain.h"
-#include "StaticModel.h"
+#include "Common\Graphics.h"
+#include "Common\xnacollision.h"
+#include "Common\Camera.h"
+#include "Common\Sky.h"
+#include "Common\Terrain.h"
+#include "Common\StaticModel.h"
 
 World::World()
 {
@@ -18,8 +18,8 @@ World::World()
 
 void World::Init()
 {
-	mDebugObject = new Object3D(gPrimitiveFactory->CreateBox());
-	mDebugObject->SetTexture("textures/crate.dds");
+	//mDebugObject = new Object3D(gPrimitiveFactory->CreateBox());
+	//mDebugObject->SetTexture("textures/crate.dds");
 
 	// Create the sky box.
 	mSkyBox = new Sky("textures/sky.dds", 5000.0f);
@@ -46,7 +46,7 @@ World::~World()
 {
 	delete mSkyBox;
 	delete mTerrain;
-	delete mDebugObject;
+	//delete mDebugObject;
 
 	// Delete all objects.
 	for(int i = 0; i < mObjectList.size(); i++)
@@ -90,8 +90,8 @@ void World::Draw(Graphics* pGraphics)
 
 	for(int i = 0; i < mLightList.size(); i++)
 	{
-		mDebugObject->SetPosition(mLightList[i]->GetPosition());
-		mDebugObject->SetRotation(mLightList[i]->GetDirection());
+		//mDebugObject->SetPosition(mLightList[i]->GetPosition());
+		//mDebugObject->SetRotation(mLightList[i]->GetDirection());
 		//mDebugObject->Draw(pGraphics);
 	}
 

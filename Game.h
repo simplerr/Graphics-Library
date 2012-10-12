@@ -2,7 +2,7 @@
 
 #include "Common\Runnable.h"
 
-class Object3D;
+class StaticObject;
 class World;
 class Light;
 class RenderTarget;
@@ -28,9 +28,9 @@ private:
 	World* mWorld;
 	Light* mLight;
 	Light* mLight2;
-	Object3D*  mObject;
-	Object3D*  mObject2;
-	Object3D*  mTerrain;
+	StaticObject*  mObject;
+	StaticObject*  mObject2;
+	StaticObject*  mTerrain;
 	ModelImporter* mModelImporter;
 	SkinnedModel* mSkinnedModel;
 };

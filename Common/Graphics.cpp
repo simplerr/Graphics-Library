@@ -18,7 +18,8 @@
 #include "RenderStates.h"
 #include "Sky.h"
 #include "ShadowMap.h"
-#include "Object3D.h"
+#include "..\Object3D.h"
+#include "..\StaticObject.h"
 #include "Terrain.h"
 #include "StaticMesh.h"
 #include "StaticModel.h"
@@ -272,23 +273,23 @@ void Graphics::FillShadowMap(ObjectList* objects)
 	GetContext()->IASetInputLayout(Effects::BuildShadowMapFX->GetInputLayout());
 	GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	// Loop through all objects.
-	for(int i = 0; i < objects->size(); i++)
-	{
-		Object3D* object = objects->operator[](i);	
-		XMMATRIX world = object->GetWorldMatrix();
-		XMMATRIX worldInvTranspose = InverseTranspose(world);
+	// Loop through all static objects.
+	//for(int i = 0; i < objects->size(); i++)
+	//{
+	//	StaticObject* object = objects->operator[](i);	
+	//	XMMATRIX world = object->GetWorldMatrix();
+	//	XMMATRIX worldInvTranspose = InverseTranspose(world);
 
-		Effects::BuildShadowMapFX->SetWorld(world);
-		Effects::BuildShadowMapFX->SetWorldViewProj(world * view * proj);
-		Effects::BuildShadowMapFX->SetWorldInvTranspose(worldInvTranspose);
-		Effects::BuildShadowMapFX->Apply();
+	//	Effects::BuildShadowMapFX->SetWorld(world);
+	//	Effects::BuildShadowMapFX->SetWorldViewProj(world * view * proj);
+	//	Effects::BuildShadowMapFX->SetWorldInvTranspose(worldInvTranspose);
+	//	Effects::BuildShadowMapFX->Apply();
 
-		// Draw all the meshes.
-		vector<StaticMesh*>* meshList = object->GetModel()->GetMeshList();
-		for(int j = 0; j < meshList->size(); j++)
-			meshList->operator[](j)->GetPrimitive()->Draw<Vertex>(GetContext());
-	}
+	//	// Draw all the meshes.
+	//	vector<StaticMesh*>* meshList = object->GetModel()->GetMeshList();
+	//	for(int j = 0; j < meshList->size(); j++)
+	//		meshList->operator[](j)->GetPrimitive()->Draw<Vertex>(GetContext());
+	//}
 
 	// Restore the rasterizer state.
 	GetContext()->RSSetState(0);

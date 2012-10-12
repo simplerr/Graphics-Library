@@ -6,9 +6,7 @@
 #include "Common\d3dUtil.h"
 #include "Common\Graphics.h"
 #include "Common\PrimitiveFactory.h"
-#include "Common\Object3D.h"
 #include "Common\Input.h"
-#include "Common\World.h"
 #include "Common\Light.h"
 #include "Common\BillboardManager.h"
 #include "Common\Vertex.h"
@@ -20,6 +18,9 @@
 #include "Common\ModelImporter.h"
 #include "Common\StaticModel.h"
 #include "Common\SkinnedModel.h"
+#include "Object3D.h"
+#include "World.h"
+#include "StaticObject.h"
 #include "vld.h"
 
 // Set globals to nullptrs
@@ -82,12 +83,12 @@ void Game::Init()
 	GetGraphics()->SetLightList(mWorld->GetLights());
 
 	// Add some objects.
-	mObject = new Object3D(mModelImporter, "models/monster/monster.x");
+	mObject = new StaticObject(mModelImporter, "models/monster/monster.x");
 	mObject->SetPosition(XMFLOAT3(0, 30, 0));
 	mObject->SetScale(XMFLOAT3(0.1, 0.1, 0.1));
 	mWorld->AddObject(mObject);
 
-	Object3D* object = new Object3D(mModelImporter, "models/monster/monster.x");
+	Object3D* object = new StaticObject(mModelImporter, "models/monster/monster.x");
 	object->SetPosition(XMFLOAT3(0, 30, 20));
 	object->SetScale(XMFLOAT3(0.1, 0.1, 0.1));
 	mWorld->AddObject(object);
