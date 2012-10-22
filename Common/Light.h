@@ -70,6 +70,8 @@ public:
 	XMFLOAT3 GetPosition();
 	XMFLOAT3 GetDirection();
 	XMFLOAT3 GetAtt();
+	Material GetMaterial();
+	float GetRange();
 	float GetSpot();
 private:
 	// Light color

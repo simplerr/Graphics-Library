@@ -258,69 +258,6 @@ void Graphics::SetEffectParameters(BasicEffect* effect, CXMMATRIX worldMatrix, T
 	effect->Apply();
 }
 
-void Graphics::ActiveShadowMap()
-{
-	// Sets render target to NULL and the DSV to the shadow maps. Enables depth writes to the DSV basicly.
-	GetShadowMap()->BindDepthStencil(GetContext());
-	Effects::BasicFX->SetRenderingToShadowMap(true);
-	mRenderingShadows = true;
-}
-
-void Graphics::DeactiveShadowMap()
-{
-	// Restore the rasterizer state.
-	GetContext()->RSSetState(0);
-
-	// Restore the render targets and viewport.
-	RestoreRenderTarget();
-	GetContext()->RSSetViewports(1, &GetD3D()->GetViewport());
-
-	Effects::BasicFX->SetRenderingToShadowMap(false);
-	mRenderingShadows = false;
-}
-
-//! Renders depth values from the light space to the shadow map texture.
-void Graphics::FillShadowMap(ObjectList* objects)
-{
-	// Sets render target to NULL and the DSV to the shadow maps. Enables depth writes to the DSV basicly.
-	GetShadowMap()->BindDepthStencil(GetContext());
-
-	XMMATRIX view = XMLoadFloat4x4(&mShadowMap->GetLightView());
-	XMMATRIX proj = XMLoadFloat4x4(&mShadowMap->GetLightProj());
-	XMMATRIX viewProj = XMMatrixMultiply(view, proj);
-
-	Effects::BuildShadowMapFX->SetViewProj(viewProj);
-
-	// Set the input layout and the primitive topology.
-	GetContext()->IASetInputLayout(Effects::BuildShadowMapFX->GetInputLayout());
-	GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-	// Loop through all static objects.
-	//for(int i = 0; i < objects->size(); i++)
-	//{
-	//	StaticObject* object = objects->operator[](i);	
-	//	XMMATRIX world = object->GetWorldMatrix();
-	//	XMMATRIX worldInvTranspose = InverseTranspose(world);
-
-	//	Effects::BuildShadowMapFX->SetWorld(world);
-	//	Effects::BuildShadowMapFX->SetWorldViewProj(world * view * proj);
-	//	Effects::BuildShadowMapFX->SetWorldInvTranspose(worldInvTranspose);
-	//	Effects::BuildShadowMapFX->Apply();
-
-	//	// Draw all the meshes.
-	//	vector<StaticMesh*>* meshList = object->GetModel()->GetMeshList();
-	//	for(int j = 0; j < meshList->size(); j++)
-	//		meshList->operator[](j)->GetPrimitive()->Draw<Vertex>(GetContext());
-	//}
-
-	// Restore the rasterizer state.
-	GetContext()->RSSetState(0);
-
-	// Restore the render targets and viewport.
-	RestoreRenderTarget();
-	GetContext()->RSSetViewports(1, &GetD3D()->GetViewport());
-}
-
 void Graphics::ApplyBlur(Texture2D* texture, int blurCount)
 {
 	mBlurFilter->ApplyBlur(GetContext(), texture->shaderResourceView, blurCount);
@@ -396,6 +333,32 @@ LightList* Graphics::GetLightList()
 XMFLOAT4 Graphics::GetFogColor()
 {
 	return mFogColor;
+}
+
+void Graphics::ActiveShadowMap()
+{
+	// Unbind the SRVs from the pipeline so they can be used as DSVs instead.
+	ID3D11ShaderResourceView *const nullSRV[1] = {NULL};//, NULL, NULL, NULL};
+	GetContext()->PSSetShaderResources(1, 1, nullSRV);
+	Effects::BuildShadowMapFX->Apply();
+
+	// Sets render target to NULL and the DSV to the shadow maps. Enables depth writes to the DSV basicly.
+	GetShadowMap()->BindDepthStencil(GetContext());
+	Effects::BasicFX->SetRenderingToShadowMap(true);
+	mRenderingShadows = true;
+}
+
+void Graphics::DeactiveShadowMap()
+{
+	// Restore the rasterizer state.
+	GetContext()->RSSetState(0);
+
+	// Restore the render targets and viewport.
+	RestoreRenderTarget();
+	GetContext()->RSSetViewports(1, &GetD3D()->GetViewport());
+
+	Effects::BasicFX->SetRenderingToShadowMap(false);
+	mRenderingShadows = false;
 }
 
 //! Sets which render target to use.

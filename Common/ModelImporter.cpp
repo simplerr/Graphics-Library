@@ -190,7 +190,9 @@ StaticModel* ModelImporter::LoadStaticModel(string filename)
 			{
 				aiVector3D v = assimpMesh->mVertices[i];
 				aiVector3D n = assimpMesh->mNormals[i];
-				aiVector3D t = assimpMesh->mTextureCoords[0][i];
+				aiVector3D t = aiVector3D(0, 0, 0);
+				if(assimpMesh->HasTextureCoords(0))
+					t = assimpMesh->mTextureCoords[0][i];
 
 				n = n.Normalize();
 				Vertex vertex(v.x, v.y, v.z, n.x, n.y, n.z, 0, 0, 0, t.x, t.y);
@@ -218,6 +220,8 @@ StaticModel* ModelImporter::LoadStaticModel(string filename)
 			StaticMesh* mesh = new StaticMesh();
 			Primitive* primitive = new Primitive(GetD3DDevice(), vertices, indices);
 			mesh->SetPrimitive(primitive);
+			mesh->SetVertices(vertices);
+			mesh->SetIndices(indices);
 			mPrimtiveFactory->AddPrimitive(path.C_Str(), primitive);
 
 			if(_stricmp(path.C_Str(), "") != 0)

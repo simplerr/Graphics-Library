@@ -62,7 +62,6 @@ public:
 	void DrawScreenQuad(Texture2D* texture, float x, float y, float width, float height);
 	void DrawBoundingBox(AxisAlignedBox* aabb, CXMMATRIX worldMatrix, Material material, float transparency = 0.4f);
 	void DrawText(string text, int x, int y, D3DXCOLOR textColor, int size);
-	void FillShadowMap(ObjectList* objects);
 	void ActiveShadowMap();
 	void DeactiveShadowMap();
 	void AddToShadowMap(SkinnedModel* model);

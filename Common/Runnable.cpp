@@ -62,11 +62,21 @@ bool Runnable::InitWin32()
 		PostQuitMessage(0);
 	}
 
+	RECT clientRect;
+	clientRect.left = GetSystemMetrics(SM_CXSCREEN)/2 - mScreenWidth/2.0f;
+	clientRect.right = GetSystemMetrics(SM_CXSCREEN)/2 + mScreenWidth/2.0f;
+	clientRect.top = GetSystemMetrics(SM_CYSCREEN)/2 - mScreenHeight/2.0f;
+	clientRect.bottom = GetSystemMetrics(SM_CYSCREEN)/2 + mScreenHeight/2.0f;
+
+	AdjustWindowRect(&clientRect, WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX, false);
+	int width = clientRect.right - clientRect.left;
+	int height = clientRect.bottom - clientRect.top;
+
 	// Create the window with a custom size and make it centered
 	// NOTE: WS_CLIPCHILDREN Makes the area under child windows not be displayed. (Useful when rendering DirectX and using windows controls).
 	mhMainWindow = CreateWindow("D3DWndClassName", mCaption.c_str(), 
 		WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_CLIPCHILDREN, GetSystemMetrics(SM_CXSCREEN)/2-(mScreenWidth/2),
-		GetSystemMetrics(SM_CYSCREEN)/2-(mScreenHeight/2), mScreenWidth, mScreenHeight, 
+		GetSystemMetrics(SM_CYSCREEN)/2-(mScreenHeight/2), width, height, 
 		0, 0, mhInstance, 0); 
 
 	if(!mhMainWindow) {

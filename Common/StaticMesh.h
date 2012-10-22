@@ -20,10 +20,13 @@ public:
 
 	void Draw(Graphics* pGraphics);
 
+	bool RayIntersect(XMVECTOR origin, XMVECTOR direction, float& pDist);
+	void LoadTexture(string filename);
 	void SetPrimitive(Primitive* primitive);
 	void SetMaterial(Material material);
 	void SetTexture(Texture2D* texture);
-	void LoadTexture(string filename);
+	void SetVertices(vector<Vertex> vertices);
+	void SetIndices(vector<UINT> indices);
 
 	Primitive*		GetPrimitive();
 	Material		GetMaterial();
@@ -31,5 +34,6 @@ private:
 	Primitive*		mPrimitive;
 	Texture2D*		mTexture;
 	Material		mMaterial;
-	// vector<Vertex>	mVertices; // Needed when implementing save-to-file.[TODO]
+	vector<Vertex>	mVertices;
+	vector<UINT>	mIndices;
 };

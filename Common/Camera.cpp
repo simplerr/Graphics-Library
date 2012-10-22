@@ -7,7 +7,7 @@ Camera::Camera()
 {
 	// Set the sensitivity and speed
 	SetLookSensitivity(2.0f);
-	SetMoveSpeed(0.03f);
+	SetMoveSpeed(0.03f*10);
 
 	// Default position and target
 	mPosition	= XMFLOAT3(32, 32, 32);

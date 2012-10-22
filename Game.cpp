@@ -23,6 +23,8 @@
 #include "StaticObject.h"
 #include "AnimatedObject.h"
 #include "vld.h"
+#include "Common\Primitive.h"
+#include "DirectX11Renderer.h"
 
 // Set globals to nullptrs
 Runnable*			gGame				= nullptr;
@@ -30,6 +32,29 @@ PrimitiveFactory*	gPrimitiveFactory	= nullptr;
 Input*				gInput				= nullptr;
 
 BillboardVertex* billboard;
+
+Gwen::Renderer::DirectX11* pRenderer;
+
+void drawText(ID3D11Device *pDevice, ID3D11DeviceContext *pContext) {
+	IFW1Factory *pFW1Factory;
+	HRESULT hResult = FW1CreateFactory(FW1_VERSION, &pFW1Factory);
+	
+	IFW1FontWrapper *pFontWrapper;
+	hResult = pFW1Factory->CreateFontWrapper(pDevice, L"Arial", &pFontWrapper);
+	
+	pFontWrapper->DrawString(
+		pContext,
+		L"Text",// String
+		12.0f,// Font size
+		100.0f,// X position
+		50.0f,// Y position
+		0xff0099ff,// Text color, 0xAaBbGgRr
+		0// Flags (for example FW1_RESTORESTATE to keep context states unchanged)
+	);
+	
+	pFontWrapper->Release();
+	pFW1Factory->Release();
+}
 
 //! The program starts here.
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance, PSTR cmdLine, int showCmd)
@@ -84,7 +109,7 @@ void Game::Init()
 	GetGraphics()->SetLightList(mWorld->GetLights());
 
 	// Add some objects.
-	/*mObject = new StaticObject(mModelImporter, "models/monster/monster.x");
+	mObject = new StaticObject(mModelImporter, "models/monster/monster.x");
 	mObject->SetPosition(XMFLOAT3(0, 30, 0));
 	mObject->SetScale(XMFLOAT3(0.1, 0.1, 0.1));
 	mWorld->AddObject(mObject);
@@ -92,7 +117,7 @@ void Game::Init()
 	Object3D* object = new StaticObject(mModelImporter, "models/monster/monster.x");
 	object->SetPosition(XMFLOAT3(0, 30, 20));
 	object->SetScale(XMFLOAT3(0.1, 0.1, 0.1));
-	mWorld->AddObject(object);*/
+	mWorld->AddObject(object);
 
 	// Add some lights.
 	mLight = new Light();
@@ -116,12 +141,15 @@ void Game::Init()
 	mAnimatedObject->SetRotation(XMFLOAT3(0.7, 0.6, 0.6));
 	mWorld->AddObject(mAnimatedObject);
 
-	for(int i = 0; i < 10; i++)
+	/*for(int i = 0; i < 5; i++)
 	{
-		AnimatedObject* obj = new AnimatedObject(mModelImporter, "models/smith/smith.x");
-		obj->SetPosition(XMFLOAT3(0, 30, i*20));
-		mWorld->AddObject(obj);
-	}
+		for(int j = 0; j < 5; j++) {
+			AnimatedObject* obj = new AnimatedObject(mModelImporter, "models/smith/smith.x");
+			obj->SetPosition(XMFLOAT3(j*20, 30, i*20));
+			obj->SetScale(XMFLOAT3(0.2, 0.2, 0.2));
+			mWorld->AddObject(obj);
+		}
+	}*/
 }
 	
 void Game::Update(float dt)
@@ -173,7 +201,7 @@ void Game::Draw(Graphics* pGraphics)
 	pGraphics->GetContext()->PSSetShaderResources(0, 3, nullSRV);
 
 	// Draw depth values to the shadow map.
-	//pGraphics->FillShadowMap(mWorld->GetObjects());
+	pGraphics->FillShadowMap(mWorld->GetObjects());
 
 	/*Texture2D tex;
 	tex.shaderResourceView = pGraphics->GetShadowMap()->GetSRV();
@@ -190,6 +218,12 @@ void Game::Draw(Graphics* pGraphics)
 LRESULT Game::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	gInput->MsgProc(msg, wParam, lParam);
+
+	MSG message;
+	message.hwnd =  hwnd;
+	message.message = msg;
+	message.wParam = wParam;
+	message.lParam = lParam;
 
 	return Runnable::MsgProc(hwnd, msg, wParam, lParam);
 }

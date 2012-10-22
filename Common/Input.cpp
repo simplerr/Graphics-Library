@@ -124,6 +124,7 @@ bool Input::KeyReleased(int key)
 */
 XMFLOAT3 Input::MousePosition()
 {
+	return mMousePosition;
 	POINT pos;
 	GetCursorPos(&pos);
 	ScreenToClient(gGame->GetHwnd(), &pos);

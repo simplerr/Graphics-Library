@@ -79,4 +79,14 @@ float Light::GetSpot()
 {
 	return mSpot;
 }
+
+float Light::GetRange()
+{
+	return mRange;
+}
+
+Material Light::GetMaterial()
+{
+	return mMaterial;
+}
  

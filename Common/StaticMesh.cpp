@@ -19,12 +19,39 @@ StaticMesh::~StaticMesh()
 void StaticMesh::Draw(Graphics* pGraphics)
 {
 	// Set the material properties for this mesh.
-	Effects::BasicFX->SetMaterial(mMaterial);
+	//Effects::BasicFX->SetMaterial(mMaterial);
 	Effects::BasicFX->SetTexture(mTexture);
 	Effects::BasicFX->Apply();
 
 	// Draw the mesh primitive.
 	mPrimitive->Draw<Vertex>(pGraphics->GetContext());
+}
+
+bool StaticMesh::RayIntersect(XMVECTOR origin, XMVECTOR direction, float& pDist)
+{
+	bool intersect = false;
+	for(UINT i = 0; i < mIndices.size()/3; ++i)
+	{
+		// Indices for this triangle.
+		UINT i0 = mIndices[i*3+0];
+		UINT i1 = mIndices[i*3+1];
+		UINT i2 = mIndices[i*3+2];
+
+		// Vertices for this triangle.
+		XMVECTOR v0 = XMLoadFloat3(&mVertices[i0].Pos);
+		XMVECTOR v1 = XMLoadFloat3(&mVertices[i1].Pos);
+		XMVECTOR v2 = XMLoadFloat3(&mVertices[i2].Pos);
+
+		float dist = 0.0f;
+		if(XNA::IntersectRayTriangle(origin, direction, v0, v1, v2, &dist))
+		{
+			if(dist < pDist)
+				pDist = dist;
+			intersect = true;
+		}
+	}
+
+	return intersect;
 }
 
 //! Sets the primitive.
@@ -49,6 +76,16 @@ void StaticMesh::SetMaterial(Material material)
 void StaticMesh::SetTexture(Texture2D* texture)
 {
 	mTexture = texture;
+}
+
+void StaticMesh::SetVertices(vector<Vertex> vertices)
+{
+	mVertices = vertices;
+}
+
+void StaticMesh::SetIndices(vector<UINT> indices)
+{
+	mIndices = indices;
 }
 
 //! Returns the primitive.

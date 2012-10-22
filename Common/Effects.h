@@ -96,9 +96,9 @@ public:
 	void SetEyePosition(XMFLOAT3 eyePos)			{ mfxEyePosW->SetRawValue(&eyePos, 0, sizeof(XMFLOAT3)); }
 	void SetBoneTransforms(const XMFLOAT4X4* M, int cnt) { mfxBoneTransforms->SetMatrixArray(reinterpret_cast<const float*>(M), 0, cnt); }
 	void SetMaterial(Material material)				{ mfxMaterial->SetRawValue(&material, 0, sizeof(material)); }
-	void SetUseTexture(bool use)					{ mfxUseTexture->SetRawValue(&use, 0, sizeof(bool)); }
-	void SetUseNormalMap(bool use)					{ mfxUseNormalMap->SetRawValue(&use, 0, sizeof(bool)) ;}
-	void SetUseAnimation(bool use)					{ mfxUseAnimation->SetRawValue(&use, 0, sizeof(bool)) ;}
+	void SetUseTexture(bool use)					{ mfxUseTexture->SetBool(use) ;}
+	void SetUseNormalMap(bool use);
+	void SetUseAnimation(bool use)					{ mfxUseAnimation->SetBool(use) ;}
 	void SetFogRange(float range)					{ mfxFogRange->SetFloat(range); }
 	void SetFogStart(float start)					{ mfxFogStart->SetFloat(start); }
 	void SetFogColor(XMFLOAT4 color)				{ mfxFogColor->SetFloatVector((const float*)&color); }
@@ -107,7 +107,7 @@ public:
 	void SetTexture(Texture2D* texture);				
 	void SetNormalMap(Texture2D* normalMap);
 	void SetLights(LightList* lights);
-	void SetRenderingToShadowMap(bool active)		{ mfxRenderingToShadowMap->SetRawValue(&active, 0, sizeof(bool)) ;}
+	void SetRenderingToShadowMap(bool active)		{ mfxRenderingToShadowMap->SetBool(active) ;}
 
 	ID3DX11EffectTechnique* GetSkinnedTech();
 private:
@@ -121,12 +121,12 @@ private:
 	ID3DX11EffectVariable* mfxLights;
 	ID3DX11EffectVariable* mfxMaterial;
 	ID3DX11EffectVariable* mfxNumLights;
-	ID3DX11EffectVariable* mfxUseTexture;
+	ID3DX11EffectScalarVariable* mfxUseTexture;
 	ID3DX11EffectShaderResourceVariable* mfxTexture;
 	ID3DX11EffectShaderResourceVariable* mfxNormalMap;
 	ID3DX11EffectShaderResourceVariable* mfxShadowMap;
-	ID3DX11EffectVariable* mfxUseNormalMap;
-	ID3DX11EffectVariable* mfxRenderingToShadowMap;
+	ID3DX11EffectScalarVariable* mfxUseNormalMap;
+	ID3DX11EffectScalarVariable* mfxRenderingToShadowMap;
 
 	// Fog.
 	ID3DX11EffectScalarVariable* mfxFogStart;
@@ -136,7 +136,7 @@ private:
 	// Skinning.
 	ID3DX11EffectTechnique*		 mfxSkinnedTech;
 	ID3DX11EffectMatrixVariable* mfxBoneTransforms;
-	ID3DX11EffectVariable*		 mfxUseAnimation;
+	ID3DX11EffectScalarVariable* mfxUseAnimation;
 };
 
 #pragma endregion

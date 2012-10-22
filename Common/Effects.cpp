@@ -76,7 +76,8 @@ void Effects::DestroyAll()
 Effect::Effect(string filename, string technique)
 {
 	// Create the effect from memory.
-	std::ifstream fin("Common/" + filename + "o", std::ios::binary);
+	// [NOTE] Fix this!
+	std::ifstream fin("F:\\Users\\Axel\\Documents\\Visual Studio 11\\Projects\\Graphics Library\\Graphics Library\\Common\\" + filename + "o", std::ios::binary);
 
 	fin.seekg(0, std::ios_base::end);
 	int size = (int)fin.tellg();
@@ -150,6 +151,11 @@ BasicEffect::~BasicEffect()
 
 }
 
+void BasicEffect::SetUseNormalMap(bool use)
+{
+	HRESULT hr = mfxUseNormalMap->SetBool(use);
+}
+
 //! Inits all effect variable handles.
 void BasicEffect::Init()
 {
@@ -165,16 +171,16 @@ void BasicEffect::Init()
 	mfxLights			 = mEffect->GetVariableByName("gLights");
 	mfxMaterial			 = mEffect->GetVariableByName("gMaterial");
 	mfxNumLights		 = mEffect->GetVariableByName("gNumLights");
-	mfxUseTexture		 = mEffect->GetVariableByName("gUseTexture");
+	mfxUseTexture		 = mEffect->GetVariableByName("gUseTexture")->AsScalar();
 	mfxTexture			 = mEffect->GetVariableByName("gTexture")->AsShaderResource();
 	mfxFogStart			 = mEffect->GetVariableByName("gFogStart")->AsScalar();
 	mfxFogRange			 = mEffect->GetVariableByName("gFogRange")->AsScalar();
 	mfxFogColor			 = mEffect->GetVariableByName("gFogColor")->AsVector();
 	mfxNormalMap		 = mEffect->GetVariableByName("gNormalMap")->AsShaderResource();
 	mfxShadowMap         = mEffect->GetVariableByName("gShadowMap")->AsShaderResource();
-	mfxUseNormalMap		 = mEffect->GetVariableByName("gUseNormalMap");
-	mfxUseAnimation		 = mEffect->GetVariableByName("gUseAnimation");
-	mfxRenderingToShadowMap = mEffect->GetVariableByName("gRenderingToShadowMap");
+	mfxUseNormalMap		 = mEffect->GetVariableByName("gUseNormalMap")->AsScalar();
+	mfxUseAnimation		 = mEffect->GetVariableByName("gUseAnimation")->AsScalar();
+	mfxRenderingToShadowMap = mEffect->GetVariableByName("gRenderingToShadowMap")->AsScalar();
 }
 
 //! Creates the input layout that will get set before the Input-Assembler state. The EffectManager calls this function.

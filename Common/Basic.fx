@@ -202,10 +202,11 @@ float4 PS(VertexOut pin) : SV_Target
 		texColor = gTexture.Sample(textureSampler, pin.Tex);
 
 	// Use normal mapping?
-	if(gUseNormalMap) {
+	/*if(gUseNormalMap)
+	{
 		float3 normalMapSample = gNormalMap.Sample(samLinear, pin.Tex).rgb;
 		pin.NormalW = NormalSampleToWorldSpace(normalMapSample, pin.NormalW, pin.TangentW);
-	}
+	}*/
 
 	// Get the shadow factor.
 	float shadow = 1.0f;
