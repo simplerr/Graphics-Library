@@ -15,6 +15,7 @@ void Light::SetMaterials(XMFLOAT4 ambient, XMFLOAT4 diffuse, XMFLOAT4 specular)
 	mMaterial.ambient  = ambient;
 	mMaterial.diffuse  = diffuse;
 	mMaterial.specular	= specular;
+	SetIntensity(1.0f, 0.0f, 0.0f);
 }
 	
 void Light::SetPosition(XMFLOAT3 position)
@@ -60,6 +61,16 @@ void Light::SetType(LightType type)
 	mType = type;
 }
  
+void Light::SetIntensity(float ambient, float diffuse, float specular)
+{
+	mIntensity = XMFLOAT3(ambient, diffuse, specular);
+}
+
+XMFLOAT3 Light::GetIntensity()
+{
+	return mIntensity;
+}
+
 XMFLOAT3 Light::GetPosition()
 {
 	return mPosition;

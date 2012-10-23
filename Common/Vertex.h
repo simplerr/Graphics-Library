@@ -8,6 +8,7 @@ class BillboardManager;
 struct Vertex
 {
 	Vertex() {}
+	Vertex(XMFLOAT3 pos) : Pos(pos) {}
 	Vertex(float px, float py, float pz, float nx, float ny, float nz)
 		: Pos(px, py, pz), Normal(nx, ny, nz) {}
 	Vertex(float px, float py, float pz, float nx, float ny, float nz, float tx, float ty, float tz, float u, float v) 

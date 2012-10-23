@@ -65,11 +65,13 @@ public:
 	void SetSpot(float spot);
 	void SetAtt(float a0, float a1, float a2);
 	void SetType(LightType type);
+	void SetIntensity(float ambient, float diffuse, float specular);
 
 	// Getters
 	XMFLOAT3 GetPosition();
 	XMFLOAT3 GetDirection();
 	XMFLOAT3 GetAtt();
+	XMFLOAT3 GetIntensity();
 	Material GetMaterial();
 	float GetRange();
 	float GetSpot();
@@ -88,4 +90,8 @@ private:
 	// Packed into 4D vector: (att, type)
 	XMFLOAT3 mAtt;
 	float mType;	// 0 = directional, 1 = point light, 2 = spot light
+
+	// Light intensity
+	XMFLOAT3 mIntensity;
+	float pad;
 };
