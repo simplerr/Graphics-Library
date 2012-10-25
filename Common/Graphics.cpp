@@ -121,11 +121,15 @@ Texture2D* Graphics::LoadTexture(string filename, float scale)
 	}
 }
 
-//! Updates the camera.
 void Graphics::Update(float dt)
 {
-	mCamera->Update(dt);
 	mShadowMap->BuildShadowTransform(mLightList->operator[](0));
+}
+
+//! Updates the camera.
+void Graphics::UpdateCamera(float dt)
+{
+	mCamera->Update(dt);
 }
 
 //! Draws a primitive.

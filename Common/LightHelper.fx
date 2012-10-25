@@ -131,7 +131,7 @@ void ComputeSpotLight(Material mat, Light light, float3 pos, float3 normal, floa
 	lightVec /= d; 
 	
 	// Ambient term.
-	ambient = mat.ambient * light.mat.ambient * light.intensity.x;	;	
+	ambient = mat.ambient * light.mat.ambient * light.intensity.x;	
 
 	// Add diffuse and specular term, provided the surface is in 
 	// the line of site of the light.

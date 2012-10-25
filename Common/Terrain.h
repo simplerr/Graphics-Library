@@ -2,6 +2,7 @@
 
 #include <vector>
 #include "d3dUtil.h"
+#include "Vertex.h"
 
 class Primitive;
 class Graphics;
@@ -40,12 +41,17 @@ public:
 	float		GetWidth();
 	float		GetDepth();
 	float		GetHeight(float x, float z);
+	void		SetHeigt(float x, float z, float height);
+	void		BuildHeightmapSRV(ID3D11Device* device);
+	void		Smooth();
+	void		Smooth(XMFLOAT3 origin, int radius);
+	XMFLOAT3	GetIntersectPoint(Ray ray);
 private:
-	void LoadHeightmap();
-	void Smooth();
-	bool InBounds(int i, int j);
-	float Average(int i, int j);
-	void BuildHeightmapSRV(ID3D11Device* device);
+	void		LoadHeightmap();
+	bool		InBounds(int i, int j);
+	float		Average(int i, int j);
+	XMFLOAT3	BinarySearch(Ray ray);
+	Ray			LinearSearch(Ray ray);
 private:
 	ID3D11ShaderResourceView* mLayerTextureArraySRV;
 	ID3D11ShaderResourceView* mHeightMapSRV;

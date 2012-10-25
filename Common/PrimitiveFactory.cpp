@@ -227,7 +227,7 @@ Primitive* PrimitiveFactory::CreateTerrain(Terrain* terrain)
 		{
 			float x = -halfWidth + j*dx;
 
-			vertices[i*n+j].Pos		= XMFLOAT3(x, terrain->GetHeight(x, z), z);
+			vertices[i*n+j].Pos		= XMFLOAT3(x, terrain->GetHeight(x, z)*0, z);
 			vertices[i*n+j].Normal	= XMFLOAT3(0, 1, 0);
 			vertices[i*n+j].Tangent = XMFLOAT4(1.0f, 0.0f, 0.0f, 1.0f);
 			vertices[i*n+j].Tex.x	= j*du;

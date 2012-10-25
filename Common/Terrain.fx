@@ -87,6 +87,7 @@ VertexOut VS(VertexIn vin)
 	VertexOut vout;
 	
 	// Terrain specified directly in world space.
+	vin.PosL.y = gHeightMap.SampleLevel( samHeightmap, vin.Tex, 0 ).r;
 	vout.PosW = vin.PosL;
 
 	// Transform to homogeneous clip space.

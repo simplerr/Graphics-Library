@@ -117,6 +117,7 @@ void Terrain::LoadHeightmap()
 	for(UINT i = 0; i < mInfo.HeightmapHeight * mInfo.HeightmapWidth; ++i)
 	{
 		mHeightMap[i] = (in[i] / 255.0f) * mInfo.HeightScale;
+		mHeightMap[i] = 0.0f;
 	}
 }
 	
@@ -137,6 +138,32 @@ void Terrain::Smooth()
 	mHeightMap = dest;
 }
 	
+
+void Terrain::Smooth(XMFLOAT3 origin, int radius)
+{
+	// Transform from terrain local space to "cell" space.
+	float c = (origin.x + 0.5f*GetWidth()) /  mInfo.CellSpacing;
+	float d = (origin.z - 0.5f*GetDepth()) / -mInfo.CellSpacing;
+
+	// Get the row and column we are in.
+	int row = (int)floorf(d);
+	int col = (int)floorf(c);
+
+	std::vector<float> dest(mHeightMap.size());
+	dest = mHeightMap;
+	for(int i = row-radius; i < row+radius; ++i)
+	{
+		for(int j = col-radius; j < col+radius; ++j)
+		{
+			if(InBounds(i, j))
+				dest[i*mInfo.HeightmapWidth+j] = Average(i,j);
+		}
+	}
+
+	// Replace the old heightmap with the filtered one.
+	mHeightMap = dest;
+}
+
 //! Returns true if (i, j) is inside the heightmap.
 bool Terrain::InBounds(int i, int j)
 {
@@ -204,6 +231,9 @@ float Terrain::GetHeight(float x, float z)
 	// Get the row and column we are in.
 	int row = (int)floorf(d);
 	int col = (int)floorf(c);
+
+	if(!InBounds(row, col))
+		return 0;
 
 	// Grab the heights of the cell we are in.
 	// A*--*B
@@ -291,4 +321,77 @@ InitInfo Terrain::GetInfo()
 Primitive* Terrain::GetPrimitive()
 {
 	return mPrimitive;
+}
+
+void Terrain::SetHeigt(float x, float z, float height)
+{
+	// Transform from terrain local space to "cell" space.
+	float c = (x + 0.5f*GetWidth()) /  mInfo.CellSpacing;
+	float d = (z - 0.5f*GetDepth()) / -mInfo.CellSpacing;
+
+	// Get the row and column we are in.
+	int row = (int)floorf(d);
+	int col = (int)floorf(c);
+
+	if(!InBounds(row, col))
+		return;
+
+	// Grab the heights of the cell we are in.
+	// A*--*B
+	//  | /|
+	//  |/ |
+	// C*--*D
+	mHeightMap[row*mInfo.HeightmapWidth + col] = height;
+}
+
+XMFLOAT3 Terrain::GetIntersectPoint(Ray ray)
+{
+	ray.direction =  ray.direction * 600;
+	Ray shorterRay = LinearSearch(ray);
+	return BinarySearch(shorterRay);
+}
+
+Ray Terrain::LinearSearch(Ray ray)
+{
+	XMStoreFloat3(&ray.direction, XMLoadFloat3(&ray.direction) / 300.0f);
+	XMFLOAT3 nextPoint = ray.origin + ray.direction;
+	float heightAtNextPoint = GetHeight(nextPoint.x, nextPoint.z);
+	while(heightAtNextPoint < nextPoint.y)
+	{
+		ray.origin = nextPoint;
+		nextPoint = ray.origin + ray.direction;
+		heightAtNextPoint = GetHeight(nextPoint.x, nextPoint.z);
+	}
+
+	return ray;
+}
+
+XMFLOAT3 Terrain::BinarySearch(Ray ray)
+{
+	float accuracy = 0.1f;
+	float heightAtStartingPoint = GetHeight(ray.origin.x, ray.origin.z);
+	float currentError = ray.origin.y - heightAtStartingPoint;
+	int counter = 0;
+	while(currentError > accuracy && counter < 1000)
+	{
+		counter++;
+		// Divide by 2.
+		XMStoreFloat3(&ray.direction, XMLoadFloat3(&ray.direction) / 2.0f);
+
+		XMFLOAT3 nextPoint = ray.origin + ray.direction;
+		float heightAtNextPoint = GetHeight(nextPoint.x, nextPoint.z);
+
+		// Is the next point above the terrain?
+		if(nextPoint.y > heightAtNextPoint)
+		{
+			ray.origin = nextPoint;
+			currentError = ray.origin.y - heightAtNextPoint;
+		}
+	}
+
+	// Return infinity if the ray dont strike anything.
+	if(counter >= 1000) 
+		return XMFLOAT3(numeric_limits<float>::infinity(), 0, 0);
+		
+	return ray.origin;
 }

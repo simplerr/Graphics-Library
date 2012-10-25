@@ -48,3 +48,23 @@ AxisAlignedBox Primitive::GetBoundingBox()
 {
 	return mBoundingBox;
 }
+
+ID3D11Buffer* Primitive::GetVertices()
+{
+	return mVertexBuffer;
+}
+
+ID3D11Buffer* Primitive::GetIndices()
+{
+	return mIndexBuffer;
+}
+
+int Primitive::NumVertices()
+{
+	return mNumVertices;
+}
+	
+int Primitive::NumIndices()
+{
+	return mNumIndices;
+}

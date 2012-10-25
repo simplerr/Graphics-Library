@@ -43,6 +43,7 @@ bool StaticMesh::RayIntersect(XMVECTOR origin, XMVECTOR direction, float& pDist)
 		XMVECTOR v2 = XMLoadFloat3(&mVertices[i2].Pos);
 
 		float dist = 0.0f;
+		direction = XMVector3Normalize(direction);
 		if(XNA::IntersectRayTriangle(origin, direction, v0, v1, v2, &dist))
 		{
 			if(dist < pDist)

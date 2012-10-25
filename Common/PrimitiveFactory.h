@@ -4,6 +4,8 @@
 #include <string>
 #include <D3DX11.h>
 #include <xnamath.h>
+#include <vector>
+#include "Vertex.h"
 using namespace std;
 
 class Primitive;

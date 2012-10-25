@@ -56,6 +56,7 @@ public:
 
 	bool Init(int clientWidth, int clientHeight, HWND hwnd, bool fullscreen = false);
 	void Update(float dt);
+	void UpdateCamera(float dt);
 
 	void DrawPrimitive(Primitive* primitive, CXMMATRIX worldMatrix, Texture2D* texture, Texture2D* normalMap, Material material, BasicEffect* effect);
 	void DrawBillboards();
