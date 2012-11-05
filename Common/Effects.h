@@ -99,6 +99,7 @@ public:
 	void SetUseTexture(bool use)					{ mfxUseTexture->SetBool(use) ;}
 	void SetUseNormalMap(bool use);
 	void SetUseAnimation(bool use)					{ mfxUseAnimation->SetBool(use) ;}
+	void SetUseLighting(bool use)					{ mfxUseLighting->SetBool(use) ;}
 	void SetFogRange(float range)					{ mfxFogRange->SetFloat(range); }
 	void SetFogStart(float start)					{ mfxFogStart->SetFloat(start); }
 	void SetFogColor(XMFLOAT4 color)				{ mfxFogColor->SetFloatVector((const float*)&color); }
@@ -121,6 +122,7 @@ private:
 	ID3DX11EffectVariable* mfxLights;
 	ID3DX11EffectVariable* mfxMaterial;
 	ID3DX11EffectVariable* mfxNumLights;
+	ID3DX11EffectScalarVariable* mfxUseLighting;
 	ID3DX11EffectScalarVariable* mfxUseTexture;
 	ID3DX11EffectShaderResourceVariable* mfxTexture;
 	ID3DX11EffectShaderResourceVariable* mfxNormalMap;
@@ -267,6 +269,8 @@ public:
 	void SetHeightMap(ID3D11ShaderResourceView* tex)       { HeightMap->SetResource(tex); }
 
 	void SetLights(LightList* lights);
+	void SetToolCenter(XMFLOAT2 center)					{ ToolCenter->SetRawValue(&center, 0, sizeof(XMFLOAT2)); }
+	void SetToolRadius(float radius)					{ ToolRadius->SetFloat(radius); }
 
 	ID3DX11EffectMatrixVariable* ViewProj;
 	ID3DX11EffectMatrixVariable* World;
@@ -288,5 +292,8 @@ public:
 	ID3DX11EffectShaderResourceVariable* LayerMapArray;
 	ID3DX11EffectShaderResourceVariable* BlendMap;
 	ID3DX11EffectShaderResourceVariable* HeightMap;
+
+	ID3DX11EffectVectorVariable* ToolCenter;
+	ID3DX11EffectScalarVariable* ToolRadius;
 };
 #pragma endregion

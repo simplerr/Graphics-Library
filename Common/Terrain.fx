@@ -21,6 +21,9 @@ cbuffer cbPerFrame
 	float gTexelCellSpaceV;
 	float gWorldCellSpace;
 	float gTexScale = 1.0f;	// Default = 1.0f
+	
+	float2	gToolCenter;
+	float	gToolRadius;
 };
 
 cbuffer cbPerObject
@@ -145,10 +148,10 @@ float4 PS(VertexOut pin) : SV_Target
     
     // Blend the layers on top of each other.
     float4 texColor = c0;
-    texColor = lerp(texColor, c1, t.r);
-    texColor = lerp(texColor, c2, t.g);
-    texColor = lerp(texColor, c3, t.b);
-    texColor = lerp(texColor, c4, t.a);
+	texColor = lerp(texColor, c1, t.r);
+	texColor = lerp(texColor, c2, t.g);
+	texColor = lerp(texColor, c3, t.b);
+	texColor = lerp(texColor, c4, t.a);
 
 	// Get the shadow factor.
 	float shadow = 1.0f;
@@ -157,6 +160,12 @@ float4 PS(VertexOut pin) : SV_Target
 	// Apply lighting.
 	float4 litColor;
 	ApplyLighting(gNumLights, gLights, gMaterial, pin.PosW, normalW, toEye, texColor, shadow, litColor);
+
+	// Apply terrain tool highlight.
+	float2 vectorDist = float2(pin.PosW.x, pin.PosW.z) - gToolCenter;
+	float dist = sqrt(vectorDist.x*vectorDist.x + vectorDist.y*vectorDist.y);
+	if(dist < gToolRadius)
+		litColor.b += 0.4f;
 
 	//! Apply fogging.
 	float fogLerp = saturate((distToEye - gFogStart) / gFogRange); 

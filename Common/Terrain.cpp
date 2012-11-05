@@ -8,6 +8,7 @@
 #include "Camera.h"
 #include "Primitive.h"
 #include "ShadowMap.h"
+#include <stdint.h>
 
 Terrain::Terrain()
 	: mPrimitive(0), mLayerTextureArraySRV(0), mBlendMapSRV(0), mHeightMapSRV(0)
@@ -32,8 +33,14 @@ void Terrain::Init(ID3D11Device* device, ID3D11DeviceContext* context, const Ini
 	LoadHeightmap();
 	Smooth();
 
+	// Load the blendmap.
+	LoadBlendMap();
+
 	// Build the heightmap SRV.
 	BuildHeightmapSRV(device);
+
+	// Build the blend map SRV.
+	BuildBlendMapSRV(device);
 
 	// Build the terrain primitive.
 	mPrimitive = gPrimitiveFactory->CreateTerrain(this);
@@ -48,7 +55,19 @@ void Terrain::Init(ID3D11Device* device, ID3D11DeviceContext* context, const Ini
 	mLayerTextureArraySRV = d3dHelper::CreateTexture2DArraySRV(device, context, layerFilenames);
 
 	// Create the SRV to the blend map.
-	HR(D3DX11CreateShaderResourceViewFromFile(device, mInfo.BlendMapFilename.c_str(), 0, 0, &mBlendMapSRV, 0));
+	//HR(D3DX11CreateShaderResourceViewFromFile(device, mInfo.BlendMapFilename.c_str(), 0, 0, &mBlendMapSRV, 0));
+
+/*
+	ID3D11Texture2D* texture;
+	mBlendMapSRV->GetResource((ID3D11Resource**)&texture);
+	D3D11_MAPPED_SUBRESOURCE data;
+	context->Map(texture, 0, D3D11_MAP_READ, 0, &data);
+
+	vector<XMFLOAT3>* vec;
+	
+	vec = (vector<XMFLOAT3>*)data.pData;
+
+	context->Unmap(texture, 0);*/
 }
 	
 //! Draw the terrain with texture blending and shadowmapping.
@@ -117,10 +136,48 @@ void Terrain::LoadHeightmap()
 	for(UINT i = 0; i < mInfo.HeightmapHeight * mInfo.HeightmapWidth; ++i)
 	{
 		mHeightMap[i] = (in[i] / 255.0f) * mInfo.HeightScale;
-		mHeightMap[i] = 0.0f;
 	}
 }
-	
+
+void Terrain::LoadBlendMap()
+{
+	// A height for each vertex
+	std::vector<float> in( mInfo.HeightmapWidth * mInfo.HeightmapHeight * 3);
+
+	// Open the file.
+	std::ifstream inFile;
+	inFile.open(mInfo.BlendMapFilename.c_str(), std::ios_base::binary);
+
+	if(inFile)
+	{
+		// Read the RAW bytes.
+		inFile.read((char*)&in[0], (std::streamsize)in.size());
+
+		// Done with file.
+		inFile.close();
+	}
+
+	// Copy the array data into a float array and scale it.
+	//mBlendMap.resize(mInfo.HeightmapHeight * mInfo.HeightmapWidth * 3 + 258, 0);	// [HACK] [NOTE] + 258 to not go out of bounds!!
+	/*for(UINT i = 0; i < mInfo.HeightmapHeight * mInfo.HeightmapWidth * 3; i+=3) {
+		mBlendMap.push_back(XMFLOAT4(in[i] , in[i+1] , in[i+2] , 255.0f));
+	}*/
+
+	// [NOTE] Doesn't acctually load from the file.
+	for(UINT i = 0; i < mInfo.HeightmapHeight * mInfo.HeightmapWidth; i++) {
+		if(i < 10000)
+			mBlendMap.push_back(XMFLOAT4(1.0f, 0, 0, 0.0f));
+		else if(i > 10000 && i < 20000)
+			mBlendMap.push_back(XMFLOAT4(0.0f, 1, 0, 0.0f));
+		else if(i > 20000 && i < 30000)
+			mBlendMap.push_back(XMFLOAT4(0.0f, 0, 1, 0.0f));
+		else if(i > 30000 && i < 40000)
+			mBlendMap.push_back(XMFLOAT4(0.0f, 0, 0, 1.0f));
+		else
+			mBlendMap.push_back(XMFLOAT4(0.0f, 0, 0, 0.0f));
+	}
+}
+
 //! Smooths out the heightmap by averaging nearby heights. 
 void Terrain::Smooth()
 {
@@ -233,7 +290,7 @@ float Terrain::GetHeight(float x, float z)
 	int col = (int)floorf(c);
 
 	if(!InBounds(row, col))
-		return 0;
+		return -99999999;
 
 	// Grab the heights of the cell we are in.
 	// A*--*B
@@ -311,6 +368,71 @@ void Terrain::BuildHeightmapSRV(ID3D11Device* device)
 	ReleaseCOM(hmapTex);
 }
 
+void Terrain::BuildBlendMapSRV(ID3D11Device* device)
+{
+	// Fill out the texture description.
+	D3D11_TEXTURE2D_DESC texDesc;
+	texDesc.Width = mInfo.HeightmapWidth;
+	texDesc.Height = mInfo.HeightmapHeight;
+    texDesc.MipLevels = 1;
+	texDesc.ArraySize = 1;
+	texDesc.Format    = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	texDesc.SampleDesc.Count   = 1;
+	texDesc.SampleDesc.Quality = 0;
+	texDesc.Usage = D3D11_USAGE_DYNAMIC;
+	texDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	texDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	texDesc.MiscFlags = 0;
+
+	// Set the initial data to be the heightmap.
+	D3D11_SUBRESOURCE_DATA data;
+	data.pSysMem = &mBlendMap[0];
+    data.SysMemPitch = mInfo.HeightmapWidth*sizeof(XMFLOAT4);
+    data.SysMemSlicePitch = 0;
+
+	// Create the texture.
+	ID3D11Texture2D* bmapTex = 0;
+	HR(device->CreateTexture2D(&texDesc, &data, &bmapTex));
+
+	// Create the SRV to the texture.
+	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
+	srvDesc.Format = texDesc.Format;
+	srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.Texture2D.MostDetailedMip = 0;
+	srvDesc.Texture2D.MipLevels = -1;
+	HR(device->CreateShaderResourceView(bmapTex, &srvDesc, &mBlendMapSRV));
+
+	return;
+
+	// Get the texture.
+	ID3D11Resource* resource = nullptr;
+	mBlendMapSRV->GetResource(&resource);
+
+	ID3D11Texture2D* texture = nullptr;
+	resource->QueryInterface(__uuidof(ID3D11Texture2D), (void**)&texture);
+
+	// Map the texture.
+	D3D11_MAPPED_SUBRESOURCE mappedData;
+	GetD3DContext()->Map(texture, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData);
+
+	const uint32_t pixelSize = sizeof(XMFLOAT4);	// 12
+	const uint32_t srcPitch = pixelSize * mInfo.HeightmapWidth;
+	uint8_t* textureData = reinterpret_cast<uint8_t*>(mappedData.pData);
+	const uint8_t* srcData = reinterpret_cast<uint8_t*>(mBlendMap.data());
+	for(uint32_t i = 0; i < mInfo.HeightmapHeight; ++i)
+	{
+		memcpy(textureData, srcData, srcPitch);
+
+		textureData += mappedData.RowPitch;
+		srcData += srcPitch;
+	}
+
+	GetD3DContext()->Unmap(texture, 0);
+
+	// SRV saves reference.
+	ReleaseCOM(bmapTex);
+}
+
 //! Returns the InitInfo member.
 InitInfo Terrain::GetInfo()
 {
@@ -344,6 +466,40 @@ void Terrain::SetHeigt(float x, float z, float height)
 	mHeightMap[row*mInfo.HeightmapWidth + col] = height;
 }
 
+void Terrain::SetBlend(XMFLOAT3 pos, float modifier, int layer)
+{
+	// Transform from terrain local space to "cell" space.
+	float c = (pos.x + 0.5f*GetWidth()) /  mInfo.CellSpacing;
+	float d = (pos.z - 0.5f*GetDepth()) / -mInfo.CellSpacing;
+
+	// Get the row and column we are in.
+	int row = (int)floorf(d);
+	int col = (int)floorf(c);
+
+	if(!InBounds(row, col))
+		return;
+
+	// Subtract the modifier from all layers.
+	XMFLOAT4& arrayReference = mBlendMap[row*mInfo.HeightmapWidth + col];
+	XMStoreFloat4(&arrayReference, XMLoadFloat4(&arrayReference) - XMVectorSet(modifier, modifier, modifier, modifier));
+
+	// Add the modififer to the active layer.
+	if(layer == 0)
+		mBlendMap[row*mInfo.HeightmapWidth + col].x += 2*modifier;
+	else if(layer == 1)
+		mBlendMap[row*mInfo.HeightmapWidth + col].y += 2*modifier;
+	else if(layer == 2)
+		mBlendMap[row*mInfo.HeightmapWidth + col].z += 2*modifier;
+	else if(layer == 3)
+		mBlendMap[row*mInfo.HeightmapWidth + col].w += 2*modifier;
+
+	// Limit to 0-1 range.
+	XMVECTOR limited = XMVectorMax(XMLoadFloat4(&arrayReference), XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f));
+	XMStoreFloat4(&arrayReference, limited);
+	limited = XMVectorMin(XMLoadFloat4(&arrayReference), XMVectorSet(1.0f, 1.0f, 1.0f, 1.0f));
+	XMStoreFloat4(&arrayReference, limited);
+}
+
 XMFLOAT3 Terrain::GetIntersectPoint(Ray ray)
 {
 	ray.direction =  ray.direction * 600;
@@ -356,12 +512,18 @@ Ray Terrain::LinearSearch(Ray ray)
 	XMStoreFloat3(&ray.direction, XMLoadFloat3(&ray.direction) / 300.0f);
 	XMFLOAT3 nextPoint = ray.origin + ray.direction;
 	float heightAtNextPoint = GetHeight(nextPoint.x, nextPoint.z);
-	while(heightAtNextPoint < nextPoint.y)
+	int counter = 0;
+	while(heightAtNextPoint < nextPoint.y && counter < 1000)
 	{
+		counter++;
 		ray.origin = nextPoint;
 		nextPoint = ray.origin + ray.direction;
 		heightAtNextPoint = GetHeight(nextPoint.x, nextPoint.z);
 	}
+
+	// Return infinity if the ray dont strike anything.
+	if(counter >= 1000) 
+		ray.direction.x = numeric_limits<float>::infinity();
 
 	return ray;
 }

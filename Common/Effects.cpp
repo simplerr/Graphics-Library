@@ -180,6 +180,7 @@ void BasicEffect::Init()
 	mfxShadowMap         = mEffect->GetVariableByName("gShadowMap")->AsShaderResource();
 	mfxUseNormalMap		 = mEffect->GetVariableByName("gUseNormalMap")->AsScalar();
 	mfxUseAnimation		 = mEffect->GetVariableByName("gUseAnimation")->AsScalar();
+	mfxUseLighting		 = mEffect->GetVariableByName("gUseLighting")->AsScalar();	
 	mfxRenderingToShadowMap = mEffect->GetVariableByName("gRenderingToShadowMap")->AsScalar();
 }
 
@@ -441,6 +442,9 @@ void TerrainEffect::Init()
 	LayerMapArray      = mEffect->GetVariableByName("gLayerMapArray")->AsShaderResource();
 	BlendMap           = mEffect->GetVariableByName("gBlendMap")->AsShaderResource();
 	HeightMap          = mEffect->GetVariableByName("gHeightMap")->AsShaderResource();
+
+	ToolCenter         = mEffect->GetVariableByName("gToolCenter")->AsVector();
+	ToolRadius           = mEffect->GetVariableByName("gToolRadius")->AsScalar();
 }
 	
 void TerrainEffect::CreateInputLayout()

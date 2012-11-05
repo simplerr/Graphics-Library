@@ -29,6 +29,7 @@ cbuffer cbPerObject
 	bool	 gUseNormalMap;
 	bool	 gUseAnimation;
 	bool	 gRenderingToShadowMap;
+	bool	 gUseLighting;
 };
 
 cbuffer cbSkinned
@@ -214,7 +215,10 @@ float4 PS(VertexOut pin) : SV_Target
 
 	// Apply lighting.
 	float4 litColor;
-	ApplyLighting(gNumLights, gLights, gMaterial, pin.PosW, pin.NormalW, toEyeW, texColor, shadow, litColor);
+	if(gUseLighting)
+		ApplyLighting(gNumLights, gLights, gMaterial, pin.PosW, pin.NormalW, toEyeW, texColor, shadow, litColor);
+	else
+		litColor = texColor*(gMaterial.ambient + gMaterial.diffuse) + gMaterial.specular;
 
 	//! Apply fogging.
 	float distToEye = length(gEyePosW - pin.PosW);

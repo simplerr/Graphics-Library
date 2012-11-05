@@ -96,6 +96,8 @@ bool Graphics::Init(int clientWidth, int clientHeight, HWND hwnd, bool fullscree
 	mAABB = gPrimitiveFactory->CreateBox();
 
 	mShadowMap = new ShadowMap(GetDevice(), 2048, 2048);
+
+	Effects::BasicFX->SetUseLighting(true);
 }
 
 //! Returns the created texture. The Graphics class handles cleanup.

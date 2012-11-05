@@ -42,5 +42,5 @@ private:
 	float mDx, mDy;
 };
 
-// Global
+// Global.
 extern Input* gInput;

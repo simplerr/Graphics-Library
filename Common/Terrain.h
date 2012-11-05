@@ -43,11 +43,15 @@ public:
 	float		GetHeight(float x, float z);
 	void		SetHeigt(float x, float z, float height);
 	void		BuildHeightmapSRV(ID3D11Device* device);
+	void		BuildBlendMapSRV(ID3D11Device* device);
 	void		Smooth();
 	void		Smooth(XMFLOAT3 origin, int radius);
 	XMFLOAT3	GetIntersectPoint(Ray ray);
+
+	void		SetBlend(XMFLOAT3 pos, float modifier, int layer);
 private:
 	void		LoadHeightmap();
+	void		LoadBlendMap();
 	bool		InBounds(int i, int j);
 	float		Average(int i, int j);
 	XMFLOAT3	BinarySearch(Ray ray);
@@ -58,6 +62,7 @@ private:
 	ID3D11ShaderResourceView* mBlendMapSRV;
 	Primitive*		mPrimitive;
 	vector<float>	mHeightMap;
+	vector<XMFLOAT4>mBlendMap;
 	InitInfo		mInfo;
 	XMFLOAT4X4		mWorldMatrix;
 };
