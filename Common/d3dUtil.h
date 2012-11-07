@@ -29,6 +29,18 @@ struct Ray
 	XMFLOAT3 direction;
 };
 
+struct Dimension
+{
+	Dimension(){};
+	Dimension(float w, float h) {
+		width = w;
+		height = h;
+	}
+
+	float width;
+	float height;
+};
+
 struct BoundingSphere
 {
 	BoundingSphere() : center(0.0f, 0.0f, 0.0f), radius(0.0f) {}

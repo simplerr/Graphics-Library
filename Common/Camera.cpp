@@ -18,7 +18,7 @@ Camera::Camera()
 	UpdatePitchYaw();
 
 	// Build the projection matrix
-	XMMATRIX proj = XMMatrixPerspectiveFovLH(XM_PI * 0.25, (float)gGame->GetScreenWidth()/(float)gGame->GetScreenHeight(), 1.0f, 1000.0f);
+	XMMATRIX proj = XMMatrixPerspectiveFovLH(XM_PI * 0.25, (float)gGame->GetClientWidth()/(float)gGame->GetClientHeight(), 1.0f, 1000.0f);
 	XMStoreFloat4x4(&mProj, proj);
 
 	UpdateViewMatrix();

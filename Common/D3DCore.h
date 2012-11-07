@@ -29,9 +29,11 @@ public:
 	~D3DCore();
 
 	bool Init(int clientWidth, int clientHeight, HWND hwnd, bool fullscreen);
-	void OnResize();
+	void OnResize(int width, int height);
 
 	HRESULT Present(UINT SyncInterval, UINT Flags);
+
+	void SetFullScreen(int width, int height, bool fullscreen);
 
 	// Getters.
 	ID3D11Device*			GetDevice();

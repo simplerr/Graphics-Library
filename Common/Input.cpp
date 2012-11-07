@@ -198,8 +198,8 @@ Ray Input::GetWorldPickingRay()
 	XMMATRIX proj = XMLoadFloat4x4(&gGame->GetGraphics()->GetCamera()->GetProjectionMatrix());
 
 	// Compute the ray in view space.
-	float vx = (+2.0f * mousePos.x / gGame->GetScreenWidth() - 1) / proj(0, 0);
-	float vy = (-2.0f * mousePos.y / gGame->GetScreenHeight() + 1) / proj(1, 1);
+	float vx = (+2.0f * mousePos.x / gGame->GetClientWidth() - 1) / proj(0, 0);
+	float vy = (-2.0f * mousePos.y / gGame->GetClientHeight() + 1) / proj(1, 1);
 
 	XMVECTOR origin = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
 	XMVECTOR dir = XMVectorSet(vx, vy, 1.0f, 0.0f);

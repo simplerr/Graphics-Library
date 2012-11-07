@@ -32,6 +32,7 @@ public:
 	virtual void Init();
 	virtual void Update(float dt) = 0;
 	virtual void Draw(Graphics* pGraphics) = 0;
+	virtual void OnResize(int width, int height) = 0;
 	virtual LRESULT MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 	// Getters and setters.
@@ -39,8 +40,10 @@ public:
 	
 	HINSTANCE	GetInstance();
 	HWND		GetHwnd();	
-	int			GetScreenWidth();
-	int			GetScreenHeight();
+	int			GetClientWidth();
+	int			GetClientHeight();
+	int			GetFullscreenWidth();
+	int			GetFullscreenHeight();
 
 	D3DCore*	GetD3D();
 	Graphics*	GetGraphics();
@@ -50,8 +53,9 @@ private:
 	string		mCaption;
 	HINSTANCE	mhInstance;
 	HWND		mhMainWindow;
-	int			mScreenWidth;
-	int			mScreenHeight;
+	bool		mFullscreen;
+	int			mWindowedWidth;
+	int			mWindowedHeight;
 
 };	// Class
 

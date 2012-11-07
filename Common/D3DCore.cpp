@@ -1,5 +1,6 @@
 #include "D3DCore.h"
 #include "d3dUtil.h"
+#include "Runnable.h"
 
 //! Constructor. The Init() function handles the initialization.
 D3DCore::D3DCore()
@@ -92,7 +93,7 @@ bool D3DCore::Init(int clientWidth, int clientHeight, HWND hwnd, bool fullscreen
 	sd.OutputWindow = hwnd;
 	sd.Windowed     = !fullscreen;
 	sd.SwapEffect   = DXGI_SWAP_EFFECT_DISCARD;
-	sd.Flags        = 0;
+	sd.Flags        = 0;//DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 
 	// To correctly create the swap chain, we must use the IDXGIFactory that was
 	// used to create the device.  If we tried to use a different IDXGIFactory instance
@@ -116,7 +117,7 @@ bool D3DCore::Init(int clientWidth, int clientHeight, HWND hwnd, bool fullscreen
 	// The remaining steps that need to be carried out for d3d creation
 	// also need to be executed every time the window is resized.  So
 	// just call the OnResize method here to avoid code duplication.
-	OnResize();
+	OnResize(mClientWidth, mClientHeight);
 
 	return true;
 }
@@ -125,7 +126,7 @@ bool D3DCore::Init(int clientWidth, int clientHeight, HWND hwnd, bool fullscreen
 /*
 
 */
-void D3DCore::OnResize()
+void D3DCore::OnResize(int width, int height)
 {
 	assert(md3dImmediateContext);
 	assert(md3dDevice);
@@ -138,7 +139,7 @@ void D3DCore::OnResize()
 	ReleaseCOM(mDepthStencilBuffer);
 
 	// Resize the swap chain and recreate the render target view.
-	HR(mSwapChain->ResizeBuffers(1, mClientWidth, mClientHeight, DXGI_FORMAT_R8G8B8A8_UNORM, 0));
+	HR(mSwapChain->ResizeBuffers(1, width, height, DXGI_FORMAT_R8G8B8A8_UNORM, 0));
 	ID3D11Texture2D* backBuffer;
 	HR(mSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer)));
 	HR(md3dDevice->CreateRenderTargetView(backBuffer, 0, &mRenderTargetView));
@@ -147,8 +148,8 @@ void D3DCore::OnResize()
 	// Create the depth/stencil buffer and view.
 	D3D11_TEXTURE2D_DESC depthStencilDesc;
 	
-	depthStencilDesc.Width     = mClientWidth;
-	depthStencilDesc.Height    = mClientHeight;
+	depthStencilDesc.Width     = width;
+	depthStencilDesc.Height    = height;
 	depthStencilDesc.MipLevels = 1;
 	depthStencilDesc.ArraySize = 1;
 	depthStencilDesc.Format    = DXGI_FORMAT_D24_UNORM_S8_UINT;
@@ -178,8 +179,8 @@ void D3DCore::OnResize()
 	// Set the viewport transform.
 	mScreenViewport.TopLeftX = 0;
 	mScreenViewport.TopLeftY = 0;
-	mScreenViewport.Width    = static_cast<float>(mClientWidth);
-	mScreenViewport.Height   = static_cast<float>(mClientHeight);
+	mScreenViewport.Width    = static_cast<float>(width);
+	mScreenViewport.Height   = static_cast<float>(height);
 	mScreenViewport.MinDepth = 0.0f;
 	mScreenViewport.MaxDepth = 1.0f;
 
@@ -190,6 +191,13 @@ void D3DCore::OnResize()
 HRESULT D3DCore::Present(UINT SyncInterval, UINT Flags)
 {
 	return mSwapChain->Present(SyncInterval, Flags);
+}
+
+//! Sets the fullscreen state.
+void D3DCore::SetFullScreen(int width, int height, bool fullscreen)
+{
+	mSwapChain->SetFullscreenState(fullscreen, NULL);
+	OnResize(width, height);	// [NOTE] Ugly.
 }
 
 //! Returns the ID3D11Device*.
@@ -226,6 +234,7 @@ D3D11_VIEWPORT	D3DCore::GetViewport()
 {
 	return mScreenViewport;
 }
+// [NOTE] Runnable has these as well.
 float D3DCore::GetClientWidth()
 {
 	return mClientWidth;

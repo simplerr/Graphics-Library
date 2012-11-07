@@ -2,6 +2,7 @@
 #include "Runnable.h"
 #include "Graphics.h"
 #include "Input.h"
+#include "D3DCore.h"
 
 LRESULT CALLBACK
 MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -21,8 +22,9 @@ Runnable::Runnable(HINSTANCE hInstance, std::string caption, int width, int heig
 	mhMainWindow	= nullptr;
 	mCaption		= caption;
 	mhInstance		= hInstance;
-	mScreenWidth	= width;
-	mScreenHeight	= height;
+	mFullscreen		= false;
+	mWindowedWidth	= width;
+	mWindowedHeight	= height;
 }
 
 //! Cleans up and frees all pointers.
@@ -39,7 +41,7 @@ void Runnable::Init()
 
 	// Init Direct3D.
 	mGraphics = new Graphics();
-	mGraphics->Init(GetScreenWidth(), GetScreenHeight(), GetHwnd(), false);
+	mGraphics->Init(GetClientWidth(), GetClientHeight(), GetHwnd(), false);
 }
 
 //! Initializes Win32 and creates the main window.
@@ -63,10 +65,10 @@ bool Runnable::InitWin32()
 	}
 
 	RECT clientRect;
-	clientRect.left = GetSystemMetrics(SM_CXSCREEN)/2 - mScreenWidth/2.0f;
-	clientRect.right = GetSystemMetrics(SM_CXSCREEN)/2 + mScreenWidth/2.0f;
-	clientRect.top = GetSystemMetrics(SM_CYSCREEN)/2 - mScreenHeight/2.0f;
-	clientRect.bottom = GetSystemMetrics(SM_CYSCREEN)/2 + mScreenHeight/2.0f;
+	clientRect.left = GetSystemMetrics(SM_CXSCREEN)/2 - mWindowedWidth/2.0f;
+	clientRect.right = GetSystemMetrics(SM_CXSCREEN)/2 + mWindowedWidth/2.0f;
+	clientRect.top = GetSystemMetrics(SM_CYSCREEN)/2 - mWindowedHeight/2.0f;
+	clientRect.bottom = GetSystemMetrics(SM_CYSCREEN)/2 + mWindowedHeight/2.0f;
 
 	AdjustWindowRect(&clientRect, WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX, false);
 	int width = clientRect.right - clientRect.left;
@@ -75,8 +77,8 @@ bool Runnable::InitWin32()
 	// Create the window with a custom size and make it centered
 	// NOTE: WS_CLIPCHILDREN Makes the area under child windows not be displayed. (Useful when rendering DirectX and using windows controls).
 	mhMainWindow = CreateWindow("D3DWndClassName", mCaption.c_str(), 
-		WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_CLIPCHILDREN, GetSystemMetrics(SM_CXSCREEN)/2-(mScreenWidth/2),
-		GetSystemMetrics(SM_CYSCREEN)/2-(mScreenHeight/2), width, height, 
+		WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_CLIPCHILDREN, GetSystemMetrics(SM_CXSCREEN)/2-(mWindowedWidth/2),
+		GetSystemMetrics(SM_CYSCREEN)/2-(mWindowedHeight/2), width, height, 
 		0, 0, mhInstance, 0); 
 
 	if(!mhMainWindow) {
@@ -92,7 +94,7 @@ bool Runnable::InitWin32()
 	return true;
 }
 
-// The game loop. Loops until it catches a WM_QUIT message.
+//! The game loop. Loops until it catches a WM_QUIT message.
 int Runnable::Run()
 {
 	MSG msg = {0};
@@ -122,7 +124,7 @@ int Runnable::Run()
 	return (int)msg.wParam;
 }
 
-// Handles all window messages.
+//! Handles all window messages.
 LRESULT Runnable::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	switch(msg)
@@ -138,7 +140,12 @@ LRESULT Runnable::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 //! Toggle between fullscreen and windowed.
 void Runnable::SwitchScreenMode()
 {
+	// Resize the swap chain.
+	mFullscreen = !mFullscreen;
+	GetD3D()->SetFullScreen(GetClientWidth(), GetClientHeight(), mFullscreen);
 
+	// Pure virtual function.
+	OnResize(GetClientWidth(), GetClientHeight());
 }
 
 //! Updates the caption with information about the FPS.
@@ -190,16 +197,38 @@ void Runnable::SetVisible(bool visible)
 		ShowWindow(mhMainWindow, SW_HIDE);
 }
 
-//! Returns the screen width.
-int	Runnable::GetScreenWidth()
+//! Returns the window width.
+int	Runnable::GetClientWidth()
 {
-	return mScreenWidth;
+	if(!mFullscreen)
+		return mWindowedWidth;
+	else
+		return GetFullscreenWidth();
 }
 
-//! Returns the screen height.
-int	Runnable::GetScreenHeight()
+//! Returns the window height.
+int	Runnable::GetClientHeight()
 {
-	return mScreenHeight;
+	if(!mFullscreen)
+		return mWindowedHeight;
+	else
+		return GetFullscreenHeight();
+}
+
+//! Returns the fullscreen width.
+int Runnable::GetFullscreenWidth()
+{
+	RECT desktop;
+	GetWindowRect(GetDesktopWindow(), &desktop);
+	return desktop.right;
+}
+
+//! Returns the fullscreen height.
+int Runnable::GetFullscreenHeight()
+{
+	RECT desktop;
+	GetWindowRect(GetDesktopWindow(), &desktop);
+	return desktop.bottom;
 }
 
 //! Returns the Graphics D3DCore instance.
