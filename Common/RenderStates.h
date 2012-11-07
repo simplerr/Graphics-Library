@@ -10,4 +10,5 @@ public:
 
 	static ID3D11BlendState*		TransparentBS;
 	static ID3D11DepthStencilState* EnableAllDSS;
+	static ID3D11DepthStencilState* NoDoubleBlendDSS;
 };

@@ -3,9 +3,13 @@
 
 ID3D11BlendState*			RenderStates::TransparentBS     = 0;
 ID3D11DepthStencilState*	RenderStates::EnableAllDSS		= 0;  
+ID3D11DepthStencilState*	RenderStates::NoDoubleBlendDSS  = 0;
 
 void RenderStates::InitAll(ID3D11Device* device)
 {
+	//
+	// The transparent blend state.
+	//
 	D3D11_BLEND_DESC transparentDesc = {0};
 	transparentDesc.AlphaToCoverageEnable = false;
 	transparentDesc.IndependentBlendEnable = false;
@@ -21,6 +25,9 @@ void RenderStates::InitAll(ID3D11Device* device)
 
 	HR(device->CreateBlendState(&transparentDesc, &TransparentBS));
 
+	//
+	// The enable all depth stencil state.
+	//
 	D3D11_DEPTH_STENCIL_DESC depthdesc;
 	memset(&depthdesc, 0, sizeof(depthdesc));
 	depthdesc.DepthEnable = (BOOL) false;
@@ -28,10 +35,34 @@ void RenderStates::InitAll(ID3D11Device* device)
 	depthdesc.DepthFunc = D3D11_COMPARISON_NEVER;
 	depthdesc.StencilEnable = (BOOL) false;
 	HR(device->CreateDepthStencilState(&depthdesc, &EnableAllDSS));
+
+	//
+	// The no double blending stencil state.
+	//
+	D3D11_DEPTH_STENCIL_DESC noDoubleBlendDesc;
+	noDoubleBlendDesc.DepthEnable      = true;
+	noDoubleBlendDesc.DepthWriteMask   = D3D11_DEPTH_WRITE_MASK_ALL;
+	noDoubleBlendDesc.DepthFunc        = D3D11_COMPARISON_LESS; 
+	noDoubleBlendDesc.StencilEnable    = true;
+	noDoubleBlendDesc.StencilReadMask  = 0xff;
+	noDoubleBlendDesc.StencilWriteMask = 0xff;
+
+	noDoubleBlendDesc.FrontFace.StencilFailOp      = D3D11_STENCIL_OP_KEEP;
+	noDoubleBlendDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+	noDoubleBlendDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_INCR;
+	noDoubleBlendDesc.FrontFace.StencilFunc   = D3D11_COMPARISON_EQUAL;
+
+	noDoubleBlendDesc.BackFace = noDoubleBlendDesc.FrontFace;
+
+	// Don't render the backfacing triangles, the key of this render state..
+	noDoubleBlendDesc.BackFace.StencilFunc   = D3D11_COMPARISON_NEVER;
+
+	HR(device->CreateDepthStencilState(&noDoubleBlendDesc, &NoDoubleBlendDSS));
 }
 
 void RenderStates::DestroyAll()
 {
 	ReleaseCOM(TransparentBS);
 	ReleaseCOM(EnableAllDSS);
+	ReleaseCOM(NoDoubleBlendDSS);
 }

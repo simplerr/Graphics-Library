@@ -21,7 +21,7 @@ SkinnedMesh::~SkinnedMesh()
 void SkinnedMesh::Draw(Graphics* pGraphics)
 {
 	// Set the material properties for this skinned mesh.
-	Effects::BasicFX->SetMaterial(mMaterial);
+	//Effects::BasicFX->SetMaterial(mMaterial);	// [NOTE] The material is controlled by Object3D.
 	Effects::BasicFX->SetTexture(mTexture);
 	Effects::BasicFX->Apply();	// Currently makes no difference.[NOTE][TODO]
 
