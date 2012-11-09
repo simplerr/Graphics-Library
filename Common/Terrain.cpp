@@ -25,7 +25,7 @@ Terrain::~Terrain()
 }
 
 //! Loads the heightmap, builds all the SRVs.
-void Terrain::Init(ID3D11Device* device, ID3D11DeviceContext* context, const InitInfo& initInfo)
+void Terrain::Init(ID3D11Device* device, ID3D11DeviceContext* context, PrimitiveFactory* pPrimitiveFactory, const InitInfo& initInfo)
 {
 	mInfo = initInfo;
 
@@ -43,7 +43,7 @@ void Terrain::Init(ID3D11Device* device, ID3D11DeviceContext* context, const Ini
 	BuildBlendMapSRV(device);
 
 	// Build the terrain primitive.
-	mPrimitive = gPrimitiveFactory->CreateTerrain(this);
+	mPrimitive = pPrimitiveFactory->CreateTerrain(this);
 
 	// Create the SRV to the texture array.
 	vector<string> layerFilenames;
@@ -106,7 +106,7 @@ void Terrain::Draw(Graphics* pGraphics)
 	Effects::TerrainFX->SetShadowTransform(XMLoadFloat4x4(&shadowMap->GetShadowTransform()));
 	
 	// Apply them.
-	Effects::TerrainFX->Apply();
+	Effects::TerrainFX->Apply(GetD3DContext());
 
 	// Draw the primitive.
 	mPrimitive->Draw<Vertex>(pGraphics->GetContext());

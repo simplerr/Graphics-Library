@@ -9,6 +9,7 @@ using namespace std;
 
 class Graphics;
 class D3DCore;
+class Input;
 
 /**
 	Initializes the Win32 window.
@@ -30,7 +31,7 @@ public:
 
 	// Framework methods.
 	virtual void Init();
-	virtual void Update(float dt) = 0;
+	virtual void Update(Input* pInput, float dt) = 0;
 	virtual void Draw(Graphics* pGraphics) = 0;
 	virtual void OnResize(int width, int height) = 0;
 	virtual LRESULT MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -47,8 +48,10 @@ public:
 
 	D3DCore*	GetD3D();
 	Graphics*	GetGraphics();
+	Input*		GetInput();
 private:
 	Graphics*	mGraphics;
+	Input*		mInput;
 	GameTimer	mTimer;
 	string		mCaption;
 	HINSTANCE	mhInstance;

@@ -6,6 +6,7 @@
 
 class Primitive;
 class Graphics;
+class PrimitiveFactory;
 
 //! Stores the init information for a terrain.
 struct InitInfo
@@ -33,7 +34,7 @@ public:
 	Terrain();
 	~Terrain();
 
-	void Init(ID3D11Device* device, ID3D11DeviceContext* context, const InitInfo& initInfo);
+	void Init(ID3D11Device* device, ID3D11DeviceContext* context, PrimitiveFactory* pPrimitiveFactory, const InitInfo& initInfo);
 	void Draw(Graphics* pGraphics);
 
 	InitInfo	GetInfo();

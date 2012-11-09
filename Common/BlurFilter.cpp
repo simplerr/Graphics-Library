@@ -58,7 +58,7 @@ void BlurFilter::Init(ID3D11Device* device, UINT width, UINT height)
 }
 	
 //! Applies the blur effect.
-void BlurFilter::ApplyBlur(ID3D11DeviceContext* context, ID3D11ShaderResourceView* inputSRV, int blurCount)
+void BlurFilter::ApplyBlur(ID3D11Device* pDevice, ID3D11DeviceContext* context, ID3D11ShaderResourceView* inputSRV, int blurCount)
 {
 	// Get the ID3D11Texture2D and it's description.
 	ID3D11Resource* resource = 0;
@@ -69,10 +69,10 @@ void BlurFilter::ApplyBlur(ID3D11DeviceContext* context, ID3D11ShaderResourceVie
 
 	// Is the width & height correct?
 	if(desc.Width != mWidth || desc.Height != mHeight)
-		Init(gGame->GetGraphics()->GetDevice(), desc.Width, desc.Height);
+		Init(pDevice, desc.Width, desc.Height);
 
 	// Create the UAV for the input SRV.
-	HR(gGame->GetGraphics()->GetDevice()->CreateUnorderedAccessView(texture, 0, &mInputUAV));
+	HR(pDevice->CreateUnorderedAccessView(texture, 0, &mInputUAV));
 
 	mInputSRV = inputSRV;
 

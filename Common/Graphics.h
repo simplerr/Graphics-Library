@@ -25,6 +25,9 @@ class BlurFilter;
 class ShadowMap;
 class SkinnedModel;
 class StaticModel;
+class PrimitiveFactory;
+class ModelImporter;
+class Input;
 struct Material;
 struct Texture2D;
 struct BillboardVertex;
@@ -55,8 +58,7 @@ public:
 	~Graphics();
 
 	bool Init(int clientWidth, int clientHeight, HWND hwnd, bool fullscreen = false);
-	void Update(float dt);
-	void UpdateCamera(float dt);
+	void Update(Input* pInput, float dt);
 
 	void DrawPrimitive(Primitive* primitive, CXMMATRIX worldMatrix, Texture2D* texture, Texture2D* normalMap, Material material, BasicEffect* effect);
 	void DrawBillboards();
@@ -81,8 +83,6 @@ public:
 	void SetRenderTarget(RenderTarget* renderTarget);
 	void RestoreRenderTarget();
 
-	
-
 	// Getters.
 	ID3D11DeviceContext*	GetContext();
 	ID3D11Device*			GetDevice();
@@ -90,6 +90,8 @@ public:
 	Camera*					GetCamera();
 	ShadowMap*				GetShadowMap();
 	LightList*				GetLightList();
+	PrimitiveFactory*		GetPrimitiveFactory();
+	ModelImporter*			GetModelImporter();
 	XMFLOAT4				GetFogColor();
 	float					GetClientWidth();
 	float					GetClientHeight();
@@ -104,6 +106,8 @@ private:
 	Primitive*		mScreenQuad;
 	Primitive*		mAABB;
 	ShadowMap*		mShadowMap;
+	PrimitiveFactory* mPrimitiveFactory;
+	ModelImporter*	mModelImporter;
 	XMFLOAT4		mFogColor;
 	bool			mRenderingShadows;
 

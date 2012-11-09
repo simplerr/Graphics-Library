@@ -12,3 +12,8 @@ void BillboardVertex::SetSize(XMFLOAT2 size)
 	Size = size;
 	Manager->SetRebuild(true); 
 }
+
+void BillboardVertex::Remove() 
+{
+	Manager->RemoveBillbaord(this);
+}

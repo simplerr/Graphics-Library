@@ -17,43 +17,43 @@ TerrainEffect*		Effects::TerrainFX		= nullptr;
 #pragma region Code for the static effect handler Effects.
 
 //! Inits all effects.
-void Effects::InitAll()
+void Effects::InitAll(ID3D11Device* pDevice)
 {
 	/**
 		Init the basic effect.
 	*/
-	BasicFX = new BasicEffect();
-	BasicFX->CreateInputLayout();
+	BasicFX = new BasicEffect(pDevice);
+	BasicFX->CreateInputLayout(pDevice);
 	BasicFX->Init();
 
 	/**
 		Init the billboard effect.
 	*/
-	BillboardFX = new BillboardEffect();
-	BillboardFX->CreateInputLayout();
+	BillboardFX = new BillboardEffect(pDevice);
+	BillboardFX->CreateInputLayout(pDevice);
 	BillboardFX->Init();
 
 	/**
 		Init the blur effect.
 	*/
-	BlurFX = new BlurEffect();
+	BlurFX = new BlurEffect(pDevice);
 	BlurFX->Init();
 
 	/**
 		Init the sky box effect.
 	*/
-	SkyFX = new SkyEffect();
-	SkyFX->CreateInputLayout();
+	SkyFX = new SkyEffect(pDevice);
+	SkyFX->CreateInputLayout(pDevice);
 	SkyFX->Init();
 
 	// Init the build shadow map effect.
-	BuildShadowMapFX = new ShadowMapEffect();
-	BuildShadowMapFX->CreateInputLayout();
+	BuildShadowMapFX = new ShadowMapEffect(pDevice);
+	BuildShadowMapFX->CreateInputLayout(pDevice);
 	BuildShadowMapFX->Init();
 
 	// Init the terrrain effect.
-	TerrainFX = new TerrainEffect();
-	TerrainFX->CreateInputLayout();
+	TerrainFX = new TerrainEffect(pDevice);
+	TerrainFX->CreateInputLayout(pDevice);
 	TerrainFX->Init();
 }
 
@@ -73,7 +73,7 @@ void Effects::DestroyAll()
 #pragma region Code for the effect base class Effect.
 
 //! Loads the effect from the file and creates the standard technique.
-Effect::Effect(string filename, string technique)
+Effect::Effect(ID3D11Device* pDevice, string filename, string technique)
 {
 	// Create the effect from memory.
 	// [NOTE] Fix this!
@@ -87,8 +87,7 @@ Effect::Effect(string filename, string technique)
 	fin.read(&compiledShader[0], size);
 	fin.close();
 	
-	HR(D3DX11CreateEffectFromMemory(&compiledShader[0], size, 
-		0, gGame->GetD3D()->GetDevice(), &mEffect));
+	HR(D3DX11CreateEffectFromMemory(&compiledShader[0], size, 0, pDevice, &mEffect));
 
 	// Set the technique.
 	mTech = mEffect->GetTechniqueByName(technique.c_str());
@@ -100,10 +99,10 @@ Effect::~Effect()
 }
 
 //! Applies the effect to the render pipeline.
-void Effect::Apply()
+void Effect::Apply(ID3D11DeviceContext* pContext)
 {
 	// Applies the changes effect and it changes to the pipeline.
-	mTech->GetPassByIndex(0)->Apply(0, gGame->GetD3D()->GetContext());
+	mTech->GetPassByIndex(0)->Apply(0, pContext);
 }
 
 //! Returns the ID3DX11Effect member.
@@ -140,8 +139,8 @@ void Effect::SetTech(string technique)
 
 #pragma region Code for the basic effect class BasicEffect.
 
-BasicEffect::BasicEffect()
-	: Effect("Basic.fx", "BasicTech")
+BasicEffect::BasicEffect(ID3D11Device* pDevice)
+	: Effect(pDevice, "Basic.fx", "BasicTech")
 {
 
 }
@@ -185,7 +184,7 @@ void BasicEffect::Init()
 }
 
 //! Creates the input layout that will get set before the Input-Assembler state. The EffectManager calls this function.
-void BasicEffect::CreateInputLayout()
+void BasicEffect::CreateInputLayout(ID3D11Device* pDevice)
 {
 	// Create the vertex input layout.
 	D3D11_INPUT_ELEMENT_DESC vertexDesc[6] =
@@ -201,7 +200,7 @@ void BasicEffect::CreateInputLayout()
 	// Create the input layout.
     D3DX11_PASS_DESC passDesc;
     mTech->GetPassByIndex(0)->GetDesc(&passDesc);
-	HR(gGame->GetD3D()->GetDevice()->CreateInputLayout(vertexDesc, 6, passDesc.pIAInputSignature, 
+	HR(pDevice->CreateInputLayout(vertexDesc, 6, passDesc.pIAInputSignature, 
 		passDesc.IAInputSignatureSize, &mInputLayout));
 }
 
@@ -248,8 +247,8 @@ ID3DX11EffectTechnique* BasicEffect::GetSkinnedTech()
 
 #pragma region Code for the billboard effect class BillboardEffect.
 
-BillboardEffect::BillboardEffect()
-	: Effect("Billboard.fx", "BillboardTech")
+BillboardEffect::BillboardEffect(ID3D11Device* pDevice)
+	: Effect(pDevice, "Billboard.fx", "BillboardTech")
 {
 
 }
@@ -274,7 +273,7 @@ void BillboardEffect::Init()
 	mfxNumLights	= mEffect->GetVariableByName("gNumLights");
 }
 	
-void BillboardEffect::CreateInputLayout()
+void BillboardEffect::CreateInputLayout(ID3D11Device* pDevice)
 {
 	// Create the vertex input layout.
 	D3D11_INPUT_ELEMENT_DESC vertexDesc[] =
@@ -286,7 +285,7 @@ void BillboardEffect::CreateInputLayout()
 	// Create the input layout.
     D3DX11_PASS_DESC passDesc;
     mTech->GetPassByIndex(0)->GetDesc(&passDesc);
-	HR(gGame->GetD3D()->GetDevice()->CreateInputLayout(vertexDesc, 2, passDesc.pIAInputSignature, 
+	HR(pDevice->CreateInputLayout(vertexDesc, 2, passDesc.pIAInputSignature, 
 		passDesc.IAInputSignatureSize, &mInputLayout));
 }
 
@@ -310,8 +309,8 @@ void BillboardEffect::SetLights(LightList* lights)
 #pragma endregion
 
 #pragma region BlurEffect
-BlurEffect::BlurEffect()
-	: Effect("Blur.fx", "VertBlur")
+BlurEffect::BlurEffect(ID3D11Device* pDevice)
+	: Effect(pDevice, "Blur.fx", "VertBlur")
 {
 
 }
@@ -334,8 +333,8 @@ void BlurEffect::Init()
 
 #pragma region Code for the sky box effect SkyEffect.
 
-SkyEffect::SkyEffect()
-	: Effect("Sky.fx", "SkyTech")
+SkyEffect::SkyEffect(ID3D11Device* pDevice)
+	: Effect(pDevice, "Sky.fx", "SkyTech")
 {
 	
 }
@@ -352,7 +351,7 @@ void SkyEffect::Init()
 }
 
 //! Creates the input layout that will get set before the Input-Assembler state. The EffectManager calls this function.
-void SkyEffect::CreateInputLayout()
+void SkyEffect::CreateInputLayout(ID3D11Device* pDevice)
 {
 	// Create the vertex input layout.
 	D3D11_INPUT_ELEMENT_DESC vertexDesc[] =
@@ -365,7 +364,7 @@ void SkyEffect::CreateInputLayout()
 	// Create the input layout.
     D3DX11_PASS_DESC passDesc;
     mTech->GetPassByIndex(0)->GetDesc(&passDesc);
-	HR(gGame->GetD3D()->GetDevice()->CreateInputLayout(vertexDesc, 3, passDesc.pIAInputSignature, 
+	HR(pDevice->CreateInputLayout(vertexDesc, 3, passDesc.pIAInputSignature, 
 		passDesc.IAInputSignatureSize, &mInputLayout));
 }
 
@@ -373,8 +372,8 @@ void SkyEffect::CreateInputLayout()
 
 #pragma region ShadowMapEffect
 
-ShadowMapEffect::ShadowMapEffect()
-	: Effect("BuildShadowMap.fx", "BuildShadowMapTech")
+ShadowMapEffect::ShadowMapEffect(ID3D11Device* pDevice)
+	: Effect(pDevice, "BuildShadowMap.fx", "BuildShadowMapTech")
 {
 
 }
@@ -392,7 +391,7 @@ void ShadowMapEffect::Init()
 	WorldInvTranspose = mEffect->GetVariableByName("gWorldInvTranspose")->AsMatrix();
 }
 
-void ShadowMapEffect::CreateInputLayout()
+void ShadowMapEffect::CreateInputLayout(ID3D11Device* pDevice)
 {
 	// Create the vertex input layout.
 	D3D11_INPUT_ELEMENT_DESC vertexDesc[] =
@@ -403,7 +402,7 @@ void ShadowMapEffect::CreateInputLayout()
 	// Create the input layout.
     D3DX11_PASS_DESC passDesc;
     mTech->GetPassByIndex(0)->GetDesc(&passDesc);
-	HR(gGame->GetD3D()->GetDevice()->CreateInputLayout(vertexDesc, 1, passDesc.pIAInputSignature, 
+	HR(pDevice->CreateInputLayout(vertexDesc, 1, passDesc.pIAInputSignature, 
 		passDesc.IAInputSignatureSize, &mInputLayout));
 }
 
@@ -411,8 +410,8 @@ void ShadowMapEffect::CreateInputLayout()
 
 #pragma region TerrainEffect
 
-TerrainEffect::TerrainEffect()
-	: Effect("Terrain.fx", "TerrainTech")
+TerrainEffect::TerrainEffect(ID3D11Device* pDevice)
+	: Effect(pDevice, "Terrain.fx", "TerrainTech")
 {
 	
 }
@@ -447,7 +446,7 @@ void TerrainEffect::Init()
 	ToolRadius           = mEffect->GetVariableByName("gToolRadius")->AsScalar();
 }
 	
-void TerrainEffect::CreateInputLayout()
+void TerrainEffect::CreateInputLayout(ID3D11Device* pDevice)
 {
 	// Create the vertex input layout.
 	D3D11_INPUT_ELEMENT_DESC vertexDesc[] =
@@ -461,7 +460,7 @@ void TerrainEffect::CreateInputLayout()
 	// Create the input layout.
     D3DX11_PASS_DESC passDesc;
     mTech->GetPassByIndex(0)->GetDesc(&passDesc);
-	HR(gGame->GetD3D()->GetDevice()->CreateInputLayout(vertexDesc, 4, passDesc.pIAInputSignature, 
+	HR(pDevice->CreateInputLayout(vertexDesc, 4, passDesc.pIAInputSignature, 
 		passDesc.IAInputSignatureSize, &mInputLayout));
 }
 

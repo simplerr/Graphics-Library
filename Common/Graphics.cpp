@@ -23,6 +23,8 @@
 #include "Terrain.h"
 #include "StaticMesh.h"
 #include "StaticModel.h"
+#include "PrimitiveFactory.h"
+#include "ModelImporter.h"
 
 //! Constructor. The Init() function handles the initialization.
 Graphics::Graphics()
@@ -44,6 +46,8 @@ Graphics::~Graphics()
 	delete mCamera;
 	delete mBlurFilter;
 	delete mShadowMap;
+	delete mPrimitiveFactory;
+	delete mModelImporter;
 
 	// Release and delete the textures.
 	for(auto iter = mTextureMap.begin(); iter != mTextureMap.end(); iter++)
@@ -79,7 +83,7 @@ bool Graphics::Init(int clientWidth, int clientHeight, HWND hwnd, bool fullscree
 	}
 
 	//! Init all effects.
-	Effects::InitAll();
+	Effects::InitAll(GetDevice());
 	RenderStates::InitAll(GetDevice());
 
 	// Create the camera.
@@ -90,10 +94,14 @@ bool Graphics::Init(int clientWidth, int clientHeight, HWND hwnd, bool fullscree
 
 	mMaterial = Material(Colors::LightSteelBlue);
 
-	// Create the primtive used when drawing 2D screen quads.
-	mScreenQuad = gPrimitiveFactory->CreateQuad();
+	// Create the primitive factory and the model importer.
+	mPrimitiveFactory = new PrimitiveFactory();	
+	mModelImporter = new ModelImporter(mPrimitiveFactory);
 
-	mAABB = gPrimitiveFactory->CreateBox();
+	// Create the primtive used when drawing 2D screen quads.
+	mScreenQuad = mPrimitiveFactory->CreateQuad();
+
+	mAABB = mPrimitiveFactory->CreateBox();
 
 	mShadowMap = new ShadowMap(GetDevice(), 2048, 2048);
 
@@ -123,15 +131,12 @@ Texture2D* Graphics::LoadTexture(string filename, float scale)
 	}
 }
 
-void Graphics::Update(float dt)
+void Graphics::Update(Input* pInput, float dt)
 {
-	mShadowMap->BuildShadowTransform(mLightList->operator[](0));
-}
+	mCamera->Update(pInput, dt);
 
-//! Updates the camera.
-void Graphics::UpdateCamera(float dt)
-{
-	mCamera->Update(dt);
+	if(mLightList->size() != 0)
+		mShadowMap->BuildShadowTransform(mLightList->operator[](0));
 }
 
 //! Draws a primitive.
@@ -163,6 +168,15 @@ void Graphics::DrawBillboards()
 	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_POINTLIST);
 	context->IASetInputLayout(Effects::BillboardFX->GetInputLayout());
 
+	// Remove billboard managers with no billboards.
+	for(auto iter = mBillboardManagerMap.begin(); iter != mBillboardManagerMap.end(); iter++)
+	{
+		if((*iter).second->GetNumBillboards() == 0) {
+			mBillboardManagerMap.erase(iter);
+			break;
+		}
+	}
+
 	// Loop through all billboard managers.
 	for(auto iter = mBillboardManagerMap.begin(); iter != mBillboardManagerMap.end(); iter++)
 	{
@@ -186,11 +200,11 @@ void Graphics::DrawBillboards()
 		Effects::BillboardFX->SetLights(mLightList);
 		Effects::BillboardFX->SetEyePosition(mCamera->GetPosition());
 		Effects::BillboardFX->SetFogColor(mFogColor);
-		Effects::BillboardFX->SetFogStart(15.0f);
+		Effects::BillboardFX->SetFogStart(2015.0f);
 		Effects::BillboardFX->SetFogRange(175.0f);
 		Effects::BillboardFX->SetMaterial(Colors::White);
 		Effects::BillboardFX->SetTexture(manager->GetTexture());
-		Effects::BillboardFX->Apply();
+		Effects::BillboardFX->Apply(GetD3DContext());
 
 		context->Draw(manager->GetNumBillboards(), 0);
 	}
@@ -213,7 +227,7 @@ void Graphics::DrawScreenQuad(Texture2D* texture, float x, float y, float width,
 
 	// Make sure to not use the view and projection matrices when dealing with NDC coordinates.
 	Effects::BasicFX->SetWorldViewProj(S*T);
-	Effects::BasicFX->Apply();
+	Effects::BasicFX->Apply(GetD3DContext());
 
 	// Draw the primitive.
 	mScreenQuad->Draw<Vertex>(context);
@@ -248,25 +262,18 @@ void Graphics::SetEffectParameters(BasicEffect* effect, CXMMATRIX worldMatrix, T
 	effect->SetNormalMap(normalMap);
 	effect->SetShadowMap(mShadowMap->GetSRV());
 	effect->SetShadowTransform(worldMatrix * XMLoadFloat4x4(&mShadowMap->GetShadowTransform()));
-	
-	if(gInput->KeyPressed('C')) {
-		XMFLOAT3 pos = mCamera->GetPosition();
-		char buffer[256];
-		sprintf(buffer, "x: %f\n, y: %f\n, z: %f\n", pos.x, pos.y, pos.z);
-		OutputDebugString(buffer);
-	}
 
 	// Fog
 	effect->SetFogColor(mFogColor);
 	effect->SetFogStart(1000.0f);
 	effect->SetFogRange(50.0f);
 
-	effect->Apply();
+	effect->Apply(GetD3DContext());
 }
 
 void Graphics::ApplyBlur(Texture2D* texture, int blurCount)
 {
-	mBlurFilter->ApplyBlur(GetContext(), texture->shaderResourceView, blurCount);
+	mBlurFilter->ApplyBlur(GetDevice(), GetContext(), texture->shaderResourceView, blurCount);
 }
 
 void Graphics::DrawText(string text, int x, int y, D3DXCOLOR textColor, int size)
@@ -281,14 +288,14 @@ BillboardVertex* Graphics::AddBillboard(XMFLOAT3 position, XMFLOAT2 size, string
 	if(mBillboardManagerMap.find(texture) != mBillboardManagerMap.end()) {
 		BillboardVertex* billboard = new BillboardVertex(position, size);
 		billboard->Manager = mBillboardManagerMap[texture];
-		mBillboardManagerMap[texture]->AddBillboard(billboard);
+		mBillboardManagerMap[texture]->AddBillboard(this, billboard);
 		return billboard;
 	}
 	else {
-		mBillboardManagerMap[texture] = new BillboardManager(texture);
+		mBillboardManagerMap[texture] = new BillboardManager(this, texture);
 		BillboardVertex* billboard = new BillboardVertex(position, size);
 		billboard->Manager = mBillboardManagerMap[texture];
-		mBillboardManagerMap[texture]->AddBillboard(billboard);
+		mBillboardManagerMap[texture]->AddBillboard(this, billboard);
 		return billboard;
 	}
 
@@ -346,7 +353,7 @@ void Graphics::ActiveShadowMap()
 	// Unbind the SRVs from the pipeline so they can be used as DSVs instead.
 	ID3D11ShaderResourceView *const nullSRV[1] = {NULL};//, NULL, NULL, NULL};
 	GetContext()->PSSetShaderResources(1, 1, nullSRV);
-	Effects::BuildShadowMapFX->Apply();
+	Effects::BuildShadowMapFX->Apply(GetD3DContext());
 
 	// Sets render target to NULL and the DSV to the shadow maps. Enables depth writes to the DSV basicly.
 	GetShadowMap()->BindDepthStencil(GetContext());
@@ -418,4 +425,14 @@ float Graphics::GetClientHeight()
 bool Graphics::IsRenderingShadows()
 {
 	return mRenderingShadows;
+}
+
+PrimitiveFactory* Graphics::GetPrimitiveFactory()
+{
+	return mPrimitiveFactory;
+}
+
+ModelImporter* Graphics::GetModelImporter()
+{
+	return mModelImporter;
 }

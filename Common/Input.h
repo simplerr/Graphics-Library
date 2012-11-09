@@ -41,6 +41,3 @@ private:
 	XMFLOAT3 mMousePosition;
 	float mDx, mDy;
 };
-
-// Global.
-extern Input* gInput;

@@ -49,8 +49,10 @@ struct BillboardVertex
 
 	void SetPos(XMFLOAT3 pos);
 	void SetSize(XMFLOAT2 size);
+	void Remove();
 
 	XMFLOAT3 Pos;
 	XMFLOAT2 Size;
+	int		 Id;
 	BillboardManager* Manager;
 };

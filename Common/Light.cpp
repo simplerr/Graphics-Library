@@ -1,7 +1,3 @@
-//***************************************************************************************
-// LightHelper.cpp by Frank Luna (C) 2011 All Rights Reserved.
-//***************************************************************************************
-
 #include "Light.h"
 
 Light::Light() 
@@ -12,9 +8,7 @@ Light::Light()
 
 void Light::SetMaterials(XMFLOAT4 ambient, XMFLOAT4 diffuse, XMFLOAT4 specular)
 {
-	mMaterial.ambient  = ambient;
-	mMaterial.diffuse  = diffuse;
-	mMaterial.specular	= specular;
+	mMaterial = Material(ambient, diffuse, specular);
 	SetIntensity(1.0f, 0.0f, 0.0f);
 }
 	
@@ -66,6 +60,16 @@ void Light::SetIntensity(float ambient, float diffuse, float specular)
 	mIntensity = XMFLOAT3(ambient, diffuse, specular);
 }
 
+void Light::SetId(int id)
+{
+	mId = id;
+}
+
+int Light::GetId()
+{
+	return mId;
+}
+
 XMFLOAT3 Light::GetIntensity()
 {
 	return mIntensity;
@@ -101,3 +105,7 @@ Material Light::GetMaterial()
 	return mMaterial;
 }
  
+int	Light::GetType()
+{
+	return mType;
+}

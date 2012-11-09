@@ -5,10 +5,10 @@
 #include "Effects.h"
 #include "Runnable.h"
 
-BillboardManager::BillboardManager(string texture)
+BillboardManager::BillboardManager(Graphics* pGraphics, string texture)
 {
 	mRebuild = false;
-	mTexture = gGame->GetGraphics()->LoadTexture(texture);
+	mTexture = pGraphics->LoadTexture(texture);
 }
 	
 //! Cleanup.
@@ -21,10 +21,37 @@ BillboardManager::~BillboardManager()
 }
 
 //! Adds a billboard.
-void BillboardManager::AddBillboard(BillboardVertex* billboard)
+void BillboardManager::AddBillboard(Graphics* pGraphics, BillboardVertex* billboard)
 {
+	static int id = 0;
+	billboard->Id = id++;
 	mBillboardList.push_back(billboard);
-	BuildVertexBuffer(gGame->GetD3D()->GetDevice());	//  [HACK]
+	BuildVertexBuffer(pGraphics->GetDevice());	
+}
+
+void BillboardManager::RemoveBillbaord(BillboardVertex* billboard)
+{
+	// Loop through all objects and find out which one to delete.
+	int i = 0;
+	auto itr =  mBillboardList.begin();
+	while(itr != mBillboardList.end() && i < mBillboardList.size())
+	{
+		if(mBillboardList[i]->Id == billboard->Id)
+		{
+			delete mBillboardList[i];		
+			mBillboardList[i] = NULL;
+			itr = mBillboardList.erase(itr);	
+			break;
+		}
+		else	{
+			itr++;
+			i++;
+		}
+	}
+
+	// Only build if not 0 billboards.
+	if(mBillboardList.size() != 0)
+		BuildVertexBuffer(GetD3DDevice());
 }
 
 //! Builds the vertex buffer.
@@ -42,7 +69,7 @@ void BillboardManager::BuildVertexBuffer(ID3D11Device* device)
 	// Fill out the D3D11_BUFFER_DESC struct.
 	D3D11_BUFFER_DESC vbd;
     vbd.Usage = D3D11_USAGE_IMMUTABLE;
-	vbd.ByteWidth = sizeof(BillboardVertex) * mBillboardList.size() - sizeof(BillboardManager*) * mBillboardList.size();
+	vbd.ByteWidth = sizeof(BillboardVertex) * mBillboardList.size();
     vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
     vbd.CPUAccessFlags = 0;
     vbd.MiscFlags = 0;

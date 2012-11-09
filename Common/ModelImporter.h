@@ -43,6 +43,3 @@ private:
 	PrimitiveFactory*	mPrimtiveFactory;
 	string				mFilename;
 };
-
-// Global.
-extern ModelImporter* gModelImporter;

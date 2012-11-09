@@ -5,11 +5,12 @@
 #include "Camera.h"
 #include "Effects.h"
 #include "Primitive.h"
+#include "PrimitiveFactory.h"
 
-Sky::Sky(string texture, float radius)
+Sky::Sky(Graphics* pGraphics, string texture, float radius)
 {
-	mTexture = gGame->GetGraphics()->LoadTexture(texture);
-	mPrimitive = gPrimitiveFactory->CreateSphere(5000.0f, 30, 30);
+	mTexture = pGraphics->LoadTexture(texture);
+	mPrimitive = pGraphics->GetPrimitiveFactory()->CreateSphere(5000.0f, 30, 30);
 }
 	
 Sky::~Sky()
@@ -17,10 +18,10 @@ Sky::~Sky()
 
 }
 
-void Sky::Draw()
+void Sky::Draw(Graphics* pGraphics)
 {
 	// Center the the skybox around the camera.
-	Camera* camera = gGame->GetGraphics()->GetCamera();
+	Camera* camera = pGraphics->GetCamera();
 	XMFLOAT3 eyePos = camera->GetPosition();
 	XMMATRIX T = XMMatrixTranslation(eyePos.x, eyePos.y, eyePos.z);
 
@@ -29,12 +30,12 @@ void Sky::Draw()
 	Effects::SkyFX->SetWorldViewProj(WVP);
 	Effects::SkyFX->SetCubeMap(mTexture->shaderResourceView);
 
-	ID3D11DeviceContext* context = gGame->GetGraphics()->GetContext();
+	ID3D11DeviceContext* context = pGraphics->GetContext();
 	context->IASetInputLayout(Effects::SkyFX->GetInputLayout());
 	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	Effects::SkyFX->GetTech()->GetPassByIndex(0)->Apply(0, context);
 	mPrimitive->Draw<Vertex>(context);
 
-	mPrimitive->Draw<Vertex>(context);
+	mPrimitive->Draw<Vertex>(context); // Why? [NOTE][TODO]
 }

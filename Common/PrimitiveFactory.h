@@ -31,5 +31,3 @@ public:
 private:
 	map<string, Primitive*> mPrimitiveMap;
 };
-
-extern PrimitiveFactory* gPrimitiveFactory;

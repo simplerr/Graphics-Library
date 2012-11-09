@@ -3,6 +3,7 @@
 #include "Graphics.h"
 #include "Input.h"
 #include "D3DCore.h"
+#include "Camera.h"
 
 LRESULT CALLBACK
 MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -31,6 +32,7 @@ Runnable::Runnable(HINSTANCE hInstance, std::string caption, int width, int heig
 Runnable::~Runnable()
 {
 	delete mGraphics;
+	delete mInput;
 }
 
 //! Initializes Win32 and Direct3D by calling Graphics::Init(...).
@@ -38,6 +40,9 @@ void Runnable::Init()
 {
 	// Init the Win32 components.
 	InitWin32();
+
+	// Create the input member.
+	mInput = new Input();
 
 	// Init Direct3D.
 	mGraphics = new Graphics();
@@ -114,9 +119,12 @@ int Runnable::Run()
 		{
 			// Calculate the delta time and call the abstract Update() and Draw() functions. 
 			mTimer.Tick();
-			gInput->Poll();
+			mInput->Poll();
 			CalculateFrameStats();
-			Update(mTimer.DeltaTime());
+			
+			mInput->Update(mTimer.DeltaTime());
+			mGraphics->Update(mInput, mTimer.DeltaTime());
+			Update(mInput, mTimer.DeltaTime());
 			Draw(GetGraphics());
 		}
     }
@@ -127,6 +135,9 @@ int Runnable::Run()
 //! Handles all window messages.
 LRESULT Runnable::MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
+	// Let Input handle the message.
+	mInput->MsgProc(msg, wParam, lParam);
+
 	switch(msg)
 	{
 	case WM_DESTROY:
@@ -241,4 +252,10 @@ D3DCore* Runnable::GetD3D()
 Graphics* Runnable::GetGraphics()
 {
 	return mGraphics;
+}
+
+//! Returns the input instance.
+Input* Runnable::GetInput()
+{
+	return mInput;
 }

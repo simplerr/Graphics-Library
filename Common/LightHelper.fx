@@ -28,7 +28,7 @@ struct Light
 	float type;		 // 0 = directional, 1 = point light, 2 = spot light
 	
 	float3 intensity;
-	float pad;
+	float id;	// Not used.
 };
 
 //! Computes the colors for directional light.

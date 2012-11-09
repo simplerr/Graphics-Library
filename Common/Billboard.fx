@@ -90,7 +90,7 @@ void GS(point VertexOut gin[1], inout TriangleStream<GeoOut> triStream)
 	// space such that the billboard is aligned with the y-axis and faces the eye.
 	float3 up = float3(0.0f, 1.0f, 0.0f);
 	float3 look = gEyePosW - gin[0].CenterW;
-	look.y = 0.0f; // y-axis aligned, so project to xz-plane
+	look.y = 0.0f; // y-axis aligned, so project to xz-plane	[NOTE]
 	look = normalize(look);
 	float3 right = cross(up, look);
 
@@ -134,8 +134,9 @@ float4 PS(GeoOut pin) : SV_Target
 	// Apply lighting.
 	float4 litColor;
 	ApplyLighting(gNumLights, gLights, gMaterial, pin.PosW, pin.NormalW, toEyeW, texColor, 1.0f, litColor);
+	litColor = texColor;	// [NOTE][HACK] Doens't use lighting.
 
-	//! Apply fogging.
+	// Apply fogging.
 	float distToEye = length(gEyePosW - pin.PosW);
 	float fogLerp = saturate( (distToEye - gFogStart) / gFogRange ); 
 

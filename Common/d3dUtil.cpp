@@ -19,6 +19,31 @@ Graphics* GetGraphics()
 	return gGame->GetGraphics();
 }
 
+Camera*	GetCamera()
+{
+	return gGame->GetGraphics()->GetCamera();
+}
+
+HINSTANCE GetWindowInstance()
+{
+	return gGame->GetInstance();
+}
+
+HWND GetWindowHandler()
+{
+	return gGame->GetHwnd();
+}
+
+int	GetClientWidth()
+{
+	return gGame->GetClientWidth();
+}
+
+int GetClientHeight()
+{
+	return gGame->GetClientHeight();
+}
+
 //! Loads and creates a SRV to a 2d texture array.
 //! Taken from Frank Lunas book.
 ID3D11ShaderResourceView* d3dHelper::CreateTexture2DArraySRV(ID3D11Device* device, ID3D11DeviceContext* context, vector<string>& filenames)

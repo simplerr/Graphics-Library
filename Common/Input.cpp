@@ -10,8 +10,7 @@ Input::Input()
 	ZeroMemory(mLastKeyState, sizeof(mLastKeyState));
 	ZeroMemory(mKeyState, sizeof(mKeyState));
 
-	HR(DirectInput8Create(gGame->GetInstance(), DIRECTINPUT_VERSION, 
-		IID_IDirectInput8, (void**)&mDInput, 0));
+	HR(DirectInput8Create(GetWindowInstance(), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&mDInput, 0));
 
 	// Get the cursor starting position.
 	POINT mousePosition;
@@ -21,7 +20,7 @@ Input::Input()
 
 	HR(mDInput->CreateDevice(GUID_SysMouse, &mMouse, 0));
 	HR(mMouse->SetDataFormat(&c_dfDIMouse2));
-	HR(mMouse->SetCooperativeLevel(gGame->GetHwnd(), DISCL_NONEXCLUSIVE|DISCL_FOREGROUND));
+	HR(mMouse->SetCooperativeLevel(GetWindowHandler(), DISCL_NONEXCLUSIVE|DISCL_FOREGROUND));
 	HR(mMouse->Acquire());
 
 	// No delta movement to start with
@@ -35,6 +34,7 @@ Input::~Input()
 	mMouse->Unacquire();
 	ReleaseCOM(mMouse);
 }
+
 
 //! Update the key state.
 /**
@@ -127,17 +127,17 @@ XMFLOAT3 Input::MousePosition()
 	return mMousePosition;
 	POINT pos;
 	GetCursorPos(&pos);
-	ScreenToClient(gGame->GetHwnd(), &pos);
+	ScreenToClient(GetWindowHandler(), &pos);
 
 	// [NOTE] Doesn't use the other code..
 	//return XMFLOAT3(pos.x, pos.y, 0);
 
 	RECT r;
-	GetWindowRect(gGame->GetHwnd(), &r);
+	GetWindowRect(GetWindowHandler(), &r);
 	float width = r.right - r.left;
 	float height = r.bottom - r.top;
 
-	GetClientRect(gGame->GetHwnd(), &r);
+	GetClientRect(GetWindowHandler(), &r);
 	XMFLOAT3 position = mMousePosition;
 	position.x = (mMousePosition.x / (float)r.right) * width;
 	position.y = (mMousePosition.y / (float)r.bottom) * height;
@@ -195,18 +195,18 @@ void Input::Poll()
 Ray Input::GetWorldPickingRay()
 {
 	XMFLOAT3 mousePos = MousePosition();
-	XMMATRIX proj = XMLoadFloat4x4(&gGame->GetGraphics()->GetCamera()->GetProjectionMatrix());
+	XMMATRIX proj = XMLoadFloat4x4(&GetCamera()->GetProjectionMatrix());
 
 	// Compute the ray in view space.
-	float vx = (+2.0f * mousePos.x / gGame->GetClientWidth() - 1) / proj(0, 0);
-	float vy = (-2.0f * mousePos.y / gGame->GetClientHeight() + 1) / proj(1, 1);
+	float vx = (+2.0f * mousePos.x / GetClientWidth() - 1) / proj(0, 0);
+	float vy = (-2.0f * mousePos.y / GetClientHeight() + 1) / proj(1, 1);
 
 	XMVECTOR origin = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
 	XMVECTOR dir = XMVectorSet(vx, vy, 1.0f, 0.0f);
 
 	// Transform the ray to world space with the inverse view matrix.
 	XMVECTOR det;
-	XMMATRIX view = XMLoadFloat4x4(&gGame->GetGraphics()->GetCamera()->GetViewMatrix());
+	XMMATRIX view = XMLoadFloat4x4(&GetCamera()->GetViewMatrix());
 	XMMATRIX invView = XMMatrixInverse(&det, view);
 
 	origin = XMVector3TransformCoord(origin, invView);

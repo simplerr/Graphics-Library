@@ -29,7 +29,7 @@ class TerrainEffect;
 class Effects
 {
 public:
-	static void InitAll();
+	static void InitAll(ID3D11Device* pDevice);
 	static void DestroyAll();
 
 	static BasicEffect*		BasicFX;
@@ -51,14 +51,14 @@ public:
 class Effect
 {
 public:
-	Effect(string filename, string technique);
+	Effect(ID3D11Device* pDevice, string filename, string technique);
 	virtual ~Effect();
 
 	// Abstract functions.
 	virtual void Init() {};
-	virtual void CreateInputLayout() {};
+	virtual void CreateInputLayout(ID3D11Device* pDevice) {};
 
-	void Apply();
+	void Apply(ID3D11DeviceContext* pContext);
 
 	// Used by the effect manager.
 	void SetEffect(ID3DX11Effect* effect);
@@ -83,11 +83,11 @@ protected:
 class BasicEffect : public Effect
 {
 public:
-	BasicEffect();
+	BasicEffect(ID3D11Device* pDevice);
 	~BasicEffect();
 
 	void Init();
-	void CreateInputLayout();
+	void CreateInputLayout(ID3D11Device* pDevice);
 
 	// Setters to effect variables.
 	void SetWorldViewProj(CXMMATRIX matrix)			{ mfxWVP->SetMatrix(reinterpret_cast<const float*>(&matrix)); }
@@ -148,11 +148,11 @@ private:
 class BillboardEffect : public Effect
 {
 public:
-	BillboardEffect();
+	BillboardEffect(ID3D11Device* pDevice);
 	~BillboardEffect();
 
 	void Init();
-	void CreateInputLayout();
+	void CreateInputLayout(ID3D11Device* pDevice);
 
 	// Setters to the effect variables.
 	void SetViewProj(CXMMATRIX matrix)              { mfxViewProj->SetMatrix(reinterpret_cast<const float*>(&matrix)); }
@@ -183,7 +183,7 @@ private:
 class BlurEffect : public Effect
 {
 public:
-	BlurEffect();
+	BlurEffect(ID3D11Device* pDevice);
 	~BlurEffect();
 
 	void Init();
@@ -204,11 +204,11 @@ public:
 class SkyEffect : public Effect
 {
 public:
-	SkyEffect();
+	SkyEffect(ID3D11Device* pDevice);
 	~SkyEffect();
 
 	void Init();
-	void CreateInputLayout();
+	void CreateInputLayout(ID3D11Device* pDevice);
 
 	void SetWorldViewProj(CXMMATRIX M)                  { WorldViewProj->SetMatrix(reinterpret_cast<const float*>(&M)); }
 	void SetCubeMap(ID3D11ShaderResourceView* cubemap)  { CubeMap->SetResource(cubemap); }
@@ -222,11 +222,11 @@ public:
 class ShadowMapEffect : public Effect
 {
 public:
-	ShadowMapEffect();
+	ShadowMapEffect(ID3D11Device* pDevice);
 	~ShadowMapEffect();
 
 	void Init();
-	void CreateInputLayout();
+	void CreateInputLayout(ID3D11Device* pDevice);
 
 	void SetViewProj(CXMMATRIX M)           { ViewProj->SetMatrix(reinterpret_cast<const float*>(&M)); }
 	void SetWorldViewProj(CXMMATRIX M)      { WorldViewProj->SetMatrix(reinterpret_cast<const float*>(&M)); }
@@ -245,11 +245,11 @@ public:
 class TerrainEffect : public Effect
 {
 public:
-	TerrainEffect();
+	TerrainEffect(ID3D11Device* pDevice);
 	~TerrainEffect();
 
 	void Init();
-	void CreateInputLayout();
+	void CreateInputLayout(ID3D11Device* pDevice);
 
 	void SetViewProj(CXMMATRIX M)                       { ViewProj->SetMatrix(reinterpret_cast<const float*>(&M)); }
 	void SetEyePosW(const XMFLOAT3& v)                  { EyePosW->SetRawValue(&v, 0, sizeof(XMFLOAT3)); }

@@ -3,6 +3,7 @@
 
 using namespace XNA;
 class Graphics;
+class Input;
 
 /**
 	Contains the view and projection matrices.
@@ -14,9 +15,9 @@ public:
 	Camera();
 	~Camera();
 
-	void Update(float dt);
-	void Move();
-	void Rotate();
+	void Update(Input* pInput, float dt);
+	void Move(Input* pInput);
+	void Rotate(Input* pInput);
 	void DrawDebug();
 	void UpdateViewMatrix();
 

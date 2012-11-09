@@ -15,10 +15,11 @@ class Texture2D;
 class BillboardManager
 {
 public:
-	BillboardManager(string texture);
+	BillboardManager(Graphics* pGraphics, string texture);
 	~BillboardManager();
 
-	void AddBillboard(BillboardVertex* billboard);
+	void AddBillboard(Graphics* pGraphics, BillboardVertex* billboard);
+	void RemoveBillbaord(BillboardVertex* billboard);
 	void BuildVertexBuffer(ID3D11Device* device);
 	void SetRebuild(bool rebuild);
 
