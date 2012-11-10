@@ -7,39 +7,43 @@
 #include "d3dUtil.h"
 using namespace std;
 
-class Primitive;
-class PrimitiveFactory;
-class StaticModel;
-class SkinnedModel;
-class SkinnedModel;
-class SceneAnimator;
-struct BoneInfo;
-
-struct Weights
+// Graphics Library namespace.
+namespace GLib
 {
-	vector<int>		boneIndices;
-	vector<float>	weights;
-};
+	class Primitive;
+	class PrimitiveFactory;
+	class StaticModel;
+	class SkinnedModel;
+	class SkinnedModel;
+	class SceneAnimator;
+	struct BoneInfo;
 
-/**
-	Loads models and stores them to support instancing.
-*/
-class ModelImporter
-{
-public:
-	ModelImporter(PrimitiveFactory* primitiveFactory);
-	~ModelImporter();
+	struct Weights
+	{
+		vector<int>		boneIndices;
+		vector<float>	weights;
+	};
 
-	StaticModel*	LoadStaticModel(string filename);
-	SkinnedModel*	LoadSkinnedModel(string filename);
+	/**
+		Loads models and stores them to support instancing.
+	*/
+	class ModelImporter
+	{
+	public:
+		ModelImporter(PrimitiveFactory* primitiveFactory);
+		~ModelImporter();
 
-private:
-	vector<Weights> CalculateWeights(aiMesh* mesh, SceneAnimator* animator);
-	int				FindValidPath(aiString* p_szString);
-	bool			TryLongerPath(char* szTemp,aiString* p_szString);
-private:
-	map<string, StaticModel*>	mStaticModelMap;
-	map<string, SkinnedModel*>	mSkinnedModelMap;
-	PrimitiveFactory*	mPrimtiveFactory;
-	string				mFilename;
-};
+		StaticModel*	LoadStaticModel(string filename);
+		SkinnedModel*	LoadSkinnedModel(string filename);
+
+	private:
+		vector<Weights> CalculateWeights(aiMesh* mesh, SceneAnimator* animator);
+		int				FindValidPath(aiString* p_szString);
+		bool			TryLongerPath(char* szTemp,aiString* p_szString);
+	private:
+		map<string, StaticModel*>	mStaticModelMap;
+		map<string, SkinnedModel*>	mSkinnedModelMap;
+		PrimitiveFactory*	mPrimtiveFactory;
+		string				mFilename;
+	};
+}

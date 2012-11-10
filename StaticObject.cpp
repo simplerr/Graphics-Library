@@ -25,7 +25,7 @@ void StaticObject::Update(float dt)
 }
 
 //! Draws the objects model.
-void StaticObject::Draw(Graphics* pGraphics)
+void StaticObject::Draw(GLib::Graphics* pGraphics)
 {
 	mModel->Draw(pGraphics, GetWorldMatrix());
 

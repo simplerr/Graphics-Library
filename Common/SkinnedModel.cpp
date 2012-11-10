@@ -7,6 +7,10 @@
 #include "cAnimationController.h"
 #include "Input.h"
 
+// Graphics Library namespace.
+namespace GLib
+{
+
 SkinnedModel::SkinnedModel()
 {
 	mAnimator = nullptr;
@@ -152,3 +156,5 @@ void SkinnedModel::SetElapsedTime(float elapsedTime)
 {
 	mElapsedTime = elapsedTime;
 }
+
+}	// End of Graphics Library namespace.

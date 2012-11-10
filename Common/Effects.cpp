@@ -6,6 +6,10 @@
 #include "Light.h"
 #include "Graphics.h"
 
+// Graphics Library namespace.
+namespace GLib
+{
+
 //! Initialize the effects.
 BasicEffect*		Effects::BasicFX		= nullptr;
 BillboardEffect*	Effects::BillboardFX	= nullptr;
@@ -478,3 +482,5 @@ void TerrainEffect::SetLights(LightList* lights)
 }
 
 #pragma endregion
+
+}	// End of Graphics Library namespace.

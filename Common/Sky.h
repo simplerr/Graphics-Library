@@ -3,19 +3,24 @@
 #include <string>
 using namespace std;
 
-class Primitive;
-class Texture2D;
-class PrimitiveFactory;
-class Graphics;
-
-class Sky
+// Graphics Library namespace.
+namespace GLib
 {
-public:
-	Sky(Graphics* pGraphics, string texture, float radius);
-	~Sky();
+	class Primitive;
+	class Texture2D;
+	class PrimitiveFactory;
+	class Graphics;
 
-	void Draw(Graphics* pGraphics);
-private:
-	Primitive* mPrimitive;
-	Texture2D* mTexture;
-};
+
+	class Sky
+	{
+	public:
+		Sky(Graphics* pGraphics, string texture, float radius);
+		~Sky();
+
+		void Draw(Graphics* pGraphics);
+	private:
+		Primitive* mPrimitive;
+		Texture2D* mTexture;
+	};
+}

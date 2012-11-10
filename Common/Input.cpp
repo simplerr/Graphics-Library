@@ -3,6 +3,10 @@
 #include "Graphics.h"
 #include "Camera.h"
 
+// Graphics Library namespace.
+namespace GLib
+{
+
 //! Constructor.
 Input::Input()
 {
@@ -221,3 +225,5 @@ Ray Input::GetWorldPickingRay()
 
 	return ray;
 }
+
+}	// End of Graphics Library namespace.

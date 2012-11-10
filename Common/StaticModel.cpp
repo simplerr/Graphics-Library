@@ -5,6 +5,10 @@
 #include "ShadowMap.h"
 #include "StaticMesh.h"
 
+// Graphics Library namespace.
+namespace GLib
+{
+
 StaticModel::StaticModel()
 {
 
@@ -85,3 +89,5 @@ void StaticModel::SetMaterial(Material material)
 	for(int i = 0; i < mMeshList.size(); i++) 
 		mMeshList[i]->SetMaterial(material);
 }
+
+}	// End of Graphics Library namespace.

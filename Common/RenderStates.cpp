@@ -1,6 +1,10 @@
 #include "RenderStates.h"
 #include "d3dUtil.h"
 
+// Graphics Library namespace.
+namespace GLib
+{
+
 ID3D11BlendState*			RenderStates::TransparentBS     = 0;
 ID3D11DepthStencilState*	RenderStates::EnableAllDSS		= 0;  
 ID3D11DepthStencilState*	RenderStates::NoDoubleBlendDSS  = 0;
@@ -66,3 +70,5 @@ void RenderStates::DestroyAll()
 	ReleaseCOM(EnableAllDSS);
 	ReleaseCOM(NoDoubleBlendDSS);
 }
+
+}	// End of Graphics Library namespace.

@@ -4,12 +4,15 @@
 #include "d3dUtil.h"
 #include "Vertex.h"
 
-class Primitive;
-class Graphics;
-class PrimitiveFactory;
+// Graphics Library namespace.
+namespace GLib
+{
+	class Primitive;
+	class Graphics;
+	class PrimitiveFactory;
 
-//! Stores the init information for a terrain.
-struct InitInfo
+	//! Stores the init information for a terrain.
+	struct InitInfo
 	{
 		string HeightMapFilename;
 		string LayerMapFilename0;
@@ -67,3 +70,5 @@ private:
 	InitInfo		mInfo;
 	XMFLOAT4X4		mWorldMatrix;
 };
+
+}

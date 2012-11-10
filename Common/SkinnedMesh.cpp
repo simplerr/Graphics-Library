@@ -5,6 +5,10 @@
 #include <assimp\scene.h>
 #include <fstream>
 
+// Graphics Library namespace.
+namespace GLib
+{
+
 SkinnedMesh::SkinnedMesh()
 {
 	mTexture = nullptr;
@@ -170,3 +174,5 @@ Material SkinnedMesh::GetMaterial()
 {
 	return mMaterial;
 }
+
+}	// End of Graphics Library namespace.

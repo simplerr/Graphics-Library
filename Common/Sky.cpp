@@ -7,6 +7,10 @@
 #include "Primitive.h"
 #include "PrimitiveFactory.h"
 
+// Graphics Library namespace.
+namespace GLib
+{
+
 Sky::Sky(Graphics* pGraphics, string texture, float radius)
 {
 	mTexture = pGraphics->LoadTexture(texture);
@@ -39,3 +43,5 @@ void Sky::Draw(Graphics* pGraphics)
 
 	mPrimitive->Draw<Vertex>(context); // Why? [NOTE][TODO]
 }
+
+}	// End of Graphics Library namespace.

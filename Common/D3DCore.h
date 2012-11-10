@@ -18,45 +18,49 @@
 #include <d3d11.h>
 #include <d3dx10math.h>
 
-/** 
-	Contains the core members of Direct3D.
-	Handles initialization of Direct3D. 
-*/
-class D3DCore
+// Graphics Library namespace.
+namespace GLib
 {
-public:
-	D3DCore();
-	~D3DCore();
+	/** 
+		Contains the core members of Direct3D.
+		Handles initialization of Direct3D. 
+	*/
+	class D3DCore
+	{
+	public:
+		D3DCore();
+		~D3DCore();
 
-	bool Init(int clientWidth, int clientHeight, HWND hwnd, bool fullscreen);
-	void OnResize(int width, int height);
+		bool Init(int clientWidth, int clientHeight, HWND hwnd, bool fullscreen);
+		void OnResize(int width, int height);
 
-	HRESULT Present(UINT SyncInterval, UINT Flags);
+		HRESULT Present(UINT SyncInterval, UINT Flags);
 
-	void SetFullScreen(int width, int height, bool fullscreen);
+		void SetFullScreen(int width, int height, bool fullscreen);
 
-	// Getters.
-	ID3D11Device*			GetDevice();
-	ID3D11DeviceContext*	GetContext();
-	IDXGISwapChain*			GetSwapChain();
-	ID3D11RenderTargetView* GetRenderTargetView();
-	ID3D11DepthStencilView* GetDepthStencilView();
-	D3D11_VIEWPORT			GetViewport();
+		// Getters.
+		ID3D11Device*			GetDevice();
+		ID3D11DeviceContext*	GetContext();
+		IDXGISwapChain*			GetSwapChain();
+		ID3D11RenderTargetView* GetRenderTargetView();
+		ID3D11DepthStencilView* GetDepthStencilView();
+		D3D11_VIEWPORT			GetViewport();
 
-	float					GetClientWidth();
-	float					GetClientHeight();
+		float					GetClientWidth();
+		float					GetClientHeight();
 
-private:
-	// Core Direct3D members.
-	ID3D11Device*			md3dDevice;
-	ID3D11DeviceContext*	md3dImmediateContext;
-	IDXGISwapChain*			mSwapChain;
-	ID3D11Texture2D*		mDepthStencilBuffer;
-	ID3D11RenderTargetView* mRenderTargetView;
-	ID3D11DepthStencilView* mDepthStencilView;
-	D3D11_VIEWPORT			mScreenViewport;
-	UINT					m4xMsaaQuality;
-	bool					mEnable4xMsaa;
-	int						mClientWidth, mClientHeight;
+	private:
+		// Core Direct3D members.
+		ID3D11Device*			md3dDevice;
+		ID3D11DeviceContext*	md3dImmediateContext;
+		IDXGISwapChain*			mSwapChain;
+		ID3D11Texture2D*		mDepthStencilBuffer;
+		ID3D11RenderTargetView* mRenderTargetView;
+		ID3D11DepthStencilView* mDepthStencilView;
+		D3D11_VIEWPORT			mScreenViewport;
+		UINT					m4xMsaaQuality;
+		bool					mEnable4xMsaa;
+		int						mClientWidth, mClientHeight;
 
-};	// Class
+	};	// Class
+}

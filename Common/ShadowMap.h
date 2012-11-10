@@ -1,8 +1,6 @@
 #pragma once
 #include "d3dUtil.h"
 
-class Light;
-
 /**
 	The steps to use shadow mapping:
 
@@ -14,30 +12,36 @@ class Light;
 	- If it's not further away then the it's not in shadow.
 */
 
-/**
-	Contains the shadow map texture with depth values.
-	Contains matrices representing the light space, and the transform matrix to the texture space.
-*/
-class ShadowMap
+// Graphics Library namespace.
+namespace GLib
 {
-public:
-	ShadowMap(ID3D11Device* device, UINT width, UINT height);
-	~ShadowMap();
+	class Light;
 
-	void BindDepthStencil(ID3D11DeviceContext* context);
-	void BuildShadowTransform(Light* light);
+	/**
+		Contains the shadow map texture with depth values.
+		Contains matrices representing the light space, and the transform matrix to the texture space.
+	*/
+	class ShadowMap
+	{
+	public:
+		ShadowMap(ID3D11Device* device, UINT width, UINT height);
+		~ShadowMap();
 
-	ID3D11ShaderResourceView* GetSRV();
-	XMFLOAT4X4 GetLightView();
-	XMFLOAT4X4 GetLightProj();
-	XMFLOAT4X4 GetShadowTransform();
-private:
-	ID3D11ShaderResourceView*	mDepthMapSRV;
-	ID3D11DepthStencilView*		mDepthMapDSV;
-	D3D11_VIEWPORT				mViewport;
-	XMFLOAT4X4					mLightView;
-	XMFLOAT4X4					mLightProj;
-	XMFLOAT4X4					mShadowTransform;
-	UINT						mWidth, mHeight;
-	BoundingSphere				mSceneBounds;
-};
+		void BindDepthStencil(ID3D11DeviceContext* context);
+		void BuildShadowTransform(Light* light);
+
+		ID3D11ShaderResourceView* GetSRV();
+		XMFLOAT4X4 GetLightView();
+		XMFLOAT4X4 GetLightProj();
+		XMFLOAT4X4 GetShadowTransform();
+	private:
+		ID3D11ShaderResourceView*	mDepthMapSRV;
+		ID3D11DepthStencilView*		mDepthMapDSV;
+		D3D11_VIEWPORT				mViewport;
+		XMFLOAT4X4					mLightView;
+		XMFLOAT4X4					mLightProj;
+		XMFLOAT4X4					mShadowTransform;
+		UINT						mWidth, mHeight;
+		BoundingSphere				mSceneBounds;
+	};
+}

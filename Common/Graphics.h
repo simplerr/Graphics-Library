@@ -13,104 +13,108 @@
 using namespace std;
 using namespace XNA;
 
-class D3DCore;
-class BasicEffect;
-class Primitive;
-class EffectManager;
-class BillboardManager;
-class RenderTarget;
-class Camera;
-class Sky;
-class BlurFilter;
-class ShadowMap;
-class SkinnedModel;
-class StaticModel;
-class PrimitiveFactory;
-class ModelImporter;
-class Input;
-struct Material;
-struct Texture2D;
-struct BillboardVertex;
-
-//! Represents a 2D texture.
-struct Texture2D
+// Graphics Library namespace.
+namespace GLib
 {
-	Texture2D() {
-		shaderResourceView = 0;
-		scale = 1.0f;
-		name = "none";
-	}
+	class D3DCore;
+	class BasicEffect;
+	class Primitive;
+	class EffectManager;
+	class BillboardManager;
+	class RenderTarget;
+	class Camera;
+	class Sky;
+	class BlurFilter;
+	class ShadowMap;
+	class SkinnedModel;
+	class StaticModel;
+	class PrimitiveFactory;
+	class ModelImporter;
+	class Input;
+	struct Material;
+	struct Texture2D;
+	struct BillboardVertex;
 
-	ID3D11ShaderResourceView* shaderResourceView;
-	float scale;
-	string name;
-};
+	//! Represents a 2D texture.
+	struct Texture2D
+	{
+		Texture2D() {
+			shaderResourceView = 0;
+			scale = 1.0f;
+			name = "none";
+		}
 
-/**
-	The user interface to the graphical components.
-	Contains a D3DCore instance.
-	This class and it's members handles everything that has to do with Direct3D.
-*/
-class Graphics
-{
-public:
-	Graphics();
-	~Graphics();
+		ID3D11ShaderResourceView* shaderResourceView;
+		float scale;
+		string name;
+	};
 
-	bool Init(int clientWidth, int clientHeight, HWND hwnd, bool fullscreen = false);
-	void Update(Input* pInput, float dt);
+	/**
+		The user interface to the graphical components.
+		Contains a D3DCore instance.
+		This class and it's members handles everything that has to do with Direct3D.
+	*/
+	class Graphics
+	{
+	public:
+		Graphics();
+		~Graphics();
 
-	void DrawPrimitive(Primitive* primitive, CXMMATRIX worldMatrix, Texture2D* texture, Texture2D* normalMap, Material material, BasicEffect* effect);
-	void DrawBillboards();
-	void DrawScreenQuad(Texture2D* texture, float x, float y, float width, float height);
-	void DrawBoundingBox(AxisAlignedBox* aabb, CXMMATRIX worldMatrix, Material material, float transparency = 0.4f);
-	void DrawText(string text, int x, int y, D3DXCOLOR textColor, int size);
-	void ActiveShadowMap();
-	void DeactiveShadowMap();
-	void AddToShadowMap(SkinnedModel* model);
-	void AddToShadowMap(StaticModel* model);
-	void ApplyBlur(Texture2D* texture, int blurCount);
+		bool Init(int clientWidth, int clientHeight, HWND hwnd, bool fullscreen = false);
+		void Update(Input* pInput, float dt);
 
-	Texture2D* LoadTexture(string filename, float scale = 1.0f);
-	BillboardVertex* AddBillboard(XMFLOAT3 position, XMFLOAT2 size, string texture);
+		void DrawPrimitive(Primitive* primitive, CXMMATRIX worldMatrix, Texture2D* texture, Texture2D* normalMap, Material material, BasicEffect* effect);
+		void DrawBillboards();
+		void DrawScreenQuad(Texture2D* texture, float x, float y, float width, float height);
+		void DrawBoundingBox(AxisAlignedBox* aabb, CXMMATRIX worldMatrix, Material material, float transparency = 0.4f);
+		void DrawText(string text, int x, int y, D3DXCOLOR textColor, int size);
+		void ActiveShadowMap();
+		void DeactiveShadowMap();
+		void AddToShadowMap(SkinnedModel* model);
+		void AddToShadowMap(StaticModel* model);
+		void ApplyBlur(Texture2D* texture, int blurCount);
 
-	void ClearScene();
-	void Present();
+		Texture2D* LoadTexture(string filename, float scale = 1.0f);
+		BillboardVertex* AddBillboard(XMFLOAT3 position, XMFLOAT2 size, string texture);
 
-	void SetEffectParameters(BasicEffect* effect, CXMMATRIX worldMatrix, Texture2D* texture, Texture2D* normalMap, Material material);
-	void SetLightList(LightList* lightList);
-	void SetFogColor(XMFLOAT4 color);
-	void SetRenderTarget(RenderTarget* renderTarget);
-	void RestoreRenderTarget();
+		void ClearScene();
+		void Present();
 
-	// Getters.
-	ID3D11DeviceContext*	GetContext();
-	ID3D11Device*			GetDevice();
-	D3DCore*				GetD3D();
-	Camera*					GetCamera();
-	ShadowMap*				GetShadowMap();
-	LightList*				GetLightList();
-	PrimitiveFactory*		GetPrimitiveFactory();
-	ModelImporter*			GetModelImporter();
-	XMFLOAT4				GetFogColor();
-	float					GetClientWidth();
-	float					GetClientHeight();
-	bool					IsRenderingShadows();
-private:
-	map<string, Texture2D*>			mTextureMap;
-	map<string, BillboardManager*>	mBillboardManagerMap;
-	LightList*		mLightList;
-	D3DCore*		mD3DCore;
-	Camera*			mCamera;
-	BlurFilter*		mBlurFilter;
-	Primitive*		mScreenQuad;
-	Primitive*		mAABB;
-	ShadowMap*		mShadowMap;
-	PrimitiveFactory* mPrimitiveFactory;
-	ModelImporter*	mModelImporter;
-	XMFLOAT4		mFogColor;
-	bool			mRenderingShadows;
+		void SetEffectParameters(BasicEffect* effect, CXMMATRIX worldMatrix, Texture2D* texture, Texture2D* normalMap, Material material);
+		void SetLightList(LightList* lightList);
+		void SetFogColor(XMFLOAT4 color);
+		void SetRenderTarget(RenderTarget* renderTarget);
+		void RestoreRenderTarget();
 
-	// TMP
-	Material mMaterial;
-};	// Class
+		// Getters.
+		ID3D11DeviceContext*	GetContext();
+		ID3D11Device*			GetDevice();
+		D3DCore*				GetD3D();
+		Camera*					GetCamera();
+		ShadowMap*				GetShadowMap();
+		LightList*				GetLightList();
+		PrimitiveFactory*		GetPrimitiveFactory();
+		ModelImporter*			GetModelImporter();
+		XMFLOAT4				GetFogColor();
+		float					GetClientWidth();
+		float					GetClientHeight();
+		bool					IsRenderingShadows();
+	private:
+		map<string, Texture2D*>			mTextureMap;
+		map<string, BillboardManager*>	mBillboardManagerMap;
+		LightList*		mLightList;
+		D3DCore*		mD3DCore;
+		Camera*			mCamera;
+		BlurFilter*		mBlurFilter;
+		Primitive*		mScreenQuad;
+		Primitive*		mAABB;
+		ShadowMap*		mShadowMap;
+		PrimitiveFactory* mPrimitiveFactory;
+		ModelImporter*	mModelImporter;
+		XMFLOAT4		mFogColor;
+		bool			mRenderingShadows;
+
+		// TMP
+		Material mMaterial;
+	};	// Class
+}

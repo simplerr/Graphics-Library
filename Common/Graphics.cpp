@@ -26,6 +26,10 @@
 #include "PrimitiveFactory.h"
 #include "ModelImporter.h"
 
+// Graphics Library namespace.
+namespace GLib
+{
+
 //! Constructor. The Init() function handles the initialization.
 Graphics::Graphics()
 {
@@ -436,3 +440,5 @@ ModelImporter* Graphics::GetModelImporter()
 {
 	return mModelImporter;
 }
+
+}	// End of Graphics Library namespace.

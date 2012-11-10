@@ -2,6 +2,10 @@
 #include "d3dUtil.h"
 #include "Runnable.h"
 
+// Graphics Library namespace.
+namespace GLib
+{
+
 //! Constructor. The Init() function handles the initialization.
 D3DCore::D3DCore()
 	: 	
@@ -244,3 +248,5 @@ float D3DCore::GetClientHeight()
 {
 	return mClientHeight;
 }
+
+}	// End of Graphics Library namespace.

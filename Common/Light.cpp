@@ -1,5 +1,9 @@
 #include "Light.h"
 
+// Graphics Library namespace.
+namespace GLib
+{
+
 Light::Light() 
 {
 	ZeroMemory(this, sizeof(this));
@@ -109,3 +113,5 @@ int	Light::GetType()
 {
 	return mType;
 }
+
+}	// End of Graphics Library namespace.

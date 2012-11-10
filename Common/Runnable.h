@@ -7,60 +7,64 @@
 
 using namespace std;
 
-class Graphics;
-class D3DCore;
-class Input;
-
-/**
-	Initializes the Win32 window.
-	This class should be inherited in all your applications.
-	Contains the game loop and a Graphics instance.
-	Declared as a global for convenience.
-*/
-class Runnable
+// Graphics Library namespace.
+namespace GLib
 {
-public:
-	Runnable(HINSTANCE hInstance, string caption, int width, int height);
-	virtual ~Runnable();
+	class Graphics;
+	class D3DCore;
+	class Input;
 
-	// None-framwork methods.
-	int		Run();
-	bool	InitWin32();
-	void	SwitchScreenMode();
-	void	CalculateFrameStats();
+	/**
+		Initializes the Win32 window.
+		This class should be inherited in all your applications.
+		Contains the game loop and a Graphics instance.
+		Declared as a global for convenience.
+	*/
+	class Runnable
+	{
+	public:
+		Runnable(HINSTANCE hInstance, string caption, int width, int height);
+		virtual ~Runnable();
 
-	// Framework methods.
-	virtual void Init();
-	virtual void Update(Input* pInput, float dt) = 0;
-	virtual void Draw(Graphics* pGraphics) = 0;
-	virtual void OnResize(int width, int height) = 0;
-	virtual LRESULT MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+		// None-framwork methods.
+		int		Run();
+		bool	InitWin32();
+		void	SwitchScreenMode();
+		void	CalculateFrameStats();
 
-	// Getters and setters.
-	void SetVisible(bool visible);
+		// Framework methods.
+		virtual void Init();
+		virtual void Update(Input* pInput, float dt) = 0;
+		virtual void Draw(Graphics* pGraphics) = 0;
+		virtual void OnResize(int width, int height) = 0;
+		virtual LRESULT MsgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+
+		// Getters and setters.
+		void SetVisible(bool visible);
 	
-	HINSTANCE	GetInstance();
-	HWND		GetHwnd();	
-	int			GetClientWidth();
-	int			GetClientHeight();
-	int			GetFullscreenWidth();
-	int			GetFullscreenHeight();
+		HINSTANCE	GetInstance();
+		HWND		GetHwnd();	
+		int			GetClientWidth();
+		int			GetClientHeight();
+		int			GetFullscreenWidth();
+		int			GetFullscreenHeight();
 
-	D3DCore*	GetD3D();
-	Graphics*	GetGraphics();
-	Input*		GetInput();
-private:
-	Graphics*	mGraphics;
-	Input*		mInput;
-	GameTimer	mTimer;
-	string		mCaption;
-	HINSTANCE	mhInstance;
-	HWND		mhMainWindow;
-	bool		mFullscreen;
-	int			mWindowedWidth;
-	int			mWindowedHeight;
+		D3DCore*	GetD3D();
+		Graphics*	GetGraphics();
+		Input*		GetInput();
+	private:
+		Graphics*	mGraphics;
+		Input*		mInput;
+		GameTimer	mTimer;
+		string		mCaption;
+		HINSTANCE	mhInstance;
+		HWND		mhMainWindow;
+		bool		mFullscreen;
+		int			mWindowedWidth;
+		int			mWindowedHeight;
 
-};	// Class
+	};	// Class
 
-// Global
-extern Runnable* gGame;
+	// Global
+	extern Runnable* GlobalApp;
+}

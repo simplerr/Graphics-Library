@@ -3,6 +3,10 @@
 #include "Effects.h"
 #include "Primitive.h"
 
+// Graphics Library namespace.
+namespace GLib
+{
+
 StaticMesh::StaticMesh()
 {
 	mTexture = nullptr;
@@ -100,3 +104,5 @@ Material StaticMesh::GetMaterial()
 {
 	return mMaterial;
 }
+
+}	// End of Graphics Library namespace.

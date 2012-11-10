@@ -5,6 +5,10 @@
 #include <windows.h>
 #include "GameTimer.h"
 
+// Graphics Library namespace.
+namespace GLib
+{
+
 //! Constructor.
 GameTimer::GameTimer()
 : mSecondsPerCount(0.0), mDeltaTime(-1.0), mBaseTime(0), 
@@ -124,3 +128,4 @@ void GameTimer::Tick()
 		mDeltaTime = 0.0;
 }
 
+}	// End of Graphics Library namespace.

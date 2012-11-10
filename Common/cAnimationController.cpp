@@ -4,6 +4,10 @@
 
 #include "cAnimationController.h"
 
+// Graphics Library namespace.
+namespace GLib
+{
+
 void TransformMatrix(XMFLOAT4X4& out,const aiMatrix4x4& in){// there is some type of alignment issue with my mat4 and the aimatrix4x4 class, so the copy must be manually
 	out._11=in.a1;
 	out._12=in.a2;
@@ -515,3 +519,5 @@ cBone* SceneAnimator::LoadSkeleton(std::ifstream& file, cBone* parent){
 	return internalNode;
 
 }
+
+}	// End of Graphics Library namespace.

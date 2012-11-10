@@ -10,6 +10,10 @@
 #include "ShadowMap.h"
 #include <stdint.h>
 
+// Graphics Library namespace.
+namespace GLib
+{
+
 Terrain::Terrain()
 	: mPrimitive(0), mLayerTextureArraySRV(0), mBlendMapSRV(0), mHeightMapSRV(0)
 {
@@ -557,3 +561,5 @@ XMFLOAT3 Terrain::BinarySearch(Ray ray)
 		
 	return ray.origin;
 }
+
+}	// End of Graphics Library namespace.

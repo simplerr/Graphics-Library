@@ -4,44 +4,48 @@
 #include "D3DCore.h"
 #include "Graphics.h"
 
+// Graphics Library namespace.
+namespace GLib
+{
+
 ID3D11Device* GetD3DDevice()
 {
-	return gGame->GetD3D()->GetDevice();
+	return GlobalApp->GetD3D()->GetDevice();
 }
 
 ID3D11DeviceContext* GetD3DContext()
 {
-	return gGame->GetD3D()->GetContext();
+	return GlobalApp->GetD3D()->GetContext();
 }
 
 Graphics* GetGraphics()
 {
-	return gGame->GetGraphics();
+	return GlobalApp->GetGraphics();
 }
 
 Camera*	GetCamera()
 {
-	return gGame->GetGraphics()->GetCamera();
+	return GlobalApp->GetGraphics()->GetCamera();
 }
 
 HINSTANCE GetWindowInstance()
 {
-	return gGame->GetInstance();
+	return GlobalApp->GetInstance();
 }
 
 HWND GetWindowHandler()
 {
-	return gGame->GetHwnd();
+	return GlobalApp->GetHwnd();
 }
 
 int	GetClientWidth()
 {
-	return gGame->GetClientWidth();
+	return GlobalApp->GetClientWidth();
 }
 
 int GetClientHeight()
 {
-	return gGame->GetClientHeight();
+	return GlobalApp->GetClientHeight();
 }
 
 //! Loads and creates a SRV to a 2d texture array.
@@ -169,70 +173,6 @@ XMMATRIX InverseTranspose(CXMMATRIX M)
 	return XMMatrixTranspose(XMMatrixInverse(&det, A));
 }
 
-XMFLOAT3 operator+(const XMFLOAT3 a, const XMFLOAT3 b)
-{
-	XMVECTOR first = XMLoadFloat3(&a);
-	XMVECTOR second = XMLoadFloat3(&b);
-
-	XMFLOAT3 result;
-	XMStoreFloat3(&result, first + second);
-	return result;
-}
-
-XMFLOAT3 operator-(const XMFLOAT3 a, const XMFLOAT3 b)
-{
-	XMVECTOR first = XMLoadFloat3(&a);
-	XMVECTOR second = XMLoadFloat3(&b);
-
-	XMFLOAT3 result;
-	XMStoreFloat3(&result, first - second);
-	return result;
-}
-
-XMFLOAT3 operator+=(const XMFLOAT3 a, const XMVECTOR b)
-{
-	XMFLOAT3 result;
-	XMStoreFloat3(&result, XMLoadFloat3(&a) + b);
-	return result;
-}
-
-XMFLOAT3 operator-=(const XMFLOAT3 a, const XMVECTOR b)
-{
-	XMFLOAT3 result;
-	XMStoreFloat3(&result, XMLoadFloat3(&a) - b);
-	return result;
-}
-
-XMFLOAT4 operator*(const XMFLOAT4 a, const float b)
-{
-	return XMFLOAT4(a.x * b, a.y * b, a.z * b, a.w * b);
-}
-
-XMFLOAT3 operator*(const XMFLOAT3 a, const float b)
-{
-	return XMFLOAT3(a.x * b, a.y * b, a.z * b);
-}
-
-XMFLOAT2 operator+(const XMFLOAT2 a, const XMFLOAT2 b)
-{
-	XMVECTOR first = XMLoadFloat2(&a);
-	XMVECTOR second = XMLoadFloat2(&b);
-
-	XMFLOAT2 result;
-	XMStoreFloat2(&result, first + second);
-	return result;
-}
-
-XMFLOAT2 operator-(const XMFLOAT2 a, const XMFLOAT2 b)
-{
-	XMVECTOR first = XMLoadFloat2(&a);
-	XMVECTOR second = XMLoadFloat2(&b);
-
-	XMFLOAT2 result;
-	XMStoreFloat2(&result, first - second);
-	return result;
-}
-
 XMFLOAT4X4 ToXMFloat4X4(aiMatrix4x4 ai)
 {
 	XMFLOAT4X4 xm;
@@ -307,4 +247,71 @@ VOID TransformAxisAlignedBoxCustom(XNA::AxisAlignedBox* pOut, const XNA::AxisAli
     XMStoreFloat3( &pOut->Extents, ( Max - Min ) * 0.5f );
 
     return;
+}
+
+}	// End of Graphics Library namespace.
+
+
+XMFLOAT3 operator+(const XMFLOAT3 a, const XMFLOAT3 b)
+{
+	XMVECTOR first = XMLoadFloat3(&a);
+	XMVECTOR second = XMLoadFloat3(&b);
+
+	XMFLOAT3 result;
+	XMStoreFloat3(&result, first + second);
+	return result;
+}
+
+XMFLOAT3 operator-(const XMFLOAT3 a, const XMFLOAT3 b)
+{
+	XMVECTOR first = XMLoadFloat3(&a);
+	XMVECTOR second = XMLoadFloat3(&b);
+
+	XMFLOAT3 result;
+	XMStoreFloat3(&result, first - second);
+	return result;
+}
+
+XMFLOAT3 operator+=(const XMFLOAT3 a, const XMVECTOR b)
+{
+	XMFLOAT3 result;
+	XMStoreFloat3(&result, XMLoadFloat3(&a) + b);
+	return result;
+}
+
+XMFLOAT3 operator-=(const XMFLOAT3 a, const XMVECTOR b)
+{
+	XMFLOAT3 result;
+	XMStoreFloat3(&result, XMLoadFloat3(&a) - b);
+	return result;
+}
+
+XMFLOAT4 operator*(const XMFLOAT4 a, const float b)
+{
+	return XMFLOAT4(a.x * b, a.y * b, a.z * b, a.w * b);
+}
+
+XMFLOAT3 operator*(const XMFLOAT3 a, const float b)
+{
+	return XMFLOAT3(a.x * b, a.y * b, a.z * b);
+}
+
+XMFLOAT2 operator+(const XMFLOAT2 a, const XMFLOAT2 b)
+{
+	XMVECTOR first = XMLoadFloat2(&a);
+	XMVECTOR second = XMLoadFloat2(&b);
+
+	XMFLOAT2 result;
+	XMStoreFloat2(&result, first + second);
+	return result;
+}
+
+XMFLOAT2 operator-(const XMFLOAT2 a, const XMFLOAT2 b)
+{
+	XMVECTOR first = XMLoadFloat2(&a);
+	XMVECTOR second = XMLoadFloat2(&b);
+
+	XMFLOAT2 result;
+	XMStoreFloat2(&result, first - second);
+	return result;
 }

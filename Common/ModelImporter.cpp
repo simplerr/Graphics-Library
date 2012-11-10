@@ -2,7 +2,6 @@
 #include <assimp\Importer.hpp>
 #include <assimp\postprocess.h>  
 #include <assimp\scene.h>
-#include "ModelImporter.h"
 #include "Vertex.h"
 #include "Primitive.h"
 #include "PrimitiveFactory.h"
@@ -18,6 +17,11 @@
 #include "SkinnedMesh.h"
 #include <fstream>
 #include "cAnimationController.h"
+#include "ModelImporter.h"
+
+// Graphics Library namespace.
+namespace GLib
+{
 
 ModelImporter::ModelImporter(PrimitiveFactory* primitiveFactory)
 {
@@ -445,3 +449,5 @@ bool ModelImporter::TryLongerPath(char* szTemp,aiString* p_szString)
 	}
 	return false;
 }
+
+}	// End of Graphics Library namespace.

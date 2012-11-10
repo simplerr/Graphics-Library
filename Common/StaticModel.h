@@ -2,27 +2,31 @@
 
 #include "d3dUtil.h"
 
-class Graphics;
-class StaticMesh;
-struct Material;
-
-typedef vector<StaticMesh*> MeshList;
-
-/**
-	Contains a list of static meshes representing a model.
-*/
-class StaticModel
+// Graphics Library namespace.
+namespace GLib
 {
-public:
-	StaticModel();
-	~StaticModel();
+	class Graphics;
+	class StaticMesh;
+	struct Material;
 
-	void Draw(Graphics* pGraphics, CXMMATRIX world);
-	void AddMesh(StaticMesh* mesh);
-	bool RayIntersect(XMVECTOR origin, XMVECTOR direction, float& pDist);
+	typedef vector<StaticMesh*> MeshList;
 
-	void SetMaterial(Material material);
-	MeshList* GetMeshList();
-private:
-	MeshList mMeshList;
-};
+	/**
+		Contains a list of static meshes representing a model.
+	*/
+	class StaticModel
+	{
+	public:
+		StaticModel();
+		~StaticModel();
+
+		void Draw(Graphics* pGraphics, CXMMATRIX world);
+		void AddMesh(StaticMesh* mesh);
+		bool RayIntersect(XMVECTOR origin, XMVECTOR direction, float& pDist);
+
+		void SetMaterial(Material material);
+		MeshList* GetMeshList();
+	private:
+		MeshList mMeshList;
+	};
+}

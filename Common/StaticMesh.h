@@ -4,36 +4,40 @@
 #include "Vertex.h"
 #include "Light.h"
 
-class Graphics;
-class Texture2D;
-class Primitive;
-
-/**
-	A part of a static model that's rendered with the same texture and material.
-	Contains a Primitive with the vertices and indices.
-*/
-class StaticMesh
+// Graphics Library namespace.
+namespace GLib
 {
-public:
-	StaticMesh();
-	~StaticMesh();
+	class Graphics;
+	class Texture2D;
+	class Primitive;
 
-	void Draw(Graphics* pGraphics);
+	/**
+		A part of a static model that's rendered with the same texture and material.
+		Contains a Primitive with the vertices and indices.
+	*/
+	class StaticMesh
+	{
+	public:
+		StaticMesh();
+		~StaticMesh();
 
-	bool RayIntersect(XMVECTOR origin, XMVECTOR direction, float& pDist);
-	void LoadTexture(string filename);
-	void SetPrimitive(Primitive* primitive);
-	void SetMaterial(Material material);
-	void SetTexture(Texture2D* texture);
-	void SetVertices(vector<Vertex> vertices);
-	void SetIndices(vector<UINT> indices);
+		void Draw(Graphics* pGraphics);
 
-	Primitive*		GetPrimitive();
-	Material		GetMaterial();
-private:
-	Primitive*		mPrimitive;
-	Texture2D*		mTexture;
-	Material		mMaterial;
-	vector<Vertex>	mVertices;
-	vector<UINT>	mIndices;
-};
+		bool RayIntersect(XMVECTOR origin, XMVECTOR direction, float& pDist);
+		void LoadTexture(string filename);
+		void SetPrimitive(Primitive* primitive);
+		void SetMaterial(Material material);
+		void SetTexture(Texture2D* texture);
+		void SetVertices(vector<Vertex> vertices);
+		void SetIndices(vector<UINT> indices);
+
+		Primitive*		GetPrimitive();
+		Material		GetMaterial();
+	private:
+		Primitive*		mPrimitive;
+		Texture2D*		mTexture;
+		Material		mMaterial;
+		vector<Vertex>	mVertices;
+		vector<UINT>	mIndices;
+	};
+}

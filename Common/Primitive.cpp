@@ -5,6 +5,10 @@
 
 using namespace std;
 	
+// Graphics Library namespace.
+namespace GLib
+{
+
 Primitive::Primitive()
 {
 
@@ -68,3 +72,5 @@ int Primitive::NumIndices()
 {
 	return mNumIndices;
 }
+
+}	// End of Graphics Library namespace.

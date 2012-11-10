@@ -13,7 +13,7 @@ public:
 	~StaticObject();
 
 	virtual void Update(float dt);
-	virtual void Draw(Graphics* pGraphics);
+	virtual void Draw(GLib::Graphics* pGraphics);
 
 	AxisAlignedBox GetBoundingBox();
 	StaticModel* GetModel();

@@ -5,12 +5,16 @@
 #include "D3DCore.h"
 #include "Camera.h"
 
+// Graphics Library namespace.
+namespace GLib
+{
+
 LRESULT CALLBACK
 MainWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	// Don't start processing messages until the application has been created.
-	if(gGame != NULL )
-		return gGame->MsgProc(hwnd, msg, wParam, lParam);
+	if(GlobalApp != NULL )
+		return GlobalApp->MsgProc(hwnd, msg, wParam, lParam);
 	else
 		return DefWindowProc(hwnd, msg, wParam, lParam);
 }
@@ -259,3 +263,5 @@ Input* Runnable::GetInput()
 {
 	return mInput;
 }
+
+}	// End of Graphics Library namespace.

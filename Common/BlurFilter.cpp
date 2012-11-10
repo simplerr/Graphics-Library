@@ -4,6 +4,10 @@
 #include "Graphics.h"
 #include "Effects.h"
 
+// Graphics Library namespace.
+namespace GLib
+{
+
 BlurFilter::BlurFilter()
 {
 	mTmpSRV = 0;
@@ -109,3 +113,5 @@ void BlurFilter::ApplyBlur(ID3D11Device* pDevice, ID3D11DeviceContext* context, 
 	// Disable compute shader.
 	context->CSSetShader(0, 0, 0);
 }
+
+}	// End of Graphics Library namespace.

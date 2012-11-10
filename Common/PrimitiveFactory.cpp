@@ -9,6 +9,10 @@
 #include "Graphics.h"
 #include "Terrain.h"
 
+// Graphics Library namespace.
+namespace GLib
+{
+
 PrimitiveFactory::PrimitiveFactory()
 {
 
@@ -374,3 +378,5 @@ Primitive* PrimitiveFactory::CreateSphere(float radius, UINT sliceCount, UINT st
 	AddPrimitive("sphere", new Primitive(GetD3DDevice(), vertices, indices));
 	return mPrimitiveMap["sphere"];
 }
+
+}	// End of Graphics Library namespace.

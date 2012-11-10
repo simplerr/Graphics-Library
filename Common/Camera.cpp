@@ -3,6 +3,10 @@
 #include "Graphics.h"
 #include "Runnable.h"
 
+// Graphics Library namespace.
+namespace GLib
+{
+
 Camera::Camera()
 {
 	// Set the sensitivity and speed
@@ -249,3 +253,5 @@ void Camera::SetPitch(float pitch)
 	mPitch = pitch;
 	UpdateViewMatrix();
 }
+
+}	// End of Graphics Library namespace.

@@ -2,6 +2,10 @@
 #include "Graphics.h"
 #include "d3dUtil.h"
 
+// Graphics Library namespace.
+namespace GLib
+{
+
 RenderTarget::RenderTarget(Graphics* pGraphics, UINT width, UINT height)
 {
 	// Fill out the D3D11_TEXTURE2D_DESC structure that will be used creating the ID3D11Texture2D texture.
@@ -72,3 +76,5 @@ ID3D11Texture2D* RenderTarget::GetID3D11Texture2D()
 {
 	return mID3D11Texture2D;
 }
+
+}	// End of Graphics Library namespace.

@@ -8,7 +8,7 @@
 
 using namespace XNA;
 
-class Graphics;
+class GLib::Graphics;
 class BasicEffect;
 class Primitive;
 class StaticModel;
@@ -26,14 +26,14 @@ public:
 	virtual ~Object3D();
 
 	virtual void Update(float dt) = 0;
-	virtual void Draw(Graphics* pGraphics) = 0;
+	virtual void Draw(GLib::Graphics* pGraphics) = 0;
 
 	// Getters.
 	XMMATRIX	GetWorldMatrix();
 	XMFLOAT3	GetPosition();
 	XMFLOAT3	GetRotation();
 	XMFLOAT3	GetScale();
-	Material	GetMaterial();
+	GLib::Material	GetMaterial();
 	virtual AxisAlignedBox GetBoundingBox() = 0;
 	
 	// Setters.

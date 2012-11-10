@@ -1,6 +1,10 @@
 #include "ShadowMap.h"
 #include "Light.h"
 
+// Graphics Library namespace.
+namespace GLib
+{
+
 ShadowMap::ShadowMap(ID3D11Device* device, UINT width, UINT height)
 	: mWidth(width), mHeight(height), mDepthMapDSV(0), mDepthMapSRV(0)
 {
@@ -130,3 +134,5 @@ XMFLOAT4X4 ShadowMap::GetShadowTransform()
 {
 	return mShadowTransform;
 }
+
+}	// End of Graphics Library namespace.
