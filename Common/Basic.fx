@@ -62,7 +62,6 @@ SamplerComparisonState samShadow
 
     ComparisonFunc = LESS;
 };
- 
 
 //! The sampler state to use with the normal map.
 SamplerState samLinear
@@ -186,7 +185,7 @@ VertexOut SkinnedVS(SkinnedVertexIn vin)
 	}
 }
 
-//! Pixel shader that applies ligthing, fogging, normal mapping and shadow mapping.
+//! Pixel shader that applies ligthing, fogging and shadow mapping.
 float4 PS(VertexOut pin) : SV_Target
 {
 	if(gRenderingToShadowMap)
@@ -202,12 +201,49 @@ float4 PS(VertexOut pin) : SV_Target
 	if(gUseTexture)
 		texColor = gTexture.Sample(textureSampler, pin.Tex);
 
-	// Use normal mapping?
-	/*if(gUseNormalMap)
-	{
-		float3 normalMapSample = gNormalMap.Sample(samLinear, pin.Tex).rgb;
-		pin.NormalW = NormalSampleToWorldSpace(normalMapSample, pin.NormalW, pin.TangentW);
-	}*/
+	// Get the shadow factor.
+	float shadow = 1.0f;
+	shadow = CalcShadowFactor(samShadow, gShadowMap, pin.ShadowPosH);
+
+	// Apply lighting.
+	float4 litColor;
+	if(gUseLighting)
+		ApplyLighting(gNumLights, gLights, gMaterial, pin.PosW, pin.NormalW, toEyeW, texColor, shadow, litColor);
+	else
+		litColor = texColor*(gMaterial.ambient + gMaterial.diffuse) + gMaterial.specular;
+
+	//! Apply fogging.
+	float distToEye = length(gEyePosW - pin.PosW);
+	float fogLerp = saturate((distToEye - gFogStart) / gFogRange); 
+
+	// Blend the fog color and the lit color.
+	litColor = lerp(litColor, gFogColor, fogLerp);
+
+	// Common to take alpha from diffuse material.
+	litColor.a = gMaterial.diffuse.a * texColor.a;
+
+    return litColor;
+}
+
+//! Pixel shader that applies ligthing, fogging, normal mapping and shadow mapping.
+float4 NormalMapPS(VertexOut pin) : SV_Target
+{
+	if(gRenderingToShadowMap)
+		return float4(1.0f, 1.0f, 1.0f, 1.0f);
+
+	// Interpolating normal can unnormalize it, so normalize it.
+    pin.NormalW = normalize(pin.NormalW); 
+
+	float3 toEyeW = normalize(gEyePosW - pin.PosW);
+
+	// Identity as default.
+	float4 texColor = float4(1, 1, 1, 1);
+
+	if(gUseTexture)
+		texColor = gTexture.Sample(textureSampler, pin.Tex);
+
+	float3 normalMapSample = gNormalMap.Sample(samLinear, pin.Tex).rgb;
+	pin.NormalW = NormalSampleToWorldSpace(normalMapSample, pin.NormalW, pin.TangentW);
 
 	// Get the shadow factor.
 	float shadow = 1.0f;
@@ -252,5 +288,16 @@ technique11 SkinnedTech
         SetVertexShader(CompileShader( vs_5_0, SkinnedVS()));
 		SetGeometryShader(NULL);
         SetPixelShader(CompileShader( ps_5_0, PS()));
+    }
+}
+
+//! Normal map technique.
+technique11 NormalMapTech
+{
+    pass P0
+    {
+        SetVertexShader(CompileShader( vs_5_0, SkinnedVS()));
+		SetGeometryShader(NULL);
+        SetPixelShader(CompileShader( ps_5_0, NormalMapPS()));
     }
 }

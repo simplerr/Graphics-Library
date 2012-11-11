@@ -30,9 +30,10 @@ XMFLOAT2 operator-(const XMFLOAT2 a, const XMFLOAT2 b);
 XMFLOAT4 operator*(const XMFLOAT4 a, const float b);
 XMFLOAT3 operator*(const XMFLOAT3 a, const float b);
 
-// Graphics Library namespace.
+//! Graphics Library namespace.
 namespace GLib
 {
+	// Forward declarations.
 	class Light;
 	class Graphics;
 	class Camera;

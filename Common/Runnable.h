@@ -7,19 +7,20 @@
 
 using namespace std;
 
-// Graphics Library namespace.
+//! Graphics Library namespace.
 namespace GLib
 {
+	// Forward declarations.
 	class Graphics;
 	class D3DCore;
 	class Input;
 
-	/**
-		Initializes the Win32 window.
-		This class should be inherited in all your applications.
-		Contains the game loop and a Graphics instance.
-		Declared as a global for convenience.
-	*/
+	//!
+	//	Initializes the Win32 window.
+	//	This class should be inherited in all your applications.
+	//	Contains the game loop and a Graphics instance.
+	//	Declared as a global for convenience.
+	//!
 	class Runnable
 	{
 	public:

@@ -5,7 +5,7 @@
 #include <windows.h>
 #include "GameTimer.h"
 
-// Graphics Library namespace.
+//! Graphics Library namespace.
 namespace GLib
 {
 

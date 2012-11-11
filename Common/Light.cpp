@@ -1,9 +1,10 @@
 #include "Light.h"
 
-// Graphics Library namespace.
+//! Graphics Library namespace.
 namespace GLib
 {
 
+//! Constructor.
 Light::Light() 
 {
 	ZeroMemory(this, sizeof(this));

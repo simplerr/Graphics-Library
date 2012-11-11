@@ -7,10 +7,11 @@
 #include "cAnimationController.h"
 #include "Input.h"
 
-// Graphics Library namespace.
+//! Graphics Library namespace.
 namespace GLib
 {
 
+//! Constructor.
 SkinnedModel::SkinnedModel()
 {
 	mAnimator = nullptr;

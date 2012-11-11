@@ -3,10 +3,11 @@
 #include "Graphics.h"
 #include "Runnable.h"
 
-// Graphics Library namespace.
+//! Graphics Library namespace.
 namespace GLib
 {
 
+//! Constructor.
 Camera::Camera()
 {
 	// Set the sensitivity and speed
@@ -31,6 +32,7 @@ Camera::Camera()
 	XNA::ComputeFrustumFromProjection(&mFrustum, &XMLoadFloat4x4(&GetProjectionMatrix()));
 }
 
+//! Cleanup.
 Camera::~Camera()
 {
 

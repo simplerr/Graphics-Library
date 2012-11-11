@@ -1,7 +1,7 @@
 #include "Vertex.h"
 #include "BillboardManager.h"
 
-// Graphics Library namespace.
+//! Graphics Library namespace.
 namespace GLib
 {
 

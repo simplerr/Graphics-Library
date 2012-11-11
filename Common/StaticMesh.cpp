@@ -3,13 +3,15 @@
 #include "Effects.h"
 #include "Primitive.h"
 
-// Graphics Library namespace.
+//! Graphics Library namespace.
 namespace GLib
 {
 
+//! Constructor.
 StaticMesh::StaticMesh()
 {
 	mTexture = nullptr;
+	mNormalMap = nullptr;
 	mPrimitive = nullptr;
 }
 	
@@ -23,9 +25,9 @@ StaticMesh::~StaticMesh()
 void StaticMesh::Draw(Graphics* pGraphics)
 {
 	// Set the material properties for this mesh.
-	//Effects::BasicFX->SetMaterial(mMaterial);
 	Effects::BasicFX->SetTexture(mTexture);
-	Effects::BasicFX->Apply(GetD3DContext());
+	Effects::BasicFX->SetNormalMap(mNormalMap);
+	Effects::BasicFX->Apply(GetD3DContext(), mNormalMap == 0 ? STANDARD_TECH : NMAP_TECH);
 
 	// Draw the mesh primitive.
 	mPrimitive->Draw<Vertex>(pGraphics->GetContext());
@@ -81,6 +83,11 @@ void StaticMesh::SetMaterial(Material material)
 void StaticMesh::SetTexture(Texture2D* texture)
 {
 	mTexture = texture;
+}
+
+void StaticMesh::SetNormalMap(Texture2D* nmap)
+{
+	mNormalMap = nmap;
 }
 
 void StaticMesh::SetVertices(vector<Vertex> vertices)

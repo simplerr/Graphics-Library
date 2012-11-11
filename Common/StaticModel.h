@@ -2,18 +2,17 @@
 
 #include "d3dUtil.h"
 
-// Graphics Library namespace.
+//! Graphics Library namespace.
 namespace GLib
 {
+	// Forward declarations.
 	class Graphics;
 	class StaticMesh;
 	struct Material;
 
 	typedef vector<StaticMesh*> MeshList;
 
-	/**
-		Contains a list of static meshes representing a model.
-	*/
+	//! Contains a list of static meshes representing a model.
 	class StaticModel
 	{
 	public:

@@ -13,9 +13,10 @@
 using namespace std;
 using namespace XNA;
 
-// Graphics Library namespace.
+//! Graphics Library namespace.
 namespace GLib
 {
+	// Forward declarations.
 	class D3DCore;
 	class BasicEffect;
 	class Primitive;
@@ -49,11 +50,11 @@ namespace GLib
 		string name;
 	};
 
-	/**
-		The user interface to the graphical components.
-		Contains a D3DCore instance.
-		This class and it's members handles everything that has to do with Direct3D.
-	*/
+	//!
+	//	The user interface to the graphical components.
+	//	Contains a D3DCore instance.
+	//	This class and it's members handles everything that has to do with Direct3D.
+	//!
 	class Graphics
 	{
 	public:

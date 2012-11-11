@@ -5,7 +5,7 @@
 #include <xnamath.h>
 #include "d3dUtil.h"
 
-// Graphics Library namespace.
+//! Graphics Library namespace.
 namespace GLib
 {
 	//! Wrapper for input with keyboard and mouse.

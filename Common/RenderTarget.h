@@ -3,12 +3,14 @@
 #include <string>
 using namespace std;
 
-// Graphics Library namespace.
+//! Graphics Library namespace.
 namespace GLib
 {
+	// Forward declarations.
 	class Graphics;
 	class Texture2D;
 
+	//! A render target wrapper.
 	class RenderTarget
 	{
 	public:

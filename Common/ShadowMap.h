@@ -12,15 +12,16 @@
 	- If it's not further away then the it's not in shadow.
 */
 
-// Graphics Library namespace.
+//! Graphics Library namespace.
 namespace GLib
 {
+	// Forward declarations.
 	class Light;
 
-	/**
-		Contains the shadow map texture with depth values.
-		Contains matrices representing the light space, and the transform matrix to the texture space.
-	*/
+	//!
+	//	Contains the shadow map texture with depth values.
+	//	Contains matrices representing the light space, and the transform matrix to the texture space.
+	//!
 	class ShadowMap
 	{
 	public:

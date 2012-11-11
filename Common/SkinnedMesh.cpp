@@ -5,13 +5,15 @@
 #include <assimp\scene.h>
 #include <fstream>
 
-// Graphics Library namespace.
+//! Graphics Library namespace.
 namespace GLib
 {
 
+//! Constructor.
 SkinnedMesh::SkinnedMesh()
 {
 	mTexture = nullptr;
+	mNormalMap = nullptr;
 	mPrimitive = nullptr;
 }
 
@@ -25,9 +27,9 @@ SkinnedMesh::~SkinnedMesh()
 void SkinnedMesh::Draw(Graphics* pGraphics)
 {
 	// Set the material properties for this skinned mesh.
-	//Effects::BasicFX->SetMaterial(mMaterial);	// [NOTE] The material is controlled by Object3D.
 	Effects::BasicFX->SetTexture(mTexture);
-	Effects::BasicFX->Apply(GetD3DContext());	// Currently makes no difference.[NOTE][TODO]
+	Effects::BasicFX->SetNormalMap(mNormalMap);
+	Effects::BasicFX->Apply(GetD3DContext(), mNormalMap == 0 ? STANDARD_TECH : NMAP_TECH);	
 
 	ID3D11DeviceContext* dc = pGraphics->GetContext();
 
@@ -161,6 +163,11 @@ void SkinnedMesh::SetMaterial(Material material)
 void SkinnedMesh::SetTexture(Texture2D* texture)
 {
 	mTexture = texture;
+}
+
+void SkinnedMesh::SetNormalMap(Texture2D* nmap)
+{
+	mNormalMap = nmap;
 }
 
 //! Returns the primitive.

@@ -2,9 +2,10 @@
 #include <Windows.h>
 #include <xnamath.h>
 
-// Graphics Library namespace.
+//! Graphics Library namespace.
 namespace GLib
 {
+	// Forward declarations.
 	class BillboardManager;
 
 	//! Basic vertex.

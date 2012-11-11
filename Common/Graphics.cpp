@@ -26,7 +26,7 @@
 #include "PrimitiveFactory.h"
 #include "ModelImporter.h"
 
-// Graphics Library namespace.
+//! Graphics Library namespace.
 namespace GLib
 {
 

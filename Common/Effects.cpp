@@ -6,7 +6,7 @@
 #include "Light.h"
 #include "Graphics.h"
 
-// Graphics Library namespace.
+//! Graphics Library namespace.
 namespace GLib
 {
 
@@ -103,7 +103,7 @@ Effect::~Effect()
 }
 
 //! Applies the effect to the render pipeline.
-void Effect::Apply(ID3D11DeviceContext* pContext)
+void Effect::Apply(ID3D11DeviceContext* pContext, EffectTech tech)
 {
 	// Applies the changes effect and it changes to the pipeline.
 	mTech->GetPassByIndex(0)->Apply(0, pContext);
@@ -185,6 +185,7 @@ void BasicEffect::Init()
 	mfxUseAnimation		 = mEffect->GetVariableByName("gUseAnimation")->AsScalar();
 	mfxUseLighting		 = mEffect->GetVariableByName("gUseLighting")->AsScalar();	
 	mfxRenderingToShadowMap = mEffect->GetVariableByName("gRenderingToShadowMap")->AsScalar();
+	mfxNormalMapTech	 = mEffect->GetTechniqueByName("NormalMapTech");
 }
 
 //! Creates the input layout that will get set before the Input-Assembler state. The EffectManager calls this function.
@@ -206,6 +207,15 @@ void BasicEffect::CreateInputLayout(ID3D11Device* pDevice)
     mTech->GetPassByIndex(0)->GetDesc(&passDesc);
 	HR(pDevice->CreateInputLayout(vertexDesc, 6, passDesc.pIAInputSignature, 
 		passDesc.IAInputSignatureSize, &mInputLayout));
+}
+
+void BasicEffect::Apply(ID3D11DeviceContext* pContext, EffectTech tech)
+{
+	// Applies the changes effect and it changes to the pipeline.
+	if(tech == STANDARD_TECH)
+		Effect::Apply(pContext, tech);
+	else if(tech == NMAP_TECH)
+		mfxNormalMapTech->GetPassByIndex(0)->Apply(0, pContext);
 }
 
 //! Sets the lights to use in the shader.

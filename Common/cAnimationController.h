@@ -13,7 +13,7 @@
 #include <stdint.h>
 #include <assimp\scene.h>
 
-// Graphics Library namespace.
+//! Graphics Library namespace.
 namespace GLib
 {
 	class cBone {

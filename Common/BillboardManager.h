@@ -5,16 +5,17 @@
 #include "Vertex.h"
 using namespace std;
 
-// Graphics Library namespace.
+//! Graphics Library namespace.
 namespace GLib
 {
+	// Forward declarations.
 	class Billboard;
 	class Graphics;
 	class Texture2D;
 
-	/**
-		Contain a vertex buffer with points representing billboards.
-	*/
+	//!
+	//	Contains a vertex buffer with points representing billboards.
+	//!
 	class BillboardManager
 	{
 	public:

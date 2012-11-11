@@ -1,12 +1,12 @@
 #pragma once
 
-// Graphics Library namespace.
+//! Graphics Library namespace.
 namespace GLib
 {
-	/**
-		Calculates delta time between frames
-		and the total run time of the application.
-	*/
+	//!
+	//	Calculates delta time between frames
+	//	and the total run time of the application.
+	//!
 	class GameTimer
 	{
 	public:

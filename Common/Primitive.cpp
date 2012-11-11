@@ -5,20 +5,23 @@
 
 using namespace std;
 	
-// Graphics Library namespace.
+//! Graphics Library namespace.
 namespace GLib
 {
 
+//! Constructor.
 Primitive::Primitive()
 {
 
 }
 
+//! Cleanup.
 Primitive::~Primitive()
 {
 
 }
 
+//! Cleanup.
 void Primitive::Cleanup()
 {
 	// Release the buffers.

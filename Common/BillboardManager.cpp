@@ -5,10 +5,11 @@
 #include "Effects.h"
 #include "Runnable.h"
 
-// Graphics Library namespace.
+//! Graphics Library namespace.
 namespace GLib
 {
 
+//! Constructor.
 BillboardManager::BillboardManager(Graphics* pGraphics, string texture)
 {
 	mRebuild = false;

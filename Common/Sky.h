@@ -3,15 +3,16 @@
 #include <string>
 using namespace std;
 
-// Graphics Library namespace.
+//! Graphics Library namespace.
 namespace GLib
 {
+	// Forward declarations.
 	class Primitive;
 	class Texture2D;
 	class PrimitiveFactory;
 	class Graphics;
 
-
+	//! A sky sphere centered around the camera.
 	class Sky
 	{
 	public:

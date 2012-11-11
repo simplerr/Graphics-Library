@@ -9,10 +9,11 @@
 #include "Graphics.h"
 #include "Terrain.h"
 
-// Graphics Library namespace.
+//! Graphics Library namespace.
 namespace GLib
 {
 
+//! Constructor.
 PrimitiveFactory::PrimitiveFactory()
 {
 

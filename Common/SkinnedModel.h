@@ -3,19 +3,20 @@
 #include <vector>
 #include "d3dUtil.h"
 
-// Graphics Library namespace.
+//! Graphics Library namespace.
 namespace GLib
 {
+	// Forward declarations.
 	class Graphics;
 	class SkinnedMesh;
 	class SceneAnimator;
 
 	typedef vector<SkinnedMesh*> SkinnedMeshList;
 
-	/**
-		Contains a list of skinned meshes representing an animated model,
-		and a SceneAnimator that calculates the bone transforms.
-	*/
+	//!
+	//	Contains a list of skinned meshes representing an animated model,
+	//	and a SceneAnimator that calculates the bone transforms.
+	//!
 	class SkinnedModel
 	{
 	public:

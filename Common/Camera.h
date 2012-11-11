@@ -3,16 +3,17 @@
 
 using namespace XNA;
 
-// Graphics Library namespace.
+//! Graphics Library namespace.
 namespace GLib
 {
+	// Forward declarations.
 	class Graphics;
 	class Input;
 
-	/**
-		Contains the view and projection matrices.
-		Simulates a first person camera.
-	*/
+	//!
+	//	Contains the view and projection matrices.
+	//	Simulates a first person camera.
+	//!
 	class Camera
 	{
 	public:

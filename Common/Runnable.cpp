@@ -5,7 +5,7 @@
 #include "D3DCore.h"
 #include "Camera.h"
 
-// Graphics Library namespace.
+//! Graphics Library namespace.
 namespace GLib
 {
 

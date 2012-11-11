@@ -4,7 +4,7 @@
 
 #include "cAnimationController.h"
 
-// Graphics Library namespace.
+//! Graphics Library namespace.
 namespace GLib
 {
 

@@ -5,10 +5,11 @@
 #include "ShadowMap.h"
 #include "StaticMesh.h"
 
-// Graphics Library namespace.
+//! Graphics Library namespace.
 namespace GLib
 {
 
+//! Constructor.
 StaticModel::StaticModel()
 {
 

@@ -4,10 +4,11 @@
 #include "Graphics.h"
 #include "Effects.h"
 
-// Graphics Library namespace.
+//! Graphics Library namespace.
 namespace GLib
 {
 
+//! Constructor.
 BlurFilter::BlurFilter()
 {
 	mTmpSRV = 0;

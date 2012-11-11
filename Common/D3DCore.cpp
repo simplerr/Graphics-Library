@@ -2,7 +2,7 @@
 #include "d3dUtil.h"
 #include "Runnable.h"
 
-// Graphics Library namespace.
+//! Graphics Library namespace.
 namespace GLib
 {
 

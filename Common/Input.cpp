@@ -3,7 +3,7 @@
 #include "Graphics.h"
 #include "Camera.h"
 
-// Graphics Library namespace.
+//! Graphics Library namespace.
 namespace GLib
 {
 
@@ -31,14 +31,13 @@ Input::Input()
 	mDx = mDy = 0.0f;
 }
 
-//! Destructor.
+//! Cleanup.
 Input::~Input()
 {
 	ReleaseCOM(mDInput);
 	mMouse->Unacquire();
 	ReleaseCOM(mMouse);
 }
-
 
 //! Update the key state.
 /**

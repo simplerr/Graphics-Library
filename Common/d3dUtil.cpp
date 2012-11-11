@@ -4,7 +4,7 @@
 #include "D3DCore.h"
 #include "Graphics.h"
 
-// Graphics Library namespace.
+//! Graphics Library namespace.
 namespace GLib
 {
 

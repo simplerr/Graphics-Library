@@ -19,10 +19,11 @@
 #include "cAnimationController.h"
 #include "ModelImporter.h"
 
-// Graphics Library namespace.
+//! Graphics Library namespace.
 namespace GLib
 {
 
+//! Constructor.
 ModelImporter::ModelImporter(PrimitiveFactory* primitiveFactory)
 {
 	mPrimtiveFactory = primitiveFactory;	
@@ -134,8 +135,16 @@ SkinnedModel* ModelImporter::LoadSkinnedModel(string filename)
 			mesh->SetIndices(indices);
 			mPrimtiveFactory->AddPrimitive(path.C_Str(), primitive);
 
+			// Any texture?
 			if(_stricmp(path.C_Str(), "") != 0)
 				mesh->LoadTexture(path.C_Str());
+
+			// Any normal map?
+			aiString nmap;
+			material->Get(AI_MATKEY_TEXTURE_HEIGHT(0), nmap);
+			FindValidPath(&nmap);
+			if(_stricmp(nmap.C_Str(), "") != 0)	
+				mesh->SetNormalMap(GetGraphics()->LoadTexture(nmap.C_Str()));
 
 			// [NOTE] The material is set to white.
 			mesh->SetMaterial(Material(Colors::White));
@@ -228,8 +237,16 @@ StaticModel* ModelImporter::LoadStaticModel(string filename)
 			mesh->SetIndices(indices);
 			mPrimtiveFactory->AddPrimitive(path.C_Str(), primitive);
 
+			// Any texture?
 			if(_stricmp(path.C_Str(), "") != 0)
 				mesh->LoadTexture(path.C_Str());
+
+			// Any normal map?
+			aiString nmap;
+			material->Get(AI_MATKEY_TEXTURE_HEIGHT(0), nmap);
+			FindValidPath(&nmap);
+			if(_stricmp(nmap.C_Str(), "") != 0)	
+				mesh->SetNormalMap(GetGraphics()->LoadTexture(nmap.C_Str()));
 
 			// [NOTE] The material is set to white.
 			mesh->SetMaterial(Material(Colors::White)); //Material(ambient, diffuse, specular)

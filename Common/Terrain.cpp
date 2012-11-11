@@ -10,10 +10,11 @@
 #include "ShadowMap.h"
 #include <stdint.h>
 
-// Graphics Library namespace.
+//! Graphics Library namespace.
 namespace GLib
 {
 
+//! Constructor.
 Terrain::Terrain()
 	: mPrimitive(0), mLayerTextureArraySRV(0), mBlendMapSRV(0), mHeightMapSRV(0)
 {
@@ -21,6 +22,7 @@ Terrain::Terrain()
 	XMStoreFloat4x4(&mWorldMatrix, XMMatrixIdentity());
 }
 	
+//! Cleanup.
 Terrain::~Terrain()
 {
 	ReleaseCOM(mLayerTextureArraySRV);

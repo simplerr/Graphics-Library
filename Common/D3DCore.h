@@ -18,13 +18,13 @@
 #include <d3d11.h>
 #include <d3dx10math.h>
 
-// Graphics Library namespace.
+//! Graphics Library namespace.
 namespace GLib
 {
-	/** 
-		Contains the core members of Direct3D.
-		Handles initialization of Direct3D. 
-	*/
+	//!
+	//	Contains the core members of Direct3D.
+	//	Handles initialization of Direct3D. 
+	//!
 	class D3DCore
 	{
 	public:

@@ -7,16 +7,18 @@
 #include "Primitive.h"
 #include "PrimitiveFactory.h"
 
-// Graphics Library namespace.
+//! Graphics Library namespace.
 namespace GLib
 {
 
+//! Constructor.
 Sky::Sky(Graphics* pGraphics, string texture, float radius)
 {
 	mTexture = pGraphics->LoadTexture(texture);
 	mPrimitive = pGraphics->GetPrimitiveFactory()->CreateSphere(5000.0f, 30, 30);
 }
 	
+//! Cleanup.
 Sky::~Sky()
 {
 

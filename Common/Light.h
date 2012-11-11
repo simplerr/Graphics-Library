@@ -11,7 +11,7 @@ using namespace std;
 //   Elements are packed into 4D vectors with the restriction that an element
 //   cannot straddle a 4D vector boundary.
 
-// Graphics Library namespace.
+//! Graphics Library namespace.
 namespace GLib
 {
 	enum LightType

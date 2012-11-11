@@ -7,9 +7,10 @@
 #include "d3dUtil.h"
 using namespace std;
 
-// Graphics Library namespace.
+//! Graphics Library namespace.
 namespace GLib
 {
+	// Forward declarations.
 	class Primitive;
 	class PrimitiveFactory;
 	class StaticModel;
@@ -18,15 +19,16 @@ namespace GLib
 	class SceneAnimator;
 	struct BoneInfo;
 
+	//! Vertex weights and indices for bone animations.
 	struct Weights
 	{
 		vector<int>		boneIndices;
 		vector<float>	weights;
 	};
 
-	/**
-		Loads models and stores them to support instancing.
-	*/
+	//!
+	//	Loads models and stores them to support instancing.
+	//!
 	class ModelImporter
 	{
 	public:

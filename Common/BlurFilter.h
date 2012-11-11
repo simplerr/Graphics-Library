@@ -2,12 +2,12 @@
 
 #include <D3DX11.h>
 
-// Graphics Library namespace.
+//! Graphics Library namespace.
 namespace GLib
 {
-	/**
-		Applies a blur filter to a texture.
-	*/
+	//!
+	//	Applies a blur filter to a texture.
+	//!
 	class BlurFilter
 	{
 	public:

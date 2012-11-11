@@ -8,16 +8,17 @@
 #include "Vertex.h"
 using namespace std;
 
-// Graphics Library namespace.
+//! Graphics Library namespace.
 namespace GLib
 {
+	// Forward declarations.
 	class Primitive;
 	class Terrain;
 
-	/**
-		Handles creation of different primitives.
-		Stores each primitive in a map to enable instancing.
-	*/
+	//!
+	//	Handles creation of different primitives.
+	//	Stores each primitive in a map to enable instancing.
+	//!
 	class PrimitiveFactory
 	{
 	public:

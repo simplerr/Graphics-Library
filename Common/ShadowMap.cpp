@@ -1,10 +1,11 @@
 #include "ShadowMap.h"
 #include "Light.h"
 
-// Graphics Library namespace.
+//! Graphics Library namespace.
 namespace GLib
 {
 
+//! Constructor.
 ShadowMap::ShadowMap(ID3D11Device* device, UINT width, UINT height)
 	: mWidth(width), mHeight(height), mDepthMapDSV(0), mDepthMapSRV(0)
 {
@@ -58,6 +59,7 @@ ShadowMap::ShadowMap(ID3D11Device* device, UINT width, UINT height)
 	mSceneBounds.radius = 120.0f;
 }
 	
+//! Cleanup.
 ShadowMap::~ShadowMap()
 {
 	ReleaseCOM(mDepthMapSRV);

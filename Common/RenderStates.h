@@ -2,9 +2,10 @@
 
 #include <D3DX11.h>
 
-// Graphics Library namespace.
+//! Graphics Library namespace.
 namespace GLib
 {
+	//! Contains the different render states.
 	class RenderStates
 	{
 	public:

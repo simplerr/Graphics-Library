@@ -1,7 +1,7 @@
 #include "RenderStates.h"
 #include "d3dUtil.h"
 
-// Graphics Library namespace.
+//! Graphics Library namespace.
 namespace GLib
 {
 
@@ -64,6 +64,7 @@ void RenderStates::InitAll(ID3D11Device* device)
 	HR(device->CreateDepthStencilState(&noDoubleBlendDesc, &NoDoubleBlendDSS));
 }
 
+//! Cleanup.
 void RenderStates::DestroyAll()
 {
 	ReleaseCOM(TransparentBS);

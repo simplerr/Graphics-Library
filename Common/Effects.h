@@ -9,11 +9,10 @@
 
 using namespace std;
 
-// Graphics Library namespace.
+//! Graphics Library namespace.
 namespace GLib
 {
-	struct Material;
-	struct Texture2D;
+	// Forward declarations.
 	class Light;
 	class BasicEffect;
 	class BillboardEffect;
@@ -21,12 +20,16 @@ namespace GLib
 	class SkyEffect;
 	class ShadowMapEffect;
 	class TerrainEffect;
+	struct Material;
+	struct Texture2D;
 
-	/**
-		Contains all the effects that can be used.
-		Inits all effects.
-		Destroys all effects.
-	*/
+	enum EffectTech
+	{
+		STANDARD_TECH,
+		NMAP_TECH
+	};
+
+	//! Contains all the different effects.
 	#pragma region Effects handler
 
 	class Effects
@@ -45,10 +48,7 @@ namespace GLib
 
 	#pragma endregion
 
-	/**
-		Base class for all effects.
-		Extend this class to use custom effects.
-	*/
+	//! The base class for all effects, extend this.
 	#pragma region Effect
 
 	class Effect
@@ -60,8 +60,7 @@ namespace GLib
 		// Abstract functions.
 		virtual void Init() {};
 		virtual void CreateInputLayout(ID3D11Device* pDevice) {};
-
-		void Apply(ID3D11DeviceContext* pContext);
+		virtual void Apply(ID3D11DeviceContext* pContext, EffectTech tech = STANDARD_TECH);
 
 		// Used by the effect manager.
 		void SetEffect(ID3DX11Effect* effect);
@@ -89,6 +88,7 @@ namespace GLib
 
 		void Init();
 		void CreateInputLayout(ID3D11Device* pDevice);
+		void Apply(ID3D11DeviceContext* pContext, EffectTech tech = STANDARD_TECH);
 
 		// Setters to effect variables.
 		void SetWorldViewProj(CXMMATRIX matrix)			{ mfxWVP->SetMatrix(reinterpret_cast<const float*>(&matrix)); }
@@ -140,6 +140,8 @@ namespace GLib
 		ID3DX11EffectTechnique*		 mfxSkinnedTech;
 		ID3DX11EffectMatrixVariable* mfxBoneTransforms;
 		ID3DX11EffectScalarVariable* mfxUseAnimation;
+
+		ID3DX11EffectTechnique*		 mfxNormalMapTech;
 	};
 
 	#pragma endregion

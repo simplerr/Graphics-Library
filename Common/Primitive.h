@@ -8,14 +8,15 @@
 using namespace std;
 using namespace XNA;
 
-// Graphics Library namespace.
+//! Graphics Library namespace.
 namespace GLib
 {
+	// Forward declarations.
 	struct Vertex;
 
-	/**
-		Contains a vertex and index buffer.
-	*/
+	//!
+	//	Contains a vertex and index buffer.
+	//!
 	class Primitive
 	{
 	public:
