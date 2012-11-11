@@ -101,6 +101,12 @@ struct VertexOut
 	float4 ShadowPosH : TEXCOORD1;
 };
 
+//! Output for the shadow map vertex shader.
+struct VertexOutShadowMap
+{
+	float4 PosH : SV_POSITION;
+};
+
 //! Vertex shader that transforms coordinates and normals to the world and homogeneous space.
 VertexOut VS(VertexIn vin)
 {
@@ -183,6 +189,33 @@ VertexOut SkinnedVS(SkinnedVertexIn vin)
 
 		return vout;
 	}
+}
+
+//! Vertex shader that transforms coordinates and normals to the world and homogeneous space.
+VertexOutShadowMap ShadowVS(SkinnedVertexIn vin)
+{
+	VertexOutShadowMap vout;
+	
+	if(gUseAnimation)
+	{
+		// Init array or else we get strange warnings about SV_POSITION.
+		float weights[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+		weights[0] = vin.Weights.x;
+		weights[1] = vin.Weights.y;
+		weights[2] = vin.Weights.z;
+		weights[3] = 1.0f - weights[0] - weights[1] - weights[2];
+
+		float3 posL     = float3(0.0f, 0.0f, 0.0f);
+		for(int i = 0; i < 4; ++i)
+			posL     += weights[i]*mul(float4(vin.PosL, 1.0f), gBoneTransforms[vin.BoneIndices[i]]).xyz;
+
+		// Transform to homogeneous clip space.
+		vout.PosH = mul(float4(posL, 1.0f), gWorldViewProj);
+	}
+	else
+		vout.PosH = mul(float4(vin.PosL, 1.0f), gWorldViewProj);
+
+	return vout;
 }
 
 //! Pixel shader that applies ligthing, fogging and shadow mapping.
@@ -299,5 +332,26 @@ technique11 NormalMapTech
         SetVertexShader(CompileShader( vs_5_0, SkinnedVS()));
 		SetGeometryShader(NULL);
         SetPixelShader(CompileShader( ps_5_0, NormalMapPS()));
+    }
+}
+
+RasterizerState Depth
+{
+	// To remove shadow acne.
+	DepthBias = 100000;
+    DepthBiasClamp = 0.0f;
+	SlopeScaledDepthBias = 1.0f;
+};
+
+//! Shadow map technique.
+//! Used when rendering to the shadow map.
+technique11 ShadowMapTech
+{
+    pass P0
+    {
+        SetVertexShader(CompileShader( vs_5_0, ShadowVS()));
+		SetGeometryShader(NULL);
+        SetPixelShader(NULL);
+		SetRasterizerState(Depth);
     }
 }

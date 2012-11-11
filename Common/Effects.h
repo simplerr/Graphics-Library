@@ -25,8 +25,9 @@ namespace GLib
 
 	enum EffectTech
 	{
-		STANDARD_TECH,
-		NMAP_TECH
+		STANDARD_TECH,	// Standard tech.
+		NMAP_TECH,		// Normal map tech.
+		SMAP_TECH		// Shadow map tech.
 	};
 
 	//! Contains all the different effects.
@@ -142,6 +143,7 @@ namespace GLib
 		ID3DX11EffectScalarVariable* mfxUseAnimation;
 
 		ID3DX11EffectTechnique*		 mfxNormalMapTech;
+		ID3DX11EffectTechnique*		 mfxShadowMapTech;
 	};
 
 	#pragma endregion

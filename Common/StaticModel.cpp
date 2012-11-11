@@ -30,7 +30,6 @@ void StaticModel::Draw(Graphics* pGraphics, CXMMATRIX world)
 	GetD3DContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	XMMATRIX view, proj;
-	
 	if(!pGraphics->IsRenderingShadows()) {
 		view = XMLoadFloat4x4(&pGraphics->GetCamera()->GetViewMatrix());
 		proj = XMLoadFloat4x4(&pGraphics->GetCamera()->GetProjectionMatrix());
@@ -45,14 +44,12 @@ void StaticModel::Draw(Graphics* pGraphics, CXMMATRIX world)
 	Effects::BasicFX->SetWorldInvTranspose(InverseTranspose(world));
 	Effects::BasicFX->SetEyePosition(pGraphics->GetCamera()->GetPosition());
 	Effects::BasicFX->SetLights(pGraphics->GetLightList());
-	Effects::BasicFX->SetNormalMap(0);
 	Effects::BasicFX->SetShadowMap(pGraphics->GetShadowMap()->GetSRV());
 	Effects::BasicFX->SetShadowTransform(world * XMLoadFloat4x4(&pGraphics->GetShadowMap()->GetShadowTransform()));
 	Effects::BasicFX->SetFogColor(pGraphics->GetFogColor());
 	Effects::BasicFX->SetFogStart(1000.0f);
 	Effects::BasicFX->SetFogRange(50.0f);
 	Effects::BasicFX->SetUseAnimation(false);
-	Effects::BasicFX->SetUseNormalMap(false);
 
 	// Loop through and draw each mesh.
 	for(int i = 0; i < mMeshList.size(); i++)

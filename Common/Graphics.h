@@ -71,8 +71,6 @@ namespace GLib
 		void DrawText(string text, int x, int y, D3DXCOLOR textColor, int size);
 		void ActiveShadowMap();
 		void DeactiveShadowMap();
-		void AddToShadowMap(SkinnedModel* model);
-		void AddToShadowMap(StaticModel* model);
 		void ApplyBlur(Texture2D* texture, int blurCount);
 
 		Texture2D* LoadTexture(string filename, float scale = 1.0f);

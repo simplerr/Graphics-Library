@@ -27,7 +27,11 @@ void StaticMesh::Draw(Graphics* pGraphics)
 	// Set the material properties for this mesh.
 	Effects::BasicFX->SetTexture(mTexture);
 	Effects::BasicFX->SetNormalMap(mNormalMap);
-	Effects::BasicFX->Apply(GetD3DContext(), mNormalMap == 0 ? STANDARD_TECH : NMAP_TECH);
+
+	if(!pGraphics->IsRenderingShadows())
+		Effects::BasicFX->Apply(GetD3DContext(), mNormalMap == 0 ? STANDARD_TECH : NMAP_TECH);	
+	else
+		Effects::BasicFX->Apply(GetD3DContext(), SMAP_TECH);
 
 	// Draw the mesh primitive.
 	mPrimitive->Draw<Vertex>(pGraphics->GetContext());

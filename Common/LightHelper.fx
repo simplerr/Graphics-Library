@@ -215,9 +215,7 @@ static const float SMAP_SIZE = 2048.0f;
 static const float SMAP_DX = 1.0f / SMAP_SIZE;
 
 // Performs shadowmap test to determine if a pixel is in shadow.
-float CalcShadowFactor(SamplerComparisonState samShadow, 
-                       Texture2D shadowMap, 
-					   float4 shadowPosH)
+float CalcShadowFactor(SamplerComparisonState samShadow, Texture2D shadowMap, float4 shadowPosH)
 {
 	// Complete projection by doing division by w.
 	shadowPosH.xyz /= shadowPosH.w;

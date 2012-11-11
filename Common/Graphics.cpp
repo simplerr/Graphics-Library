@@ -362,6 +362,7 @@ void Graphics::ActiveShadowMap()
 	// Sets render target to NULL and the DSV to the shadow maps. Enables depth writes to the DSV basicly.
 	GetShadowMap()->BindDepthStencil(GetContext());
 	Effects::BasicFX->SetRenderingToShadowMap(true);
+	Effects::BasicFX->Apply(GetD3DContext());
 	mRenderingShadows = true;
 }
 

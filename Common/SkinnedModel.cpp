@@ -52,14 +52,12 @@ void SkinnedModel::Draw(Graphics* pGraphics, CXMMATRIX world)
 	Effects::BasicFX->SetWorldInvTranspose(InverseTranspose(world));
 	Effects::BasicFX->SetEyePosition(pGraphics->GetCamera()->GetPosition());
 	Effects::BasicFX->SetLights(pGraphics->GetLightList());
-	Effects::BasicFX->SetNormalMap(0);
 	Effects::BasicFX->SetShadowMap(pGraphics->GetShadowMap()->GetSRV());
 	Effects::BasicFX->SetShadowTransform(world * XMLoadFloat4x4(&pGraphics->GetShadowMap()->GetShadowTransform()));
 	Effects::BasicFX->SetFogColor(pGraphics->GetFogColor());
 	Effects::BasicFX->SetFogStart(1000.0f);
 	Effects::BasicFX->SetFogRange(50.0f);
 	Effects::BasicFX->SetUseAnimation(true);
-	Effects::BasicFX->SetUseNormalMap(false);
 
 	// Bone transforms.
 	vector<XMFLOAT4X4> finalTransforms = mAnimator->GetTransforms(mElapsedTime);	//mElapsedTime

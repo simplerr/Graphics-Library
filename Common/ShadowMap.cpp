@@ -89,7 +89,7 @@ void ShadowMap::BuildShadowTransform(Light* light)
 	// Create the light view matrix.
 	XMMATRIX V = XMMatrixLookAtLH(lightPos, targetPos, up);
 
-	// Transform the bounding sphre to light space, with the light view matrix.
+	// Transform the bounding sphere to light space, with the light view matrix.
 	XMFLOAT3 sphereCenter;
 	XMStoreFloat3(&sphereCenter, XMVector3TransformCoord(targetPos, V));
 

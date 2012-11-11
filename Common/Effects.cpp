@@ -186,6 +186,7 @@ void BasicEffect::Init()
 	mfxUseLighting		 = mEffect->GetVariableByName("gUseLighting")->AsScalar();	
 	mfxRenderingToShadowMap = mEffect->GetVariableByName("gRenderingToShadowMap")->AsScalar();
 	mfxNormalMapTech	 = mEffect->GetTechniqueByName("NormalMapTech");
+	mfxShadowMapTech	 = mEffect->GetTechniqueByName("ShadowMapTech");
 }
 
 //! Creates the input layout that will get set before the Input-Assembler state. The EffectManager calls this function.
@@ -216,6 +217,8 @@ void BasicEffect::Apply(ID3D11DeviceContext* pContext, EffectTech tech)
 		Effect::Apply(pContext, tech);
 	else if(tech == NMAP_TECH)
 		mfxNormalMapTech->GetPassByIndex(0)->Apply(0, pContext);
+	else if(tech = SMAP_TECH)
+		mfxShadowMapTech->GetPassByIndex(0)->Apply(0, pContext);
 }
 
 //! Sets the lights to use in the shader.
