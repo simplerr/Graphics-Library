@@ -25,9 +25,6 @@ Terrain::Terrain()
 //! Cleanup.
 Terrain::~Terrain()
 {
-	SaveHeightMap("heightmap.hmap");
-	SaveBlendMap("blendmap.bmap");
-
 	ReleaseCOM(mLayerTextureArraySRV);
 	ReleaseCOM(mBlendMapSRV);
 	ReleaseCOM(mHeightMapSRV);
@@ -39,28 +36,28 @@ void Terrain::Init(ID3D11Device* device, ID3D11DeviceContext* context, Primitive
 	mInfo = initInfo;
 
 	// Load the heightmap from a .RAW file and smooth it out.
-	LoadHeightmap("heightmap.hmap");
-	Smooth();
+	//LoadHeightmap("heightmap.hmap");
+	//Smooth();
 
-	// Load the blendmap.
-	LoadBlendMap("blendmap.bmap");
+	//// Load the blendmap.
+	//LoadBlendMap("blendmap.bmap");
 
-	// Build the heightmap SRV.
-	BuildHeightmapSRV(device);
+	//// Build the heightmap SRV.
+	//BuildHeightmapSRV(device);
 
-	// Build the blend map SRV.
-	BuildBlendMapSRV(device);
+	//// Build the blend map SRV.
+	//BuildBlendMapSRV(device);
 
 	// Build the terrain primitive.
 	mPrimitive = pPrimitiveFactory->CreateTerrain(this);
 
 	// Create the SRV to the texture array.
 	vector<string> layerFilenames;
-	layerFilenames.push_back(mInfo.LayerMapFilename0);
-	layerFilenames.push_back(mInfo.LayerMapFilename1);
-	layerFilenames.push_back(mInfo.LayerMapFilename2);
-	layerFilenames.push_back(mInfo.LayerMapFilename3);
-	layerFilenames.push_back(mInfo.LayerMapFilename4);
+	layerFilenames.push_back(mInfo.LayerMap0);
+	layerFilenames.push_back(mInfo.LayerMap1);
+	layerFilenames.push_back(mInfo.LayerMap2);
+	layerFilenames.push_back(mInfo.LayerMap3);
+	layerFilenames.push_back(mInfo.LayerMap4);
 	mLayerTextureArraySRV = d3dHelper::CreateTexture2DArraySRV(device, context, layerFilenames);
 }
 	
@@ -107,35 +104,30 @@ void Terrain::Draw(Graphics* pGraphics)
 }
 
 //! Saves the heightmap.
-void Terrain::SaveHeightMap(string filename)
+void Terrain::SaveHeightMap(ofstream& fout)
 {
-	ofstream fout(filename);
-
+	fout << "\n----------------------------HEIGHT_MAP----------------------------" << endl;
 	fout << mHeightMap.size() << " ";
 	for(int i = 0; i < mHeightMap.size(); i++)
 		fout << mHeightMap[i] << " ";
-
-	fout.close();
 }
 
 //! Saves the blendmap.
-void Terrain::SaveBlendMap(string filename)
+void Terrain::SaveBlendMap(ofstream& fout)
 {
-	ofstream fout(filename);
-
+	fout << "\n----------------------------BLEND_MAP----------------------------" << endl;
 	fout << mBlendMap.size() << " ";
 	for(int i = 0; i < mBlendMap.size(); i++)
 		fout << mBlendMap[i].x << " " << mBlendMap[i].y << " " << mBlendMap[i].z << " " << mBlendMap[i].w << " ";
-
-	fout.close();
 }
 
 //! Loads a heightmap from a .hmap file.
-void Terrain::LoadHeightmap(string filename)
+void Terrain::LoadHeightmap(ifstream& fin)
 {
 	mHeightMap.clear();
 
-	ifstream fin(filename);
+	string ignore;
+	fin >> ignore;	// -HEIGHT_MAP-
 
 	int size;
 	fin >> size;
@@ -145,19 +137,20 @@ void Terrain::LoadHeightmap(string filename)
 		mHeightMap.push_back(height);
 	}
 
-	fin.close();
+	// Build the heightmap SRV.
+	BuildHeightmapSRV(GLib::GetD3DDevice());
 }
 
 //! Loads a blendmap from a .bmap file.
-void Terrain::LoadBlendMap(string filename)
+void Terrain::LoadBlendMap(ifstream& fin)
 {
 	mBlendMap.clear();
 
-	ifstream fin(filename);
+	string ignore;
+	fin >> ignore;	// -BLEND_MAP-
 
 	int size;
 	fin >> size;
-
 	for(int i = 0; i < size; i++) {
 		XMFLOAT4 blend;
 		fin >> blend.x >> blend.y >> blend.z >> blend.w;
@@ -171,7 +164,8 @@ void Terrain::LoadBlendMap(string filename)
 		mBlendMap.push_back(blend);
 	}
 
-	fin.close();
+	// Build the blend map SRV.
+	BuildBlendMapSRV(GLib::GetD3DDevice());
 }
 
 //! Smooths out the heightmap by averaging nearby heights. 

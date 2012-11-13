@@ -15,13 +15,13 @@ namespace GLib
 	//! Stores the init information for a terrain.
 	struct InitInfo
 	{
-		string HeightMapFilename;
-		string LayerMapFilename0;
-		string LayerMapFilename1;
-		string LayerMapFilename2;
-		string LayerMapFilename3;
-		string LayerMapFilename4;
-		string BlendMapFilename;
+		string HeightMap														;
+		string LayerMap0;
+		string LayerMap1;
+		string LayerMap2;
+		string LayerMap3;
+		string LayerMap4;
+		string BlendMap;
 		UINT HeightmapWidth;
 		UINT HeightmapHeight;
 		float HeightScale;
@@ -41,6 +41,11 @@ namespace GLib
 		void Init(ID3D11Device* device, ID3D11DeviceContext* context, PrimitiveFactory* pPrimitiveFactory, const InitInfo& initInfo);
 		void Draw(Graphics* pGraphics);
 
+		void		LoadHeightmap(ifstream& fout);
+		void		LoadBlendMap(ifstream& fout);
+		void		SaveHeightMap(ofstream& fin);
+		void		SaveBlendMap(ofstream& fin);
+
 		InitInfo	GetInfo();
 		Primitive*	GetPrimitive();
 		float		GetWidth();
@@ -55,10 +60,6 @@ namespace GLib
 
 		void		SetBlend(XMFLOAT3 pos, float modifier, int layer);
 	private:
-		void		LoadHeightmap(string filename);
-		void		LoadBlendMap(string filename);
-		void		SaveHeightMap(string filename);
-		void		SaveBlendMap(string filename);
 		bool		InBounds(int i, int j);
 		float		Average(int i, int j);
 		XMFLOAT3	BinarySearch(Ray ray);
