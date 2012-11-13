@@ -55,8 +55,10 @@ namespace GLib
 
 		void		SetBlend(XMFLOAT3 pos, float modifier, int layer);
 	private:
-		void		LoadHeightmap();
-		void		LoadBlendMap();
+		void		LoadHeightmap(string filename);
+		void		LoadBlendMap(string filename);
+		void		SaveHeightMap(string filename);
+		void		SaveBlendMap(string filename);
 		bool		InBounds(int i, int j);
 		float		Average(int i, int j);
 		XMFLOAT3	BinarySearch(Ray ray);

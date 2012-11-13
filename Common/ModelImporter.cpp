@@ -92,7 +92,10 @@ SkinnedModel* ModelImporter::LoadSkinnedModel(string filename)
 			{
 				aiVector3D v = assimpMesh->mVertices[i];
 				aiVector3D n = assimpMesh->mNormals[i];
-				aiVector3D t = assimpMesh->mTextureCoords[0][i];
+				aiVector3D t = aiVector3D(0, 0, 0);
+				if(assimpMesh->HasTextureCoords(0))
+					t = assimpMesh->mTextureCoords[0][i];
+
 				n = n.Normalize();
 
 				// Pos, normal and texture coordinates.
@@ -152,11 +155,18 @@ SkinnedModel* ModelImporter::LoadSkinnedModel(string filename)
 			// Add the mesh to the model.
 			model->AddMesh(mesh);
 		}
-	}
 
-	// Add the newly created mesh to the map and return it.
-	mSkinnedModelMap[filename] = model;
-	return mSkinnedModelMap[filename] ;
+		// Add the newly created mesh to the map and return it.
+		mSkinnedModelMap[filename] = model;
+		return mSkinnedModelMap[filename];
+	}
+	else {
+		char buffer[246];
+		sprintf(buffer, "Error loading model: %s", filename.c_str());
+		MessageBox(0, buffer, "Error!", 0);
+		mSkinnedModelMap[filename] = LoadSkinnedModel("models/box.obj");
+		return mSkinnedModelMap[filename];
+	}
 }
 
 //! Loads and returns a static model from a file.
@@ -254,11 +264,18 @@ StaticModel* ModelImporter::LoadStaticModel(string filename)
 			// Add the mesh to the model.
 			model->AddMesh(mesh);
 		}
-	}
 
-	// Add to the model map and return it.
-	mStaticModelMap[filename] = model;
-	return mStaticModelMap[filename];
+		// Add to the model map and return it.
+		mStaticModelMap[filename] = model;
+		return mStaticModelMap[filename];
+	}
+	else {
+		char buffer[246];
+		sprintf(buffer, "Error loading model: %s", filename.c_str());
+		MessageBox(0, buffer, "Error!", 0);
+		mStaticModelMap[filename] = LoadStaticModel("models/box.obj");
+		return mStaticModelMap[filename];
+	}
 }
 
 //! Calculates the bone weights for each vertex.

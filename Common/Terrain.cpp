@@ -25,6 +25,9 @@ Terrain::Terrain()
 //! Cleanup.
 Terrain::~Terrain()
 {
+	SaveHeightMap("heightmap.hmap");
+	SaveBlendMap("blendmap.bmap");
+
 	ReleaseCOM(mLayerTextureArraySRV);
 	ReleaseCOM(mBlendMapSRV);
 	ReleaseCOM(mHeightMapSRV);
@@ -36,11 +39,11 @@ void Terrain::Init(ID3D11Device* device, ID3D11DeviceContext* context, Primitive
 	mInfo = initInfo;
 
 	// Load the heightmap from a .RAW file and smooth it out.
-	LoadHeightmap();
+	LoadHeightmap("heightmap.hmap");
 	Smooth();
 
 	// Load the blendmap.
-	LoadBlendMap();
+	LoadBlendMap("blendmap.bmap");
 
 	// Build the heightmap SRV.
 	BuildHeightmapSRV(device);
@@ -59,21 +62,6 @@ void Terrain::Init(ID3D11Device* device, ID3D11DeviceContext* context, Primitive
 	layerFilenames.push_back(mInfo.LayerMapFilename3);
 	layerFilenames.push_back(mInfo.LayerMapFilename4);
 	mLayerTextureArraySRV = d3dHelper::CreateTexture2DArraySRV(device, context, layerFilenames);
-
-	// Create the SRV to the blend map.
-	//HR(D3DX11CreateShaderResourceViewFromFile(device, mInfo.BlendMapFilename.c_str(), 0, 0, &mBlendMapSRV, 0));
-
-/*
-	ID3D11Texture2D* texture;
-	mBlendMapSRV->GetResource((ID3D11Resource**)&texture);
-	D3D11_MAPPED_SUBRESOURCE data;
-	context->Map(texture, 0, D3D11_MAP_READ, 0, &data);
-
-	vector<XMFLOAT3>* vec;
-	
-	vec = (vector<XMFLOAT3>*)data.pData;
-
-	context->Unmap(texture, 0);*/
 }
 	
 //! Draw the terrain with texture blending and shadowmapping.
@@ -118,70 +106,72 @@ void Terrain::Draw(Graphics* pGraphics)
 	mPrimitive->Draw<Vertex>(pGraphics->GetContext());
 }
 
-//! Loads a heightmap from a .RAW file.
-void Terrain::LoadHeightmap()
+//! Saves the heightmap.
+void Terrain::SaveHeightMap(string filename)
 {
-	// A height for each vertex
-	std::vector<unsigned char> in( mInfo.HeightmapWidth * mInfo.HeightmapHeight );
+	ofstream fout(filename);
 
-	// Open the file.
-	std::ifstream inFile;
-	inFile.open(mInfo.HeightMapFilename.c_str(), std::ios_base::binary);
+	fout << mHeightMap.size() << " ";
+	for(int i = 0; i < mHeightMap.size(); i++)
+		fout << mHeightMap[i] << " ";
 
-	if(inFile)
-	{
-		// Read the RAW bytes.
-		inFile.read((char*)&in[0], (std::streamsize)in.size());
-
-		// Done with file.
-		inFile.close();
-	}
-
-	// Copy the array data into a float array and scale it.
-	mHeightMap.resize(mInfo.HeightmapHeight * mInfo.HeightmapWidth+258, 0);	// [HACK] [NOTE] + 258 to not go out of bounds!!
-	for(UINT i = 0; i < mInfo.HeightmapHeight * mInfo.HeightmapWidth; ++i)
-	{
-		mHeightMap[i] = (in[i] / 255.0f) * mInfo.HeightScale;
-	}
+	fout.close();
 }
 
-void Terrain::LoadBlendMap()
+//! Saves the blendmap.
+void Terrain::SaveBlendMap(string filename)
 {
-	// A height for each vertex
-	std::vector<float> in( mInfo.HeightmapWidth * mInfo.HeightmapHeight * 3);
+	ofstream fout(filename);
 
-	// Open the file.
-	std::ifstream inFile;
-	inFile.open(mInfo.BlendMapFilename.c_str(), std::ios_base::binary);
+	fout << mBlendMap.size() << " ";
+	for(int i = 0; i < mBlendMap.size(); i++)
+		fout << mBlendMap[i].x << " " << mBlendMap[i].y << " " << mBlendMap[i].z << " " << mBlendMap[i].w << " ";
 
-	if(inFile)
-	{
-		// Read the RAW bytes.
-		inFile.read((char*)&in[0], (std::streamsize)in.size());
+	fout.close();
+}
 
-		// Done with file.
-		inFile.close();
+//! Loads a heightmap from a .hmap file.
+void Terrain::LoadHeightmap(string filename)
+{
+	mHeightMap.clear();
+
+	ifstream fin(filename);
+
+	int size;
+	fin >> size;
+	for(int i = 0; i < size; i++) {
+		float height;
+		fin >> height;
+		mHeightMap.push_back(height);
 	}
 
-	// Copy the array data into a float array and scale it.
-	//mBlendMap.resize(mInfo.HeightmapHeight * mInfo.HeightmapWidth * 3 + 258, 0);	// [HACK] [NOTE] + 258 to not go out of bounds!!
-	/*for(UINT i = 0; i < mInfo.HeightmapHeight * mInfo.HeightmapWidth * 3; i+=3) {
-		mBlendMap.push_back(XMFLOAT4(in[i] , in[i+1] , in[i+2] , 255.0f));
-	}*/
+	fin.close();
+}
 
-	// [NOTE] Doesn't acctually load from the file.
-	for(UINT i = 0; i < mInfo.HeightmapHeight * mInfo.HeightmapWidth; i++) {
-		if(i < 10000)
-			mBlendMap.push_back(XMFLOAT4(1.0f, 0, 0, 0.0f));
-		else if(i > 10000 && i < 20000)
-			mBlendMap.push_back(XMFLOAT4(0.0f, 1, 0, 0.0f));
-		else if(i > 20000 && i < 30000)
-			mBlendMap.push_back(XMFLOAT4(0.0f, 0, 1, 0.0f));
-		else if(i > 30000 && i < 40000)
-			mBlendMap.push_back(XMFLOAT4(0.0f, 0, 0, 1.0f));
-		else
-			mBlendMap.push_back(XMFLOAT4(0.0f, 0, 0, 0.0f));
+//! Loads a blendmap from a .bmap file.
+void Terrain::LoadBlendMap(string filename)
+{
+	mBlendMap.clear();
+
+	ifstream fin(filename);
+
+	int size;
+	fin >> size;
+
+	for(int i = 0; i < size; i++) {
+		XMFLOAT4 blend;
+		fin >> blend.x >> blend.y >> blend.z >> blend.w;
+
+		// Limit to 0-1 range.
+		XMVECTOR limited = XMVectorMax(XMLoadFloat4(&blend), XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f));
+		XMStoreFloat4(&blend, limited);
+		limited = XMVectorMin(XMLoadFloat4(&blend), XMVectorSet(1.0f, 1.0f, 1.0f, 1.0f));
+		XMStoreFloat4(&blend, limited);
+
+		mBlendMap.push_back(blend);
 	}
+
+	fin.close();
 }
 
 //! Smooths out the heightmap by averaging nearby heights. 
@@ -200,7 +190,6 @@ void Terrain::Smooth()
 	// Replace the old heightmap with the filtered one.
 	mHeightMap = dest;
 }
-	
 
 void Terrain::Smooth(XMFLOAT3 origin, int radius)
 {
@@ -296,7 +285,7 @@ float Terrain::GetHeight(float x, float z)
 	int col = (int)floorf(c);
 
 	if(!InBounds(row, col))
-		return -99999999;
+		return -numeric_limits<float>::infinity();
 
 	// Grab the heights of the cell we are in.
 	// A*--*B

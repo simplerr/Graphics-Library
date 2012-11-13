@@ -127,7 +127,11 @@ Texture2D* Graphics::LoadTexture(string filename, float scale)
 	else // Not already loaded.
 	{
 		Texture2D* texture2d = new Texture2D();
-		HR(D3DX11CreateShaderResourceViewFromFile(GetD3D()->GetDevice(), filename.c_str(), 0, 0, &texture2d->shaderResourceView, 0));
+		if(FAILED(D3DX11CreateShaderResourceViewFromFile(GetD3D()->GetDevice(), filename.c_str(), 0, 0, &texture2d->shaderResourceView, 0))) {
+			char buffer[246];
+			sprintf(buffer, "Error loading texture: %s", filename.c_str());
+		}
+
 		texture2d->scale = scale;
 		texture2d->name = filename;
 		mTextureMap[textureId] = texture2d;

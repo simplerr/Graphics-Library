@@ -1,4 +1,5 @@
 #include "Light.h"
+#include "d3dUtil.h"
 
 //! Graphics Library namespace.
 namespace GLib
@@ -7,7 +8,8 @@ namespace GLib
 //! Constructor.
 Light::Light() 
 {
-	ZeroMemory(this, sizeof(this));
+	//ZeroMemory(this, sizeof(this));
+	mMaterial = Colors::White;
 	mType = 0;
 }
 
@@ -32,6 +34,7 @@ void Light::SetRange(float range)
 	mRange = range;
 }
 
+// [NOTE] For some reason the rotation cant be (0, -1, 0) for the shadow mapping to work!
 void Light::SetDirection(XMFLOAT3 direction)
 {
 	// Normalize the direction.
