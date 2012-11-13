@@ -30,6 +30,7 @@ Runnable::Runnable(HINSTANCE hInstance, std::string caption, int width, int heig
 	mFullscreen		= false;
 	mWindowedWidth	= width;
 	mWindowedHeight	= height;
+	SetFpsCap(numeric_limits<float>::infinity());
 }
 
 //! Cleans up and frees all pointers.
@@ -121,15 +122,23 @@ int Runnable::Run()
 		// Else do game stuff.
 		else
 		{
-			// Calculate the delta time and call the abstract Update() and Draw() functions. 
+			// Calculate the delta time.
 			mTimer.Tick();
-			mInput->Poll();
-			CalculateFrameStats();
-			
-			mInput->Update(mTimer.DeltaTime());
-			mGraphics->Update(mInput, mTimer.DeltaTime());
-			Update(mInput, mTimer.DeltaTime());
-			Draw(GetGraphics());
+
+			// Update the elapsed time.
+			static float elapsedTime = 0;
+			elapsedTime += mTimer.DeltaTime();
+
+			// Limit the fps at mFpsCap.
+			if(elapsedTime > 1.0f / mFpsCap) {
+				CalculateFrameStats();
+				mInput->Poll();
+				mInput->Update(mTimer.DeltaTime());
+				mGraphics->Update(mInput, mTimer.DeltaTime());
+				Update(mInput, mTimer.DeltaTime());
+				Draw(GetGraphics());
+				elapsedTime = 0.0f;
+			}
 		}
     }
 
@@ -210,6 +219,12 @@ void Runnable::SetVisible(bool visible)
 		ShowWindow(mhMainWindow, SW_SHOW);
 	else
 		ShowWindow(mhMainWindow, SW_HIDE);
+}
+
+//! Sets the fps cap.
+void Runnable::SetFpsCap(float cap)
+{
+	mFpsCap = cap;
 }
 
 //! Returns the window width.

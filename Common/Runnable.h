@@ -42,6 +42,7 @@ namespace GLib
 
 		// Getters and setters.
 		void SetVisible(bool visible);
+		void SetFpsCap(float cap);
 	
 		HINSTANCE	GetInstance();
 		HWND		GetHwnd();	
@@ -63,6 +64,7 @@ namespace GLib
 		bool		mFullscreen;
 		int			mWindowedWidth;
 		int			mWindowedHeight;
+		float		mFpsCap;
 
 	};	// Class
 
