@@ -38,6 +38,7 @@ namespace GLib
 
 		Primitive*		GetPrimitive();
 		Material		GetMaterial();
+		XNA::AxisAlignedBox CalculateAABB(vector<XMFLOAT4X4>& finalTransforms);
 	private:
 		Primitive*		mPrimitive;
 		Texture2D*		mTexture;

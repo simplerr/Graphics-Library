@@ -43,6 +43,7 @@ namespace GLib
 		// Getters and setters.
 		void SetVisible(bool visible);
 		void SetFpsCap(float cap);
+		void SetFullscreen(bool fullscreen);
 	
 		HINSTANCE	GetInstance();
 		HWND		GetHwnd();	

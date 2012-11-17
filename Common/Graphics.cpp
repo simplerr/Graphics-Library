@@ -25,6 +25,7 @@
 #include "StaticModel.h"
 #include "PrimitiveFactory.h"
 #include "ModelImporter.h"
+#include "RenderStates.h"
 
 //! Graphics Library namespace.
 namespace GLib
@@ -37,6 +38,7 @@ Graphics::Graphics()
 	mD3DCore = nullptr;
 	mCamera = nullptr;
 	mRenderingShadows = false;
+	mLightList = nullptr;
 
 	// Used for clear scene and fog.
 	SetFogColor(Colors::Silver);
@@ -108,6 +110,9 @@ bool Graphics::Init(int clientWidth, int clientHeight, HWND hwnd, bool fullscree
 	mAABB = mPrimitiveFactory->CreateBox();
 
 	mShadowMap = new ShadowMap(GetDevice(), 2048, 2048);
+
+	float blendFactor[] = {0.0f, 0.0f, 0.0f, 0.0f};
+	GetContext()->OMSetBlendState(RenderStates::TransparentBS, blendFactor, 0xffffffff);
 
 	Effects::BasicFX->SetUseLighting(true);
 }
@@ -231,11 +236,18 @@ void Graphics::DrawScreenQuad(Texture2D* texture, float x, float y, float width,
 	float transformedY = -(y - GetClientHeight()/2);
 	XMMATRIX T = XMMatrixTranslation(transformedX / GetClientWidth() * 2, transformedY / GetClientHeight() * 2, 0);
 	XMMATRIX S = XMMatrixScaling(width / GetClientWidth(), height / GetClientHeight(), 1);
-	SetEffectParameters(Effects::BasicFX, S*T, texture, 0, Material(XMFLOAT4(1, 1, 1, 1)));
+	//SetEffectParameters(Effects::BasicFX, S*T, texture, 0, Material(Colors::White));
 
 	// Make sure to not use the view and projection matrices when dealing with NDC coordinates.
-	Effects::BasicFX->SetWorldViewProj(S*T);
-	Effects::BasicFX->Apply(GetD3DContext());
+	// Set the world * view * proj matrix.
+	XMMATRIX view = XMLoadFloat4x4(&mCamera->GetViewMatrix());
+	XMMATRIX proj = XMLoadFloat4x4(&mCamera->GetProjectionMatrix());
+	Effects::ScreenFX->SetWorld(S*T);
+	Effects::ScreenFX->SetWorldInvTranspose(InverseTranspose(S*T));
+	Effects::ScreenFX->SetEyePosition(mCamera->GetPosition());
+	Effects::ScreenFX->SetTexture(texture);
+	Effects::ScreenFX->SetWorldViewProj(S*T);
+	Effects::ScreenFX->Apply(GetD3DContext());
 
 	// Draw the primitive.
 	mScreenQuad->Draw<Vertex>(context);

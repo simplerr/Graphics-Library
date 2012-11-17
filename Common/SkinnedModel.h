@@ -35,9 +35,13 @@ namespace GLib
 		void SetElapsedTime(float elapsedTime);
 
 		SkinnedMeshList* GetMeshList();
+		vector<XMFLOAT4X4> GetFinalTransforms();
+		XNA::AxisAlignedBox GetBoundingBox();
+		void CalculateAABB();
 	private:
 		SkinnedMeshList	mMeshList;
 		SceneAnimator*	mAnimator;
 		float			mElapsedTime;
+		XNA::AxisAlignedBox mAABB;
 	};
 }

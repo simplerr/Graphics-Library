@@ -133,9 +133,9 @@ int Runnable::Run()
 			if(elapsedTime > 1.0f / mFpsCap) {
 				CalculateFrameStats();
 				mInput->Poll();
-				mInput->Update(mTimer.DeltaTime());
-				mGraphics->Update(mInput, mTimer.DeltaTime());
-				Update(mInput, mTimer.DeltaTime());
+				mInput->Update(elapsedTime);
+				mGraphics->Update(mInput, elapsedTime);
+				Update(mInput, elapsedTime);
 				Draw(GetGraphics());
 				elapsedTime = 0.0f;
 			}
@@ -166,6 +166,15 @@ void Runnable::SwitchScreenMode()
 {
 	// Resize the swap chain.
 	mFullscreen = !mFullscreen;
+	GetD3D()->SetFullScreen(GetClientWidth(), GetClientHeight(), mFullscreen);
+
+	// Pure virtual function.
+	OnResize(GetClientWidth(), GetClientHeight());
+}
+
+void Runnable::SetFullscreen(bool fullscreen)
+{
+	mFullscreen = fullscreen;
 	GetD3D()->SetFullScreen(GetClientWidth(), GetClientHeight(), mFullscreen);
 
 	// Pure virtual function.

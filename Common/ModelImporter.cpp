@@ -156,6 +156,9 @@ SkinnedModel* ModelImporter::LoadSkinnedModel(string filename)
 			model->AddMesh(mesh);
 		}
 
+		// Pre-calculate the bounding box.
+		model->CalculateAABB();
+
 		// Add the newly created mesh to the map and return it.
 		mSkinnedModelMap[filename] = model;
 		return mSkinnedModelMap[filename];

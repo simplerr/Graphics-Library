@@ -133,6 +133,37 @@ void SkinnedMesh::Load(ifstream& fin)
 	SetMaterial(Material(Colors::White));
 }
 
+XNA::AxisAlignedBox SkinnedMesh::CalculateAABB(vector<XMFLOAT4X4>& finalTransforms)
+{
+	XMFLOAT3 min = XMFLOAT3(numeric_limits<float>::infinity(), numeric_limits<float>::infinity(), numeric_limits<float>::infinity());
+	XMFLOAT3 max = XMFLOAT3(-numeric_limits<float>::infinity(), -numeric_limits<float>::infinity(), -numeric_limits<float>::infinity());
+	for(int i = 0; i < mVertices.size(); i++)
+	{
+		XMFLOAT3 transformed;
+		float weights[4] = {0.0f, 0.0f, 0.0f, 0.0f};
+		weights[0] = mVertices[i].Weights.x;
+		weights[1] = mVertices[i].Weights.y;
+		weights[2] = mVertices[i].Weights.z;
+		weights[3] = 1.0f - mVertices[i].Weights.x - mVertices[i].Weights.y - mVertices[i].Weights.z;
+		
+		XMVECTOR pos = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+		for(int j = 0; j < 4; ++j)
+			pos += weights[j]*XMVector3Transform(pos, XMLoadFloat4x4(&finalTransforms[mVertices[i].BoneIndices[j]]));
+	
+		XMFLOAT3 skinnedPos;
+		XMStoreFloat3(&skinnedPos, pos);
+		
+		XMStoreFloat3(&min, XMVectorMin(pos, XMLoadFloat3(&min)));
+		XMStoreFloat3(&max, XMVectorMax(pos, XMLoadFloat3(&max)));
+	}
+
+	XNA::AxisAlignedBox aabb;
+	aabb.Center =  (min + max) * 0.5f;
+	aabb.Extents = (max - min) * 0.5f;
+
+	return aabb;
+}
+
 //! Sets the primitive.
 void SkinnedMesh::SetPrimitive(Primitive* primitive)
 {

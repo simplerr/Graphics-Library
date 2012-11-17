@@ -20,6 +20,7 @@ namespace GLib
 	class SkyEffect;
 	class ShadowMapEffect;
 	class TerrainEffect;
+	class ScreenEffect;
 	struct Material;
 	struct Texture2D;
 
@@ -45,6 +46,7 @@ namespace GLib
 		static SkyEffect*		SkyFX;
 		static ShadowMapEffect* BuildShadowMapFX;
 		static TerrainEffect*	TerrainFX;
+		static ScreenEffect*	ScreenFX;
 	};
 
 	#pragma endregion
@@ -307,5 +309,32 @@ namespace GLib
 		ID3DX11EffectScalarVariable* ToolRadius;
 	};
 	#pragma endregion
+
+	//! The basic effect class, used as the standard render effect.
+#pragma region BasicEffect class
+	class ScreenEffect : public Effect
+	{
+	public:
+		ScreenEffect(ID3D11Device* pDevice);
+		~ScreenEffect();
+
+		void Init();
+		void CreateInputLayout(ID3D11Device* pDevice);
+		void Apply(ID3D11DeviceContext* pContext, EffectTech tech = STANDARD_TECH);
+
+		// Setters to effect variables.
+		void SetWorldViewProj(CXMMATRIX matrix)			{ mfxWVP->SetMatrix(reinterpret_cast<const float*>(&matrix)); }
+		void SetWorld(CXMMATRIX matrix)					{ mfxWorld->SetMatrix(reinterpret_cast<const float*>(&matrix)); }
+		void SetWorldInvTranspose(CXMMATRIX matrix)		{ mfxWorldInvTranspose->SetMatrix(reinterpret_cast<const float*>(&matrix)); }
+		void SetEyePosition(XMFLOAT3 eyePos)			{ mfxEyePosW->SetRawValue(&eyePos, 0, sizeof(XMFLOAT3)); }
+		void SetTexture(Texture2D* texture);				
+	private:
+		// Handles to effect variables.
+		ID3DX11EffectMatrixVariable* mfxWVP;
+		ID3DX11EffectMatrixVariable* mfxWorld;
+		ID3DX11EffectMatrixVariable* mfxWorldInvTranspose;
+		ID3DX11EffectVectorVariable* mfxEyePosW;
+		ID3DX11EffectShaderResourceVariable* mfxTexture;
+	};
 
 } // Namespace.

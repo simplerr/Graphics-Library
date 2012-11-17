@@ -17,6 +17,7 @@ BlurEffect*			Effects::BlurFX			= nullptr;
 SkyEffect*			Effects::SkyFX			= nullptr;
 ShadowMapEffect*	Effects::BuildShadowMapFX = nullptr;
 TerrainEffect*		Effects::TerrainFX		= nullptr;
+ScreenEffect*		Effects::ScreenFX		= nullptr;
 
 #pragma region Code for the static effect handler Effects.
 
@@ -59,6 +60,10 @@ void Effects::InitAll(ID3D11Device* pDevice)
 	TerrainFX = new TerrainEffect(pDevice);
 	TerrainFX->CreateInputLayout(pDevice);
 	TerrainFX->Init();
+
+	ScreenFX = new ScreenEffect(pDevice);
+	ScreenFX->CreateInputLayout(pDevice);
+	ScreenFX->Init();
 }
 
 //! Cleans up all effects.
@@ -70,6 +75,7 @@ void Effects::DestroyAll()
 	delete SkyFX;
 	delete BuildShadowMapFX;
 	delete TerrainFX;
+	delete ScreenFX;
 }
 
 #pragma endregion
@@ -81,7 +87,7 @@ Effect::Effect(ID3D11Device* pDevice, string filename, string technique)
 {
 	// Create the effect from memory.
 	// [NOTE] Fix this!
-	std::ifstream fin("fx\\" + filename + "o", std::ios::binary);
+	std::ifstream fin("fx\\" + filename + "o", std::ios::binary);	// [NOTE]!!!
 
 	fin.seekg(0, std::ios_base::end);
 	int size = (int)fin.tellg();
@@ -224,14 +230,20 @@ void BasicEffect::Apply(ID3D11DeviceContext* pContext, EffectTech tech)
 //! Sets the lights to use in the shader.
 void BasicEffect::SetLights(LightList* lights)
 {
-	Light lightArray[10];
-	for(int i = 0; i < lights->size(); i++)
-		lightArray[i] = *lights->operator[](i);
+	if(lights != nullptr) {
+		Light lightArray[10];
+		for(int i = 0; i < lights->size(); i++)
+			lightArray[i] = *lights->operator[](i);
 
-	// Sets the light list in the effect file.
-	mfxLights->SetRawValue((void*)lightArray, 0, sizeof(Light) * lights->size());
-	float size = lights->size();
-	mfxNumLights->SetRawValue(&size, 0, sizeof(float));
+		// Sets the light list in the effect file.
+		mfxLights->SetRawValue((void*)lightArray, 0, sizeof(Light) * lights->size());
+		float size = lights->size();
+		mfxNumLights->SetRawValue(&size, 0, sizeof(float));
+	}
+	else {
+		float size = 0;
+		mfxNumLights->SetRawValue(&size, 0, sizeof(float));
+	}
 }
 
 //! Sets the texture to use in the shader.
@@ -495,5 +507,61 @@ void TerrainEffect::SetLights(LightList* lights)
 }
 
 #pragma endregion
+
+ScreenEffect::ScreenEffect(ID3D11Device* pDevice)
+	: Effect(pDevice, "ScreenQuad.fx", "BasicTech")
+{
+
+}
+
+ScreenEffect::~ScreenEffect()
+{
+
+}
+//! Inits all effect variable handles.
+void ScreenEffect::Init()
+{
+	// Connect handlers to the effect variables.
+	mfxWVP				 = mEffect->GetVariableByName("gWorldViewProj")->AsMatrix();
+	mfxWorld			 = mEffect->GetVariableByName("gWorld")->AsMatrix();
+	mfxWorldInvTranspose = mEffect->GetVariableByName("gWorldInvTranspose")->AsMatrix();
+	mfxEyePosW			 = mEffect->GetVariableByName("gEyePosW")->AsVector();
+	mfxTexture			 = mEffect->GetVariableByName("gTexture")->AsShaderResource();
+}
+
+//! Creates the input layout that will get set before the Input-Assembler state. The EffectManager calls this function.
+void ScreenEffect::CreateInputLayout(ID3D11Device* pDevice)
+{
+	// Create the vertex input layout.
+	D3D11_INPUT_ELEMENT_DESC vertexDesc[6] =
+	{
+		{"POSITION",     0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT ,  D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"NORMAL",       0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT , D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TEXCOORD",     0, DXGI_FORMAT_R32G32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT , D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TANGENT",      0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT , D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"WEIGHTS",      0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT , D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"BONEINDICES",  0, DXGI_FORMAT_R8G8B8A8_UINT,   0, D3D11_APPEND_ALIGNED_ELEMENT , D3D11_INPUT_PER_VERTEX_DATA, 0}
+	};
+
+	// Create the input layout.
+	D3DX11_PASS_DESC passDesc;
+	mTech->GetPassByIndex(0)->GetDesc(&passDesc);
+	HR(pDevice->CreateInputLayout(vertexDesc, 6, passDesc.pIAInputSignature, 
+		passDesc.IAInputSignatureSize, &mInputLayout));
+}
+
+void ScreenEffect::Apply(ID3D11DeviceContext* pContext, EffectTech tech)
+{
+	Effect::Apply(pContext, tech);
+}
+
+//! Sets the texture to use in the shader.
+void ScreenEffect::SetTexture(Texture2D* texture)
+{
+	bool f = texture == nullptr ? false : true;
+	if(texture != nullptr) {
+		mfxTexture->SetResource(texture->shaderResourceView);
+	}
+}
 
 }	// End of Graphics Library namespace.
