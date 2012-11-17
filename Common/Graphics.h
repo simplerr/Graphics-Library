@@ -83,6 +83,7 @@ namespace GLib
 		void SetLightList(LightList* lightList);
 		void SetFogColor(XMFLOAT4 color);
 		void SetRenderTarget(RenderTarget* renderTarget);
+		void SetCamera(Camera* pCamera);
 		void RestoreRenderTarget();
 
 		// Getters.

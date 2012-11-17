@@ -35,19 +35,6 @@ void Terrain::Init(ID3D11Device* device, ID3D11DeviceContext* context, Primitive
 {
 	mInfo = initInfo;
 
-	// Load the heightmap from a .RAW file and smooth it out.
-	//LoadHeightmap("heightmap.hmap");
-	//Smooth();
-
-	//// Load the blendmap.
-	//LoadBlendMap("blendmap.bmap");
-
-	//// Build the heightmap SRV.
-	//BuildHeightmapSRV(device);
-
-	//// Build the blend map SRV.
-	//BuildBlendMapSRV(device);
-
 	// Build the terrain primitive.
 	mPrimitive = pPrimitiveFactory->CreateTerrain(this);
 

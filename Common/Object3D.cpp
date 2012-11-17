@@ -25,7 +25,6 @@ Object3D::Object3D(ObjectType type, XMFLOAT3 position, XMFLOAT3 rotation, XMFLOA
 	SetId(-1);
 	SetType(type);
 	SetWorld(nullptr);
-	SetFilename("none");
 	mAlive = true;
 }
 
@@ -68,12 +67,6 @@ void Object3D::SetDefaultOrientation()
 	SetPosition(XMFLOAT3(0.0f, 0.0f, 0.0f));
 	SetRotation(XMFLOAT3(0.0f, 0.0f, 0.0f));
 	SetScale(XMFLOAT3(1.0f, 1.0f, 1.0f));
-}
-
-//! Set the filename the object was loaded from.
-void Object3D::SetFilename(string filename)
-{
-	mFilename = filename;
 }
 
 //! Returns the world the object is in.
@@ -140,12 +133,6 @@ ObjectType Object3D::GetType()
 string Object3D::GetName()
 {
 	return mName;
-}
-
-//! Returns name of the file the object was loaded from.
-string Object3D::GetFilename()
-{
-	return mFilename;
 }
 
 //! True if the bounding box should be drawn.

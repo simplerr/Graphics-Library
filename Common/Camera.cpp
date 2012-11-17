@@ -12,7 +12,7 @@ Camera::Camera()
 {
 	// Set the sensitivity and speed
 	SetLookSensitivity(2.0f);
-	SetMoveSpeed(0.6f);
+	SetMovementSpeed(0.6f);
 
 	// Default position and target
 	mPosition	= XMFLOAT3(32, 100, 82);
@@ -38,19 +38,6 @@ Camera::~Camera()
 
 }
 
-//! Rotates, moves and updates the view matrix.
-void Camera::Update(Input* pInput, float dt)
-{
-	// Rotate and move
-	Move(pInput);
-
-	if(pInput->KeyDown(VK_MBUTTON))		// [NOTE][HACK]
-		Rotate(pInput);
-
-	// Update the view matrix.
-	UpdateViewMatrix();
-}
-
 //! Updates the view matrix.
 void Camera::UpdateViewMatrix()
 {
@@ -67,37 +54,10 @@ void Camera::UpdateViewMatrix()
 	XMStoreFloat4x4(&mView, XMMatrixLookAtLH(pos, target, up));
 }
 
-//! Reads keyboard input and moves the camera correspondingly.
-void Camera::Move(Input* pInput)
+void Camera::Move(XMFLOAT3 speed)
 {
-	// Get the look direction
-	XMVECTOR direction;
-	direction = XMLoadFloat3(&GetDirection());
-
-	// Fast scroll zooming
-	mPosition += direction * pInput->MouseDz() / 8;
-	mTarget += direction * pInput->MouseDz() / 8;
-
-	// Check for keypresses
-	if(pInput->KeyDown('W')) {
-		XMStoreFloat3(&mPosition, XMLoadFloat3(&mPosition) + direction*mVelocity);
-		XMStoreFloat3(&mTarget, XMLoadFloat3(&mTarget) + direction*mVelocity);
-	}
-	else if(pInput->KeyDown('S')) {
-		XMStoreFloat3(&mPosition, XMLoadFloat3(&mPosition) - direction*mVelocity);
-		XMStoreFloat3(&mTarget, XMLoadFloat3(&mTarget) - direction*mVelocity);
-	}
-
-	if(pInput->KeyDown('A')) {
-		XMVECTOR right = XMLoadFloat3(&GetRight());
-		XMStoreFloat3(&mPosition, XMLoadFloat3(&mPosition) - right*mVelocity);
-		XMStoreFloat3(&mTarget, XMLoadFloat3(&mTarget) - right*mVelocity);
-	}
-	else if(pInput->KeyDown('D')) {
-		XMVECTOR right = XMLoadFloat3(&GetRight());
-		XMStoreFloat3(&mPosition, XMLoadFloat3(&mPosition) + right*mVelocity);
-		XMStoreFloat3(&mTarget, XMLoadFloat3(&mTarget) + right*mVelocity);
-	}
+	mPosition = mPosition + speed;
+	mTarget = mTarget + speed;
 }
 
 //! Reads mouse movement and rotates the camera correspondingly.
@@ -176,9 +136,9 @@ void Camera::SetLookSensitivity(float sensitivity)
 }
 
 //! Sets the movement speed of the camera.
-void Camera::SetMoveSpeed(float speed)
+void Camera::SetMovementSpeed(float speed)
 {
-	mVelocity = speed;
+	mMovementSpeed = speed;
 }
 
 //! Returns the view matrix.
@@ -191,6 +151,11 @@ XMFLOAT4X4 Camera::GetViewMatrix()
 XMFLOAT4X4 Camera::GetProjectionMatrix()
 {
 	return mProj;
+}
+
+float Camera::GetMovementSpeed()
+{
+	return mMovementSpeed;
 }
 
 XMFLOAT3 Camera::GetPosition()

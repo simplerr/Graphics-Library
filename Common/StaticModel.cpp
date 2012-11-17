@@ -12,7 +12,7 @@ namespace GLib
 //! Constructor.
 StaticModel::StaticModel()
 {
-
+	SetFilename("#NOVALUE");
 }
 	
 //! Cleanup.
@@ -68,6 +68,16 @@ void StaticModel::AddMesh(StaticMesh* mesh)
 MeshList* StaticModel::GetMeshList()
 {
 	return &mMeshList;
+}
+
+string StaticModel::GetFilename()
+{
+	return mFilename;
+}
+
+void StaticModel::SetFilename(string filename)
+{
+	mFilename = filename;
 }
 
 bool StaticModel::RayIntersect(XMVECTOR origin, XMVECTOR direction, float& pDist)

@@ -24,8 +24,12 @@ namespace GLib
 		bool RayIntersect(XMVECTOR origin, XMVECTOR direction, float& pDist);
 
 		void SetMaterial(Material material);
+		void SetFilename(string filename);
+
 		MeshList* GetMeshList();
+		string GetFilename();
 	private:
 		MeshList mMeshList;
+		string mFilename;
 	};
 }

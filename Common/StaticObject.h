@@ -12,17 +12,18 @@ namespace GLib {
 	class StaticObject : public Object3D
 	{
 	public:
-		StaticObject(GLib::ModelImporter* importer, string filename);
+		StaticObject(ModelImporter* importer, string filename);
 		~StaticObject();
 
 		virtual void Init();
 		virtual void Update(float dt);
-		virtual void Draw(GLib::Graphics* pGraphics);
+		virtual void Draw(Graphics* pGraphics);
 
 		bool RayIntersect(XMVECTOR origin, XMVECTOR direction, float& pDist);
 		AxisAlignedBox GetBoundingBox();
-		GLib::StaticModel* GetModel();
+		StaticModel* GetModel();
+		string GetFilename();
 	private:
-		GLib::StaticModel* mModel;
+		StaticModel* mModel;
 	};
 }

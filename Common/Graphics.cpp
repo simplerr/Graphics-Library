@@ -92,9 +92,6 @@ bool Graphics::Init(int clientWidth, int clientHeight, HWND hwnd, bool fullscree
 	Effects::InitAll(GetDevice());
 	RenderStates::InitAll(GetDevice());
 
-	// Create the camera.
-	mCamera = new Camera();
-
 	// Create the blur filter.
 	mBlurFilter = new BlurFilter();
 
@@ -144,6 +141,7 @@ Texture2D* Graphics::LoadTexture(string filename, float scale)
 	}
 }
 
+//! Updates the camera and builds the shadow map.
 void Graphics::Update(Input* pInput, float dt)
 {
 	mCamera->Update(pInput, dt);
@@ -425,6 +423,12 @@ ID3D11Device* Graphics::GetDevice()
 void Graphics::SetLightList(LightList* lightList)
 {
 	mLightList = lightList;
+}
+
+//! Sets the camera to use.
+void Graphics::SetCamera(Camera* pCamera)
+{
+	mCamera = pCamera;
 }
 
 //! Sets the fog color.

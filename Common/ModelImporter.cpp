@@ -152,6 +152,8 @@ SkinnedModel* ModelImporter::LoadSkinnedModel(string filename)
 			// [NOTE] The material is set to white.
 			mesh->SetMaterial(Material(Colors::White));
 
+			model->SetFilename(filename);
+
 			// Add the mesh to the model.
 			model->AddMesh(mesh);
 		}
@@ -263,6 +265,8 @@ StaticModel* ModelImporter::LoadStaticModel(string filename)
 
 			// [NOTE] The material is set to white.
 			mesh->SetMaterial(Material(Colors::White)); //Material(ambient, diffuse, specular)
+
+			model->SetFilename(filename);
 
 			// Add the mesh to the model.
 			model->AddMesh(mesh);

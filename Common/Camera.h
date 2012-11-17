@@ -18,10 +18,10 @@ namespace GLib
 	{
 	public:
 		Camera();
-		~Camera();
+		virtual ~Camera();
 
-		void Update(Input* pInput, float dt);
-		void Move(Input* pInput);
+		virtual void Update(Input* pInput, float dt) = 0;
+		void Move(XMFLOAT3 speed);
 		void Rotate(Input* pInput);
 		void DrawDebug();
 		void UpdateViewMatrix();
@@ -29,7 +29,7 @@ namespace GLib
 		void SetPosition(XMFLOAT3 position);
 		void SetTarget(XMFLOAT3 target);
 		void SetLookSensitivity(float sensitivity);
-		void SetMoveSpeed(float speed);
+		void SetMovementSpeed(float speed);
 		void SetDirection(XMFLOAT3 direction);
 		void SetYaw(float yaw);
 		void SetPitch(float pitch);
@@ -40,6 +40,7 @@ namespace GLib
 		XMFLOAT3	GetTarget();
 		XMFLOAT3	GetDirection();
 		XMFLOAT3	GetRight();
+		float		GetMovementSpeed();
 		Frustum		GetFrustum();
 		Ray			GetWorldPickingRay();
 	private:
@@ -52,7 +53,7 @@ namespace GLib
 		XMFLOAT3	mRight;
 		Frustum		mFrustum;
 
-		float		mVelocity;
+		float		mMovementSpeed;
 		float		mSensitivity;
 		float		mHeightOffset;
 		float		mYaw, mPitch;

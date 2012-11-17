@@ -98,7 +98,6 @@ void WorldLoader::LoadWorld(World* pWorld, Terrain* pTerrain, string filename)
 
 		// Common for all objects.
 		object->SetName(name);
-		object->SetFilename(fileName);
 		object->SetPosition(pos);
 		object->SetRotation(rot);
 		object->SetScale(sca);

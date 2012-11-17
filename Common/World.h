@@ -27,20 +27,20 @@ namespace GLib {
 		World();
 		~World();
 
-		virtual void Init(GLib::Graphics* pGraphics);
+		virtual void Init(Graphics* pGraphics);
 		virtual void Update(float dt);
-		virtual void Draw(GLib::Graphics* pGraphics);
+		virtual void Draw(Graphics* pGraphics);
 
 		void AddObject(Object3D* object);
 		void AddLight(Light* pLight);
 		void RemoveObject(Object3D* pObject);
 		void RemoveLight(Light* pLight);
 
-		GLib::LightList*	GetLights();
+		LightList*	GetLights();
 		ObjectList*			GetObjects();
-		GLib::Terrain*		GetTerrain();
+		Terrain*		GetTerrain();
 		int			GetNumLights();
-		XMFLOAT3	GetTerrainIntersectPoint(GLib::Ray ray);
+		XMFLOAT3	GetTerrainIntersectPoint(Ray ray);
 		Object3D*	GetSelectedObject(Ray ray);
 
 		// Callback hookup.

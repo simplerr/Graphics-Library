@@ -16,7 +16,7 @@ namespace GLib {
 		WorldLoader();
 		~WorldLoader();
 
-		void LoadWorld(World* pWorld, GLib::Terrain* pTerrain, string filename);
-		void SaveWorld(World* pWorld, GLib::Terrain* pTerrain, string filename);
+		void LoadWorld(World* pWorld, Terrain* pTerrain, string filename);
+		void SaveWorld(World* pWorld, Terrain* pTerrain, string filename);
 	};
 }

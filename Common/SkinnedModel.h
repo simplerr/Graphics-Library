@@ -31,17 +31,20 @@ namespace GLib
 		void SetAnimator(SceneAnimator* animator);
 
 		void SetAnimation(string animation);
+		void SetFilename(string filename);
 		void SetAnimation(int index);
 		void SetElapsedTime(float elapsedTime);
-
+		
 		SkinnedMeshList* GetMeshList();
 		vector<XMFLOAT4X4> GetFinalTransforms();
 		XNA::AxisAlignedBox GetBoundingBox();
+		string GetFilename();
 		void CalculateAABB();
 	private:
 		SkinnedMeshList	mMeshList;
 		SceneAnimator*	mAnimator;
 		float			mElapsedTime;
+		string			mFilename;
 		XNA::AxisAlignedBox mAABB;
 	};
 }

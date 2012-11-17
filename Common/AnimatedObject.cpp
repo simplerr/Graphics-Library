@@ -107,4 +107,9 @@ GLib::SkinnedModel* AnimatedObject::GetModel()
 	return mSkinnedModel;
 }
 
+string AnimatedObject::GetFilename()
+{
+	return mSkinnedModel->GetFilename();
+}
+
 }	// End of Graphics Library namespace.

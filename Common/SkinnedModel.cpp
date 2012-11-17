@@ -14,6 +14,7 @@ namespace GLib
 //! Constructor.
 SkinnedModel::SkinnedModel()
 {
+	SetFilename("#NOVALUE");
 	mAnimator = nullptr;
 	mElapsedTime = 0.0f;
 }
@@ -132,6 +133,12 @@ void SkinnedModel::SetAnimator(SceneAnimator* animator)
 	mAnimator = animator;
 }
 
+//! Sets the filename.
+void SkinnedModel::SetFilename(string filename)
+{
+	mFilename = filename;
+}
+
 //! Sets which animation to use by name.
 void SkinnedModel::SetAnimation(string animation)
 {
@@ -187,6 +194,11 @@ void SkinnedModel::CalculateAABB()
 XNA::AxisAlignedBox SkinnedModel::GetBoundingBox()
 {
 	return mAABB;
+}
+
+string SkinnedModel::GetFilename()
+{
+	return mFilename;
 }
 
 }	// End of Graphics Library namespace.

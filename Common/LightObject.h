@@ -18,9 +18,9 @@ namespace GLib {
 
 		virtual void Init();
 		virtual void Update(float dt);
-		virtual void Draw(GLib::Graphics* pGraphics);
+		virtual void Draw(Graphics* pGraphics);
 
-		void SetMaterials(GLib::Material material);
+		void SetMaterials(Material material);
 		void SetPosition(XMFLOAT3 position);
 		void SetRotation(XMFLOAT3 rotation);
 
@@ -28,7 +28,7 @@ namespace GLib {
 		void SetRange(float range);
 		void SetSpot(float spot);
 		void SetAtt(float a0, float a1, float a2);
-		void SetLightType(GLib::LightType type);
+		void SetLightType(LightType type);
 		void SetIntensity(float ambient, float diffuse, float specular);
 
 		XMFLOAT3 GetAtt();
@@ -40,7 +40,7 @@ namespace GLib {
 		bool RayIntersect(XMVECTOR origin, XMVECTOR direction, float& pDist);
 		AxisAlignedBox GetBoundingBox();
 	private:
-		GLib::BillboardVertex* mBillboard;
-		GLib::Light* mLight;
+		BillboardVertex* mBillboard;
+		Light* mLight;
 	};
 }

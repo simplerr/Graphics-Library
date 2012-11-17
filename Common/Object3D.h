@@ -41,6 +41,7 @@ namespace GLib {
 		virtual void Update(float dt) = 0;
 		virtual void Draw(Graphics* pGraphics) = 0;
 		virtual AxisAlignedBox GetBoundingBox() = 0;
+		virtual string GetFilename() { return "#NOVALUE"; }
 		virtual bool RayIntersect(XMVECTOR origin, XMVECTOR direction, float& pDist) = 0;
 		void Kill();
 
@@ -51,7 +52,6 @@ namespace GLib {
 		void SetWorld(World* pWorld);
 		void SetNormalMap(string filename);
 		void SetNormalMap(Texture2D* normalMap);
-		void SetFilename(string filename);
 		void SetScale(XMFLOAT3 scale);
 		void SetDefaultOrientation();
 		void SetType(ObjectType type);
@@ -69,7 +69,6 @@ namespace GLib {
 		Material	GetMaterial();
 		ObjectType	GetType();
 		string		GetName();
-		string		GetFilename();
 		bool		GetAlive();
 		int			GetId();
 		bool		IsBoundingBoxVisible();
@@ -82,7 +81,6 @@ namespace GLib {
 		ObjectType	mType;
 		Material	mMaterial;
 		string		mName;
-		string		mFilename;
 		bool		mDrawBoundingBox;
 		bool		mAlive;
 		int			mId;
