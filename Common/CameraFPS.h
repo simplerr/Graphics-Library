@@ -3,6 +3,7 @@
 
 namespace GLib
 {
+	//! A FPS camera.
 	class CameraFPS : public Camera
 	{
 	public:

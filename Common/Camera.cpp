@@ -15,7 +15,7 @@ Camera::Camera()
 	SetMovementSpeed(0.6f);
 
 	// Default position and target
-	mPosition	= XMFLOAT3(32, 100, 82);
+	mPosition	= XMFLOAT3(0, 100, 60);
 	mTarget		= XMFLOAT3(0.0f, 0.0f, 0.0f);
 	mUp			= XMFLOAT3(0.0f, 1.0f, 0.0f);		// Weird up vector
 
