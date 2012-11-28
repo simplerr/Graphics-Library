@@ -24,7 +24,10 @@ namespace GLib {
 		ANIMATED_OBJECT,
 		STATIC_OBJECT,
 		LIGHT_OBJECT,
-		TERRAIN
+		TERRAIN,
+		PROJECTILE,
+		PLAYER,
+		ANY
 	};
 
 	//!

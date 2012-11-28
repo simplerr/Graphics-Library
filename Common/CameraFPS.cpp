@@ -5,17 +5,20 @@
 namespace GLib
 {
 
+	//! Constructor.
 	CameraFPS::CameraFPS() 
 		: Camera()
 	{
 		SetRotateButton(-1);
 	}
 
+	//! Cleanup.
 	CameraFPS::~CameraFPS()
 	{
 
 	}
 
+	//! Updates the camera in a FPS fashion.
 	void CameraFPS::Update(Input* pInput, float dt)
 	{
 		// Get the look direction
@@ -42,8 +45,10 @@ namespace GLib
 		UpdateViewMatrix();
 	}
 
+	//! Sets the rotate button, default -1 (no rotate button).
 	void CameraFPS::SetRotateButton(int button)
 	{
 		mRotateButton = button;
 	}
-}
+
+}	// End of Graphics Library namespace.

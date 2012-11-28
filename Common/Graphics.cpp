@@ -68,6 +68,10 @@ Graphics::~Graphics()
 
 	Effects::DestroyAll();
 	RenderStates::DestroyAll();
+
+	// Cleanup fonts.
+	mFontFactory->Release();
+	mFontWrapper->Release();
 }
 
 //! Initializes Direct3D by calling D3DCore::Init(...).
@@ -95,8 +99,6 @@ bool Graphics::Init(int clientWidth, int clientHeight, HWND hwnd, bool fullscree
 	// Create the blur filter.
 	mBlurFilter = new BlurFilter();
 
-	mMaterial = Material(Colors::LightSteelBlue);
-
 	// Create the primitive factory and the model importer.
 	mPrimitiveFactory = new PrimitiveFactory();	
 	mModelImporter = new ModelImporter(mPrimitiveFactory);
@@ -112,6 +114,10 @@ bool Graphics::Init(int clientWidth, int clientHeight, HWND hwnd, bool fullscree
 	GetContext()->OMSetBlendState(RenderStates::TransparentBS, blendFactor, 0xffffffff);
 
 	Effects::BasicFX->SetUseLighting(true);
+
+	// Create the font wrapper.
+	FW1CreateFactory(FW1_VERSION, &mFontFactory);
+	mFontFactory->CreateFontWrapper(GetD3DDevice(), L"Courier New", &mFontWrapper);
 }
 
 //! Returns the created texture. The Graphics class handles cleanup.
@@ -294,9 +300,11 @@ void Graphics::ApplyBlur(Texture2D* texture, int blurCount)
 	mBlurFilter->ApplyBlur(GetDevice(), GetContext(), texture->shaderResourceView, blurCount);
 }
 
-void Graphics::DrawText(string text, int x, int y, D3DXCOLOR textColor, int size)
+//! Draws text to the screen.
+void Graphics::DrawText(string text, int x, int y, int size,  UINT32 textColor)
 {
-
+	std::wstring wsTmp(text.begin(), text.end());
+	mFontWrapper->DrawString(GetD3DContext(), wsTmp.c_str(), size, x, y, textColor, 0);
 }
 
 //! Adds a billboard to the scene.

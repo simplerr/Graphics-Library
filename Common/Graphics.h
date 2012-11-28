@@ -9,6 +9,7 @@
 #include "Light.h"
 #include "d3dUtil.h"
 #include "xnacollision.h"
+#include "FW1FontWrapper.h"
 
 using namespace std;
 using namespace XNA;
@@ -68,7 +69,7 @@ namespace GLib
 		void DrawBillboards();
 		void DrawScreenQuad(Texture2D* texture, float x, float y, float width, float height);
 		void DrawBoundingBox(AxisAlignedBox* aabb, CXMMATRIX worldMatrix, Material material, float transparency = 0.4f);
-		void DrawText(string text, int x, int y, D3DXCOLOR textColor, int size);
+		void DrawText(string text, int x, int y, int size,  UINT32 color);
 		void ActiveShadowMap();
 		void DeactiveShadowMap();
 		void ApplyBlur(Texture2D* texture, int blurCount);
@@ -114,7 +115,8 @@ namespace GLib
 		XMFLOAT4		mFogColor;
 		bool			mRenderingShadows;
 
-		// TMP
-		Material mMaterial;
-	};	// Class
+		// Font.
+		IFW1Factory*	 mFontFactory;
+		IFW1FontWrapper* mFontWrapper;
+ 	};	// Class
 }

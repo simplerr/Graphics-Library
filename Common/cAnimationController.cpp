@@ -301,7 +301,7 @@ void SceneAnimator::Init(const aiScene* pScene){// this will build the skeleton 
 			}
 		}
 	}
-	OutputDebugString("Finished loading animations with ");//<<Bones.size()<<" bones");
+	//OutputDebugString("Finished loading animations with ");//<<Bones.size()<<" bones");
 }
 void SceneAnimator::Save(std::ofstream& file){
 	// first recursivly save the skeleton

@@ -17,6 +17,7 @@ namespace GLib {
 	class Object3D;
 	class WorldLoader;
 	struct BillboardVertex;
+	enum ObjectType;
 
 	typedef std::vector<Object3D*> ObjectList;
 
@@ -30,30 +31,46 @@ namespace GLib {
 		virtual void Init(Graphics* pGraphics);
 		virtual void Update(float dt);
 		virtual void Draw(Graphics* pGraphics);
+		void HandleCollisions();
 
 		void AddObject(Object3D* object);
 		void AddLight(Light* pLight);
 		void RemoveObject(Object3D* pObject);
+		void RemoveObject(int id);
 		void RemoveLight(Light* pLight);
 
 		LightList*	GetLights();
-		ObjectList*			GetObjects();
-		Terrain*		GetTerrain();
+		ObjectList*	GetObjects();
+		Terrain*	GetTerrain();
 		int			GetNumLights();
+		int			GetNumObjects(ObjectType type);
 		XMFLOAT3	GetTerrainIntersectPoint(Ray ray);
-		Object3D*	GetSelectedObject(Ray ray);
+		Object3D*	GetSelectedObject(Ray ray, ObjectType type);
+		Object3D*	GetObjectById(int id);
 
-		// Callback hookup.
+		// Callback hookups.
 		template <class T>
-		void AddItemSelectedListender(void(T::*_callback)(void*, int), T* _object)	{
+		void AddItemSelectedListener(void(T::*_callback)(void*, int), T* _object)	{
 			OnItemSelected = boost::bind(_callback, _object, _1, _2);
 		}
+
+		template <class T>
+		void AddObjectRemovedListener(void(T::*_callback)(Object3D*), T* _object)	{
+			OnObjectRemoved = boost::bind(_callback, _object, _1);
+		}
+
+		template <class T>
+		void AddObjectCollisionListener(void(T::*_callback)(Object3D*, Object3D*), T* _object)	{
+			OnObjectCollision = boost::bind(_callback, _object, _1, _2);
+		}
 	private:
-		// Callback.
-		boost::function<void(void*, int)>	OnItemSelected;
+		// Callbacks.
+		boost::function<void(void*, int)>			OnItemSelected;
+		boost::function<void(Object3D*)>			OnObjectRemoved;
+		boost::function<void(Object3D*, Object3D*)>	OnObjectCollision;
 	private:
 		ObjectList		mObjectList;
-		LightList	mLightList;
+		LightList		mLightList;
 		WorldLoader*	mWorldLoader;
 		Sky*		mSkyBox;
 		Terrain*	mTerrain;
