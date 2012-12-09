@@ -28,7 +28,7 @@ Camera*	GetCamera()
 	return GlobalApp->GetGraphics()->GetCamera();
 }
 
-HINSTANCE GetWindowInstance()
+HINSTANCE GetAppInstance()
 {
 	return GlobalApp->GetInstance();
 }

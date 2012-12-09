@@ -154,6 +154,10 @@ namespace GLib
 		object->SetWorld(this);
 		object->Init();
 		mObjectList.push_back(object);
+
+		// Callback.
+		if(!OnObjectAdded.empty())
+			OnObjectAdded(object);
 	}
 
 	//! Adds a light to the light list.
@@ -241,6 +245,18 @@ namespace GLib
 		return &mObjectList;
 	}
 
+	ObjectList World::GetObjectsByType(ObjectType type)
+	{
+		ObjectList list;
+		for(int i = 0; i < mObjectList.size(); i++)
+		{
+			if(mObjectList[i]->GetType() == type)
+				list.push_back(mObjectList[i]);
+		}
+
+		return list;
+	}
+
 	//! Returns a pointer to the terrain.
 	Terrain* World::GetTerrain()
 	{
@@ -264,6 +280,17 @@ namespace GLib
 		for(int i = 0; i < mObjectList.size(); i++)
 		{
 			if(mObjectList[i]->GetId() == id)
+				return mObjectList[i];
+		}
+
+		return nullptr;
+	}
+
+	Object3D* World::GetObjectByName(string name)
+	{
+		for(int i = 0; i < mObjectList.size(); i++)
+		{
+			if(mObjectList[i]->GetName() == name)
 				return mObjectList[i];
 		}
 

@@ -14,7 +14,7 @@ Input::Input()
 	ZeroMemory(mLastKeyState, sizeof(mLastKeyState));
 	ZeroMemory(mKeyState, sizeof(mKeyState));
 
-	HR(DirectInput8Create(GetWindowInstance(), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&mDInput, 0));
+	HR(DirectInput8Create(GetAppInstance(), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&mDInput, 0));
 
 	// Get the cursor starting position.
 	POINT mousePosition;

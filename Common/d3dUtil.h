@@ -42,7 +42,7 @@ namespace GLib
 	ID3D11DeviceContext*	GetD3DContext();
 	Graphics*				GetGraphics();
 	Camera*					GetCamera();
-	HINSTANCE				GetWindowInstance();
+	HINSTANCE				GetAppInstance();
 	HWND					GetWindowHandler();
 	int						GetClientWidth();
 	int						GetClientHeight();

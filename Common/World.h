@@ -41,17 +41,19 @@ namespace GLib {
 
 		LightList*	GetLights();
 		ObjectList*	GetObjects();
+		ObjectList	GetObjectsByType(ObjectType type);
 		Terrain*	GetTerrain();
 		int			GetNumLights();
 		int			GetNumObjects(ObjectType type);
 		XMFLOAT3	GetTerrainIntersectPoint(Ray ray);
 		Object3D*	GetSelectedObject(Ray ray, ObjectType type);
 		Object3D*	GetObjectById(int id);
+		Object3D*	GetObjectByName(string name);
 
 		// Callback hookups.
 		template <class T>
-		void AddItemSelectedListener(void(T::*_callback)(void*, int), T* _object)	{
-			OnItemSelected = boost::bind(_callback, _object, _1, _2);
+		void AddObjectAddedListener(void(T::*_callback)(Object3D*), T* _object)	{
+			OnObjectAdded = boost::bind(_callback, _object, _1);
 		}
 
 		template <class T>
@@ -60,13 +62,19 @@ namespace GLib {
 		}
 
 		template <class T>
+		void AddItemSelectedListener(void(T::*_callback)(void*, int), T* _object)	{
+			OnItemSelected = boost::bind(_callback, _object, _1, _2);
+		}
+
+		template <class T>
 		void AddObjectCollisionListener(void(T::*_callback)(Object3D*, Object3D*), T* _object)	{
 			OnObjectCollision = boost::bind(_callback, _object, _1, _2);
 		}
 	private:
 		// Callbacks.
-		boost::function<void(void*, int)>			OnItemSelected;
+		boost::function<void(Object3D*)>			OnObjectAdded;
 		boost::function<void(Object3D*)>			OnObjectRemoved;
+		boost::function<void(void*, int)>			OnItemSelected;
 		boost::function<void(Object3D*, Object3D*)>	OnObjectCollision;
 	private:
 		ObjectList		mObjectList;

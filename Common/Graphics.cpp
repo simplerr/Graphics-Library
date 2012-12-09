@@ -117,7 +117,7 @@ bool Graphics::Init(int clientWidth, int clientHeight, HWND hwnd, bool fullscree
 
 	// Create the font wrapper.
 	FW1CreateFactory(FW1_VERSION, &mFontFactory);
-	mFontFactory->CreateFontWrapper(GetD3DDevice(), L"Courier New", &mFontWrapper);
+	mFontFactory->CreateFontWrapper(GetD3DDevice(), L"Arial", &mFontWrapper);
 }
 
 //! Returns the created texture. The Graphics class handles cleanup.

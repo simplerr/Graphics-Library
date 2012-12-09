@@ -176,6 +176,10 @@ float4 PS(VertexOut pin) : SV_Target
 	// Common to take alpha from diffuse material.
 	litColor.a = gMaterial.diffuse.a * texColor.a;
 
+	// [NOTE][HACK] REMOVE!!
+	if(sqrt(pin.PosW.x * pin.PosW.x + pin.PosW.z * pin.PosW.z) > 60.0f)
+		litColor.rgb *= 0.4f;
+
     return litColor;
 }
 

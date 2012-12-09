@@ -558,7 +558,6 @@ void ScreenEffect::Apply(ID3D11DeviceContext* pContext, EffectTech tech)
 //! Sets the texture to use in the shader.
 void ScreenEffect::SetTexture(Texture2D* texture)
 {
-	bool f = texture == nullptr ? false : true;
 	if(texture != nullptr) {
 		mfxTexture->SetResource(texture->shaderResourceView);
 	}
