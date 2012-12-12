@@ -48,6 +48,17 @@ int GetClientHeight()
 	return GlobalApp->GetClientHeight();
 }
 
+float GetRandomFloat(float a, float b)
+{
+	if( a >= b ) // bad input
+		return a;
+
+	// Get random float in [0, 1] interval.
+	float f = (rand()%10001) * 0.0001f;
+
+	return (f*(b-a))+a;
+}
+
 //! Loads and creates a SRV to a 2d texture array.
 //! Taken from Frank Lunas book.
 ID3D11ShaderResourceView* d3dHelper::CreateTexture2DArraySRV(ID3D11Device* device, ID3D11DeviceContext* context, vector<string>& filenames)
@@ -296,6 +307,12 @@ XMFLOAT3 operator*(const XMFLOAT3 a, const float b)
 	return XMFLOAT3(a.x * b, a.y * b, a.z * b);
 }
 
+XMFLOAT3 operator*(const float b, const XMFLOAT3 a)
+{
+	return XMFLOAT3(a.x * b, a.y * b, a.z * b);
+}
+
+
 XMFLOAT2 operator+(const XMFLOAT2 a, const XMFLOAT2 b)
 {
 	XMVECTOR first = XMLoadFloat2(&a);
@@ -314,4 +331,9 @@ XMFLOAT2 operator-(const XMFLOAT2 a, const XMFLOAT2 b)
 	XMFLOAT2 result;
 	XMStoreFloat2(&result, first - second);
 	return result;
+}
+
+XMFLOAT3 operator+(const XMFLOAT3 a, const float b)
+{
+	return XMFLOAT3(a.x + b, a.y + b, a.z + b);
 }

@@ -55,8 +55,8 @@ void BillboardManager::RemoveBillbaord(BillboardVertex* billboard)
 	}
 
 	// Only build if not 0 billboards.
-	if(mBillboardList.size() != 0)
-		BuildVertexBuffer(GetD3DDevice());
+	//if(mBillboardList.size() != 0)
+	//BuildVertexBuffer(GetD3DDevice());
 }
 
 //! Builds the vertex buffer.

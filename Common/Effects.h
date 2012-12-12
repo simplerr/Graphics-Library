@@ -21,6 +21,7 @@ namespace GLib
 	class ShadowMapEffect;
 	class TerrainEffect;
 	class ScreenEffect;
+	class ParticleEffect;
 	struct Material;
 	struct Texture2D;
 
@@ -47,6 +48,7 @@ namespace GLib
 		static ShadowMapEffect* BuildShadowMapFX;
 		static TerrainEffect*	TerrainFX;
 		static ScreenEffect*	ScreenFX;
+		static ParticleEffect*	ParticleFX;
 	};
 
 	#pragma endregion
@@ -311,7 +313,7 @@ namespace GLib
 	#pragma endregion
 
 	//! The basic effect class, used as the standard render effect.
-#pragma region BasicEffect class
+	#pragma region BasicEffect class
 	class ScreenEffect : public Effect
 	{
 	public:
@@ -336,5 +338,32 @@ namespace GLib
 		ID3DX11EffectVectorVariable* mfxEyePosW;
 		ID3DX11EffectShaderResourceVariable* mfxTexture;
 	};
+	#pragma endregion
 
+	class ParticleEffect : public Effect
+	{
+	public:
+		ParticleEffect(ID3D11Device* pDevice);
+		~ParticleEffect();
+
+		void Init();
+		void CreateInputLayout(ID3D11Device* pDevice);
+		void Apply(ID3D11DeviceContext* pContext, EffectTech tech = STANDARD_TECH);
+
+		// Setters to effect variables.
+		void SetWorldViewProj(CXMMATRIX matrix)			{ mfxWVP->SetMatrix(reinterpret_cast<const float*>(&matrix)); }
+		void SetEyePosition(XMFLOAT3 eyePos)			{ mfxEyePosW->SetRawValue(&eyePos, 0, sizeof(XMFLOAT3)); }
+		void SetAcceleration(XMFLOAT3 accel)			{ mfxAccel->SetRawValue(&accel, 0, sizeof(XMFLOAT3)); }
+		void SetTime(float time)						{ mfxTime->SetFloat(time); }
+		void SetViewportHeight(float height)			{ mfxViewportHeight->SetFloat(height); }
+		void SetTexture(Texture2D* texture);			
+	private:
+		// Handles to effect variables.
+		ID3DX11EffectMatrixVariable* mfxWVP;
+		ID3DX11EffectVectorVariable* mfxEyePosW;
+		ID3DX11EffectVectorVariable* mfxAccel;
+		ID3DX11EffectScalarVariable* mfxTime;
+		ID3DX11EffectScalarVariable* mfxViewportHeight;
+		ID3DX11EffectShaderResourceVariable* mfxTexture;
+	};
 } // Namespace.

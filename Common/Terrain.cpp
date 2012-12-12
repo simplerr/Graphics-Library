@@ -346,6 +346,7 @@ namespace GLib
 
 	//! Builds the blendmap SRV.
 	void Terrain::BuildBlendMapSRV(ID3D11Device* device)
+
 	{
 		// Fill out the texture description.
 		D3D11_TEXTURE2D_DESC texDesc;

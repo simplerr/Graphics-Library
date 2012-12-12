@@ -18,6 +18,7 @@ SkyEffect*			Effects::SkyFX			= nullptr;
 ShadowMapEffect*	Effects::BuildShadowMapFX = nullptr;
 TerrainEffect*		Effects::TerrainFX		= nullptr;
 ScreenEffect*		Effects::ScreenFX		= nullptr;
+ParticleEffect*		Effects::ParticleFX		= nullptr;
 
 #pragma region Code for the static effect handler Effects.
 
@@ -508,6 +509,7 @@ void TerrainEffect::SetLights(LightList* lights)
 
 #pragma endregion
 
+#pragma region ScreenEffect
 ScreenEffect::ScreenEffect(ID3D11Device* pDevice)
 	: Effect(pDevice, "ScreenQuad.fx", "BasicTech")
 {
@@ -557,6 +559,65 @@ void ScreenEffect::Apply(ID3D11DeviceContext* pContext, EffectTech tech)
 
 //! Sets the texture to use in the shader.
 void ScreenEffect::SetTexture(Texture2D* texture)
+{
+	if(texture != nullptr) {
+		mfxTexture->SetResource(texture->shaderResourceView);
+	}
+}
+
+#pragma endregion
+
+ParticleEffect::ParticleEffect(ID3D11Device* pDevice)
+	: Effect(pDevice, "ParticleSystem.fx", "BasicTech")
+{
+
+}
+
+ParticleEffect::~ParticleEffect()
+{
+
+}
+//! Inits all effect variable handles.
+void ParticleEffect::Init()
+{
+	// Connect handlers to the effect variables.
+	mfxWVP				= mEffect->GetVariableByName("gWorldViewProj")->AsMatrix();
+	mfxEyePosW			= mEffect->GetVariableByName("gEyePosW")->AsVector();
+	mfxAccel			= mEffect->GetVariableByName("gAccel")->AsVector();
+	mfxTexture			= mEffect->GetVariableByName("gTexture")->AsShaderResource();
+	mfxTime				= mEffect->GetVariableByName("gTime")->AsScalar();
+	mfxViewportHeight	= mEffect->GetVariableByName("gViewportHeight")->AsScalar();
+}
+
+//! Creates the input layout that will get set before the Input-Assembler state. The EffectManager calls this function.
+void ParticleEffect::CreateInputLayout(ID3D11Device* pDevice)
+{
+	// Create the vertex input layout.
+	D3D11_INPUT_ELEMENT_DESC vertexDesc[7] =
+	{
+		{"INIT_POSITION",   0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT ,  D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"INIT_VELOCITY",   0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT , D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"INIT_SIZE",		0, DXGI_FORMAT_R32_FLOAT,    0, D3D11_APPEND_ALIGNED_ELEMENT , D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"INIT_TIME",		0, DXGI_FORMAT_R32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT , D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"LIFE_TIME",		0, DXGI_FORMAT_R32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT , D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"MASS",			0, DXGI_FORMAT_R32_FLOAT,   0, D3D11_APPEND_ALIGNED_ELEMENT , D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"INIT_COLOR",		0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT ,  D3D11_INPUT_PER_VERTEX_DATA, 0}
+	};
+
+	// Create the input layout.
+	D3DX11_PASS_DESC passDesc;
+	mTech->GetPassByIndex(0)->GetDesc(&passDesc);
+	HR(pDevice->CreateInputLayout(vertexDesc, 7, passDesc.pIAInputSignature, 
+		passDesc.IAInputSignatureSize, &mInputLayout));
+}
+
+void ParticleEffect::Apply(ID3D11DeviceContext* pContext, EffectTech tech)
+{
+	Effect::Apply(pContext, tech);
+}
+
+//! Sets the texture to use in the shader.
+void ParticleEffect::SetTexture(Texture2D* texture)
 {
 	if(texture != nullptr) {
 		mfxTexture->SetResource(texture->shaderResourceView);

@@ -6,9 +6,9 @@ namespace GLib {
 //! Constructor.
 StatusText::StatusText()
 {
-	mColor = 0xff000000;
 	SetSize(16);
 	SetText("nothing", mColor, 0);
+	mColor = 0xff000000;
 	mPosition = XMFLOAT3(0, 0, 0);
 }
 
@@ -44,7 +44,7 @@ void StatusText::Update(float dt)
 }
 
 //! Set the text and how long to draw it.
-void StatusText::SetText(string text, UINT32 color, float time)
+void StatusText::SetText(string text, float time, UINT32 color)
 {
 	mText = text;
 	mTime = time;

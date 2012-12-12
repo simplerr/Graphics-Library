@@ -29,6 +29,9 @@ XMFLOAT2 operator-(const XMFLOAT2 a, const XMFLOAT2 b);
 
 XMFLOAT4 operator*(const XMFLOAT4 a, const float b);
 XMFLOAT3 operator*(const XMFLOAT3 a, const float b);
+XMFLOAT3 operator*(const float b, const XMFLOAT3 a);
+
+XMFLOAT3 operator+(const XMFLOAT3 a, const float b);
 
 //! Graphics Library namespace.
 namespace GLib
@@ -46,6 +49,8 @@ namespace GLib
 	HWND					GetWindowHandler();
 	int						GetClientWidth();
 	int						GetClientHeight();
+
+	float GetRandomFloat(float a, float b);
 
 	struct Ray
 	{

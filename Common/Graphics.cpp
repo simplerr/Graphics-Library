@@ -328,6 +328,12 @@ BillboardVertex* Graphics::AddBillboard(XMFLOAT3 position, XMFLOAT2 size, string
 	return nullptr;
 }
 
+void Graphics::RemoveBillboard(string texture, BillboardVertex* pBillboard)
+{
+	if(mBillboardManagerMap.find(texture) != mBillboardManagerMap.end()) 
+		mBillboardManagerMap[texture]->RemoveBillbaord(pBillboard);
+}
+
 //! Clears the backbuffer with the color "color".
 void Graphics::ClearScene()
 {

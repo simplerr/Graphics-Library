@@ -76,6 +76,7 @@ namespace GLib
 
 		Texture2D* LoadTexture(string filename, float scale = 1.0f);
 		BillboardVertex* AddBillboard(XMFLOAT3 position, XMFLOAT2 size, string texture);
+		void RemoveBillboard(string texture, BillboardVertex* pBillboard);
 
 		void ClearScene();
 		void Present();

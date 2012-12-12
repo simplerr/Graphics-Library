@@ -16,7 +16,7 @@ namespace GLib {
 
 		void Draw(Graphics* pGraphics);
 		void Update(float dt);
-		void SetText(string text, UINT32 color = 0xff000000, float time = 2.0f);
+		void SetText(string text, float time = 2.0f, UINT32 color = 0xff000000);
 		void SetSize(float size);
 		void Activate(float time);
 	private:

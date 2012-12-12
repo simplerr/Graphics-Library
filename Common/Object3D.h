@@ -27,6 +27,7 @@ namespace GLib {
 		TERRAIN,
 		PROJECTILE,
 		PLAYER,
+		PARTICLE_SYSTEM,
 		ANY
 	};
 
