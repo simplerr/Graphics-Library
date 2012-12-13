@@ -5,41 +5,33 @@
 #include <vector>
 #include <string>
 #include "Object3D.h"
+
 using namespace std;
+
+class LuaWrapper;
 
 namespace GLib {
 	class Object3D;
 	class ParticleEffect;
 	class Texture2D;
 	class Graphics;
-
-	//! Particle vertex.
-	struct Particle
-	{
-		BillboardVertex* billboard;
-		XMFLOAT3	initialPos;
-		XMFLOAT3	initialVelocity;
-		float       initialSize; // In pixels.
-		float       initialTime;
-		float       lifeTime;
-		float       mass;
-		XMFLOAT4    initialColor;
-	};
+	class Particle;
 
 	class ParticleSystem : public GLib::Object3D
 	{
 	public:
-		ParticleSystem(XMFLOAT3 position, string texture, int numMaxParticles);
+		ParticleSystem(XMFLOAT3 position, string luaScript);
 		virtual ~ParticleSystem();
 
-		virtual void InitParticle(Particle& out) = 0;
+		Particle* CreateParticle();
+		void InitLua();
 		void Update(float dt);
 		void Draw(Graphics* pGraphics);
 
-		void SetAccel(XMFLOAT3 accel);
 		void SetSpawnFrequency(float frequency);
 		void SetTime(float time);
 		void SetLifetime(float lifetime);
+		void SetNumMaxParticles(int numMaxParticles);
 		
 		void AddParticle();
 
@@ -48,16 +40,16 @@ namespace GLib {
 		bool RayIntersect(XMVECTOR origin, XMVECTOR direction, float& pDist) {return false;}
 		AxisAlignedBox GetBoundingBox() {return AxisAlignedBox();}
 	protected:
+		LuaWrapper*		 mLuaWrapper;
 		ParticleEffect*	 mEffect;
-		GLib::Texture2D* mTexture;
-		XMFLOAT3		 mAccel;
 		string			 mTextureName;
+		string			 mLuaScript;
 		float mTime;
 		float mLifetime;
 		float mSpawnFrequency;
 		int	  mNumMaxParticles;
 
-		std::vector<Particle>	mParticles;
+		std::vector<Particle*>	mParticles;
 		std::vector<Particle*>	mAliveParticles;
 		std::vector<Particle*>	mDeadParticles; 
 	};

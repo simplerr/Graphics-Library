@@ -4,22 +4,23 @@
 #include "Camera.h"
 #include "d3dUtil.h"
 #include "Effects.h"
+#include "lua_Particle.h"
+#include "Particle.h"
+#include "LuaWrapper.h"
 
 namespace GLib {
 
-ParticleSystem::ParticleSystem(XMFLOAT3 position, string texture, int numMaxParticles)
+ParticleSystem::ParticleSystem(XMFLOAT3 position, string luaScript)
 	: Object3D(PARTICLE_SYSTEM, position),
 	mTime(0.0f),
-	mTextureName(texture),
-	mNumMaxParticles(numMaxParticles)
+	mLuaScript(luaScript)
 {
-	// Defaults.
-	SetAccel(XMFLOAT3(0, -100, 0));
-	SetSpawnFrequency(0.1f);
-	SetLifetime(5.0f);
+	mLuaWrapper = new LuaWrapper(luaScript);
 
-	// Create the texture.
-	mTexture = GLib::GetGraphics()->LoadTexture(texture);
+	SetSpawnFrequency(mLuaWrapper->GetNumber("GetSpawnFrequency"));
+	SetLifetime(mLuaWrapper->GetNumber("GetSystemLifetime"));
+	SetNumMaxParticles(mLuaWrapper->GetNumber("GetMaxParticles"));
+	mTextureName = mLuaWrapper->GetString("GetTexture");
 
 	// Allocate memory for maximum number of particles.
 	mParticles.resize(mNumMaxParticles);
@@ -29,11 +30,10 @@ ParticleSystem::ParticleSystem(XMFLOAT3 position, string texture, int numMaxPart
 	// They start off all dead.
 	for(int i = 0; i < mNumMaxParticles; ++i)
 	{
-		mParticles[i].lifeTime = -1.0f;
-		mParticles[i].initialTime = 0.0f;
-		mParticles[i].billboard = GLib::GetGraphics()->AddBillboard(XMFLOAT3(0, 0, 0), XMFLOAT2(1, 1), texture);
-
-		// The billboards position and size will be updated in ParticleSystem::Update().
+		mParticles[i] = CreateParticle();
+		mParticles[i]->SetInitialTime(0.0f);
+		mParticles[i]->SetLifetime(-1);
+		mParticles[i]->billboard = GLib::GetGraphics()->AddBillboard(XMFLOAT3(0, 0, 0), XMFLOAT2(1, 1), mTextureName);
 	}
 }
 
@@ -41,7 +41,30 @@ ParticleSystem::~ParticleSystem()
 {
 	// Remove all the billboards.
 	for(int i = 0; i < mNumMaxParticles; ++i)
-		GLib::GetGraphics()->RemoveBillboard(mTextureName, mParticles[i].billboard);
+		GLib::GetGraphics()->RemoveBillboard(mTextureName, mParticles[i]->billboard);
+}
+
+void ParticleSystem::InitLua()
+{
+	
+}
+
+Particle* ParticleSystem::CreateParticle()
+{
+	// Push arguments.
+	lua_getglobal(mLuaWrapper->GetLua(), "InitParticle");
+	lua_pushnumber(mLuaWrapper->GetLua(), mTime);
+	lua_pushnumber(mLuaWrapper->GetLua(), GetPosition().x);
+	lua_pushnumber(mLuaWrapper->GetLua(), GetPosition().y);
+	lua_pushnumber(mLuaWrapper->GetLua(), GetPosition().z);
+
+	// Call Lua function.
+	int result = lua_pcall(mLuaWrapper->GetLua(), 4, 1, 0);
+
+	// Get the return value.
+	Particle* particle = (Particle*)tolua_tousertype(mLuaWrapper->GetLua(), -1, 0);
+
+	return particle;
 }
 
 float ParticleSystem::GetTime()
@@ -66,7 +89,9 @@ void ParticleSystem::AddParticle()
 		// Reinitialize a particle.
 		Particle* p = mDeadParticles.back();
 		p->initialTime = mTime;
-		InitParticle(*p);
+
+		// Get the lifetime variable from Lua.
+		p->lifeTime = mLuaWrapper->GetNumber("GetLifetime");
 
 		// No longer dead.
 		mDeadParticles.pop_back();
@@ -87,25 +112,29 @@ void ParticleSystem::Update(float dt)
 	// For each particle.
 	for(int i = 0; i < mNumMaxParticles; ++i)
 	{
+		Particle* particle = mParticles[i];
+
 		// Is the particle dead?
-		if( (mTime - mParticles[i].initialTime) > mParticles[i].lifeTime)
+ 		if( (mTime - particle->initialTime) > particle->lifeTime)
 		{
-			mDeadParticles.push_back(&mParticles[i]);
+			mDeadParticles.push_back(particle);
 
 			// [HACK] Sets the position outside vision.
 			float infinity = numeric_limits<float>::infinity();
-			mParticles[i].billboard->SetPos(XMFLOAT3(infinity, infinity, infinity));
+			particle->billboard->SetPos(XMFLOAT3(infinity, infinity, infinity));
 		}
 		else
 		{
-			mAliveParticles.push_back(&mParticles[i]);
+			mAliveParticles.push_back(particle);
 
-			// [TODO] Run LUA script here.
+			// Run the UpdateParticle() function in Lua.
+			lua_getglobal(mLuaWrapper->GetLua(), "UpdateParticle");
+			tolua_pushusertype(mLuaWrapper->GetLua(), particle, "Particle");
+			lua_pushnumber(mLuaWrapper->GetLua(), GetTime());
+			lua_pcall(mLuaWrapper->GetLua(), 2, 0, 0);
 
-			float age = mTime - mParticles[i].initialTime;
-			mParticles[i].billboard->SetPos(mParticles[i].initialPos + mParticles[i].initialVelocity * age + 0.5f * mAccel * age * age);
-			float size = mParticles[i].initialSize * sinf(age * 6);
-			mParticles[i].billboard->SetSize(XMFLOAT2(size, size));
+			particle->billboard->SetPos(particle->GetPosition());
+			particle->billboard->SetSize(XMFLOAT2(particle->GetSize(), particle->GetSize()));
 		}
 	}
 
@@ -119,11 +148,6 @@ void ParticleSystem::Update(float dt)
 	}
 }
 
-void ParticleSystem::SetAccel(XMFLOAT3 accel)
-{
-	mAccel = accel;
-}
-
 void ParticleSystem::SetSpawnFrequency(float frequency)
 {
 	mSpawnFrequency = frequency;
@@ -132,6 +156,11 @@ void ParticleSystem::SetSpawnFrequency(float frequency)
 void ParticleSystem::Draw(Graphics* pGraphics)
 {
 	// Graphics::DrawBillboards() does the drawing.
+}
+
+void ParticleSystem::SetNumMaxParticles(int numMaxParticles)
+{
+	mNumMaxParticles = numMaxParticles;
 }
 
 }
