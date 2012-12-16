@@ -47,6 +47,20 @@ SamplerState samplerState
 	AddressV = CLAMP;
 };
 
+//! Blend state.
+BlendState AdditiveBlending
+{
+    AlphaToCoverageEnable = FALSE;
+    BlendEnable[0] = TRUE;
+    SrcBlend = SRC_ALPHA;
+    DestBlend = ONE;
+    BlendOp = ADD;
+    SrcBlendAlpha = ZERO;
+    DestBlendAlpha = ZERO;
+    BlendOpAlpha = ADD;
+    RenderTargetWriteMask[0] = 0x0F;
+};
+
 //! Input for the vertex shader.
 struct VertexIn
 {
@@ -157,5 +171,7 @@ technique11 BillboardTech
         SetVertexShader(CompileShader(vs_5_0, VS()));
 		SetGeometryShader(CompileShader(gs_5_0, GS()));
         SetPixelShader(CompileShader(ps_5_0, PS()));
+
+		//SetBlendState(AdditiveBlending, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xffffffff);
     }
 }

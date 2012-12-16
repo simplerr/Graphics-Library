@@ -3,6 +3,10 @@
 #include "Runnable.h"
 #include "D3DCore.h"
 #include "Graphics.h"
+#include <string>
+#include <vector>
+#include <sstream>
+using namespace std;
 
 //! Graphics Library namespace.
 namespace GLib
@@ -57,6 +61,37 @@ float GetRandomFloat(float a, float b)
 	float f = (rand()%10001) * 0.0001f;
 
 	return (f*(b-a))+a;
+}
+
+wstring StringToWString(const std::string &s)
+{
+	return wstring(s.begin(), s.end());
+}
+
+unsigned int ColorRGBA(byte red, byte green, byte blue, byte alpha)
+{
+	unsigned int color = (alpha<<24) | (blue<<16) | (green<<8) | (red);
+
+	return color;
+}
+
+vector<string> SplitString(string text, char delim)
+{
+	vector<string> elems;
+	stringstream ss(text);
+	string item;
+
+	while(getline(ss, item, delim)) {
+		elems.push_back(item);
+	}
+
+	return elems;
+}
+
+UINT32 StripRGBA(string colors)
+{
+	vector<string> split = SplitString(colors, ' ');
+	return ColorRGBA(atoi(split[0].c_str()), atoi(split[1].c_str()), atoi(split[2].c_str()), atoi(split[3].c_str()));
 }
 
 //! Loads and creates a SRV to a 2d texture array.

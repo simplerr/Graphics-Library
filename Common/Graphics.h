@@ -69,10 +69,11 @@ namespace GLib
 		void DrawBillboards();
 		void DrawScreenQuad(Texture2D* texture, float x, float y, float width, float height);
 		void DrawBoundingBox(AxisAlignedBox* aabb, CXMMATRIX worldMatrix, Material material, float transparency = 0.4f);
-		void DrawText(string text, int x, int y, int size,  UINT32 color = 0xff000000);
+		void DrawText(string text, int x, int y, int size,  UINT32 color = 0xff000000, string fontFamily = "Arial");
 		void ActiveShadowMap();
 		void DeactiveShadowMap();
 		void ApplyBlur(Texture2D* texture, int blurCount);
+		Rect MeasureText(string text, int size, string fontFamily);
 
 		Texture2D* LoadTexture(string filename, float scale = 1.0f);
 		BillboardVertex* AddBillboard(XMFLOAT3 position, XMFLOAT2 size, string texture);

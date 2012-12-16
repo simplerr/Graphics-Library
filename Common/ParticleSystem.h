@@ -38,7 +38,7 @@ namespace GLib {
 		float GetTime();
 		void Init() {};
 		bool RayIntersect(XMVECTOR origin, XMVECTOR direction, float& pDist) {return false;}
-		AxisAlignedBox GetBoundingBox() {return AxisAlignedBox();}
+		AxisAlignedBox GetBoundingBox();
 	protected:
 		LuaWrapper*		 mLuaWrapper;
 		ParticleEffect*	 mEffect;
@@ -47,6 +47,7 @@ namespace GLib {
 		float mTime;
 		float mLifetime;
 		float mSpawnFrequency;
+		float mRadius;
 		int	  mNumMaxParticles;
 
 		std::vector<Particle*>	mParticles;

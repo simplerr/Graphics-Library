@@ -16,6 +16,10 @@ public:
 	LuaWrapper(string luaScript);
 	~LuaWrapper();
 
+	void Reload();
+
+	float GetTableNumber(string table, string element, int n = 0);
+	string  GetTableString(string table, string element);
 	float GetNumber(string function);
 	string GetString(string function);
 	lua_State* GetLua();

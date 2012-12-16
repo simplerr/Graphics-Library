@@ -51,6 +51,12 @@ namespace GLib
 	int						GetClientHeight();
 
 	float GetRandomFloat(float a, float b);
+	wstring StringToWString(const std::string &s);
+	unsigned int ColorRGBA(byte red, byte green, byte blue, byte alpha);
+	vector<string> SplitString(string text, char delim);
+
+	//! Takes a "0 0 0 255" string and splits it up to a UIN32 color value.
+	UINT32 StripRGBA(string colors);
 
 	struct Ray
 	{
@@ -68,6 +74,30 @@ namespace GLib
 
 		float width;
 		float height;
+	};
+
+	struct Rect
+	{
+		Rect() {}
+		Rect(float l, float r, float t, float b) {
+			left = l;
+			right = r;
+			top = t;
+			bottom = b;
+		}
+
+		float Width() {
+			return right - left;
+		}
+
+		float Height() {
+			return bottom - top;
+		}
+
+		float left;
+		float right;
+		float top;
+		float bottom;
 	};
 
 	struct BoundingSphere

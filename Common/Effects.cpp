@@ -88,7 +88,8 @@ Effect::Effect(ID3D11Device* pDevice, string filename, string technique)
 {
 	// Create the effect from memory.
 	// [NOTE] Fix this!
-	std::ifstream fin("fx\\" + filename + "o", std::ios::binary);	// [NOTE]!!!
+	//std::ifstream fin("fx\\" + filename + "o", std::ios::binary);	// [NOTE]!!!
+	std::ifstream fin("F:\\Users\\Axel\\Documents\\Visual Studio 11\\Projects\\Graphics Library\\Graphics Library\\Common\\" + filename + "o", std::ios::binary);	// [NOTE]!!!
 
 	fin.seekg(0, std::ios_base::end);
 	int size = (int)fin.tellg();

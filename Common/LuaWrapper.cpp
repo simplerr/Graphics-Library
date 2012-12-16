@@ -4,6 +4,16 @@
 LuaWrapper::LuaWrapper(string luaScript)
 {
 	mScriptName = luaScript;
+	Reload();
+}
+
+LuaWrapper::~LuaWrapper()
+{
+	lua_close(mLuaState);
+}
+
+void LuaWrapper::Reload()
+{
 	mLuaState = lua_open();
 
 	luaL_openlibs(mLuaState);
@@ -11,11 +21,6 @@ LuaWrapper::LuaWrapper(string luaScript)
 
 	tolua_Particle_open(mLuaState);
 	luaL_dofile(mLuaState, mScriptName.c_str());
-}
-
-LuaWrapper::~LuaWrapper()
-{
-	lua_close(mLuaState);
 }
 
 float LuaWrapper::GetNumber(string function)
@@ -29,6 +34,22 @@ string LuaWrapper::GetString(string function)
 {
 	lua_getglobal(mLuaState, function.c_str());
 	lua_pcall(mLuaState, 0, 1, 0);
+	return string(lua_tostring(mLuaState, -1));
+}
+
+float LuaWrapper::GetTableNumber(string table, string element, int n)
+{
+	lua_getglobal(mLuaState, table.c_str());
+	lua_pushstring(mLuaState, element.c_str());
+	lua_gettable(mLuaState, -2);
+	return lua_tonumber(mLuaState, -1);
+}
+
+string LuaWrapper::GetTableString(string table, string element)
+{
+	lua_getglobal(mLuaState, table.c_str());
+	lua_pushstring(mLuaState, element.c_str());
+	lua_gettable(mLuaState, -2);
 	return string(lua_tostring(mLuaState, -1));
 }
 

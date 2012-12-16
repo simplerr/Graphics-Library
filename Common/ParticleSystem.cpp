@@ -17,10 +17,15 @@ ParticleSystem::ParticleSystem(XMFLOAT3 position, string luaScript)
 {
 	mLuaWrapper = new LuaWrapper(luaScript);
 
-	SetSpawnFrequency(mLuaWrapper->GetNumber("GetSpawnFrequency"));
-	SetLifetime(mLuaWrapper->GetNumber("GetSystemLifetime"));
-	SetNumMaxParticles(mLuaWrapper->GetNumber("GetMaxParticles"));
-	mTextureName = mLuaWrapper->GetString("GetTexture");
+	float spawnFrequency = mLuaWrapper->GetTableNumber("ParticleSystemData", "spawn_frequency");
+	float lifetime = mLuaWrapper->GetTableNumber("ParticleSystemData", "lifetime");
+	int numMaxParticles = mLuaWrapper->GetTableNumber("ParticleSystemData", "max_particles");
+	mRadius = mLuaWrapper->GetTableNumber("ParticleSystemData", "radius");
+
+	SetSpawnFrequency(spawnFrequency);
+	SetLifetime(lifetime);
+	SetNumMaxParticles(numMaxParticles);
+	mTextureName = mLuaWrapper->GetTableString("ParticleData", "texture");
 
 	// Allocate memory for maximum number of particles.
 	mParticles.resize(mNumMaxParticles);
@@ -53,10 +58,10 @@ Particle* ParticleSystem::CreateParticle()
 {
 	// Push arguments.
 	lua_getglobal(mLuaWrapper->GetLua(), "InitParticle");
-	lua_pushnumber(mLuaWrapper->GetLua(), mTime);
 	lua_pushnumber(mLuaWrapper->GetLua(), GetPosition().x);
 	lua_pushnumber(mLuaWrapper->GetLua(), GetPosition().y);
 	lua_pushnumber(mLuaWrapper->GetLua(), GetPosition().z);
+	lua_pushnumber(mLuaWrapper->GetLua(), mTime);
 
 	// Call Lua function.
 	int result = lua_pcall(mLuaWrapper->GetLua(), 4, 1, 0);
@@ -133,6 +138,7 @@ void ParticleSystem::Update(float dt)
 			lua_pushnumber(mLuaWrapper->GetLua(), GetTime());
 			lua_pcall(mLuaWrapper->GetLua(), 2, 0, 0);
 
+			particle->SetInitialPos(GetPosition().x, GetPosition().y, GetPosition().z);
 			particle->billboard->SetPos(particle->GetPosition());
 			particle->billboard->SetSize(XMFLOAT2(particle->GetSize(), particle->GetSize()));
 		}
@@ -156,11 +162,20 @@ void ParticleSystem::SetSpawnFrequency(float frequency)
 void ParticleSystem::Draw(Graphics* pGraphics)
 {
 	// Graphics::DrawBillboards() does the drawing.
+	//pGraphics->DrawBoundingBox(&GetBoundingBox(), GetWorldMatrix(), Material(Colors::Blue));
 }
 
 void ParticleSystem::SetNumMaxParticles(int numMaxParticles)
 {
 	mNumMaxParticles = numMaxParticles;
+}
+
+AxisAlignedBox ParticleSystem::GetBoundingBox()
+{
+	AxisAlignedBox box;
+	box.Center = GetPosition();
+	box.Extents = XMFLOAT3(mRadius, mRadius, mRadius);
+	return box;
 }
 
 }

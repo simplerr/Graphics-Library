@@ -225,6 +225,9 @@ void Graphics::DrawBillboards()
 
 		context->Draw(manager->GetNumBillboards(), 0);
 	}
+
+	float blendFactor[4] = {0, 0, 0, 0};
+	context->OMSetBlendState(RenderStates::TransparentBS, blendFactor, 0xffffffff);
 }
 
 void Graphics::DrawScreenQuad(Texture2D* texture, float x, float y, float width, float height)
@@ -301,10 +304,23 @@ void Graphics::ApplyBlur(Texture2D* texture, int blurCount)
 }
 
 //! Draws text to the screen.
-void Graphics::DrawText(string text, int x, int y, int size,  UINT32 textColor)
+void Graphics::DrawText(string text, int x, int y, int size,  UINT32 textColor, string fontFamily)
 {
 	std::wstring wsTmp(text.begin(), text.end());
-	mFontWrapper->DrawString(GetD3DContext(), wsTmp.c_str(), size, x, y, textColor, 0);
+	std::wstring family(fontFamily.begin(), fontFamily.end());
+
+	mFontWrapper->DrawString(GetD3DContext(), wsTmp.c_str(), family.c_str(), size, x, y, textColor, 0);
+}
+
+Rect Graphics::MeasureText(string text, int size, string fontFamily)
+{
+	std::wstring wsTmp(text.begin(), text.end());
+	std::wstring family(fontFamily.begin(), fontFamily.end());
+
+	FW1_RECTF inputRect = {0, 0, 0, 0};
+	FW1_RECTF dimensions = mFontWrapper->MeasureString(wsTmp.c_str(), family.c_str(), size, &inputRect, FW1_NOWORDWRAP);
+
+	return Rect(dimensions.Left, dimensions.Right, dimensions.Top, dimensions.Bottom);
 }
 
 //! Adds a billboard to the scene.
