@@ -6,10 +6,8 @@
 #define AV_SCENEANIMATOR_H
 #include "d3dUtil.h"
 #include <map>
-#include <vector>
 #include <fstream>
 #include <tuple>
-#include <string>
 #include <stdint.h>
 #include <assimp\scene.h>
 

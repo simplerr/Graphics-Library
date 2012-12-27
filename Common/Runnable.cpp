@@ -31,6 +31,7 @@ Runnable::Runnable(HINSTANCE hInstance, std::string caption, int width, int heig
 	mWindowedWidth	= width;
 	mWindowedHeight	= height;
 	SetFpsCap(numeric_limits<float>::infinity());
+	SetUseWindowBorder(true);
 }
 
 //! Cleans up and frees all pointers.
@@ -80,14 +81,16 @@ bool Runnable::InitWin32()
 	clientRect.top = GetSystemMetrics(SM_CYSCREEN)/2 - mWindowedHeight/2.0f;
 	clientRect.bottom = GetSystemMetrics(SM_CYSCREEN)/2 + mWindowedHeight/2.0f;
 
-	AdjustWindowRect(&clientRect, WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX, false);
+	DWORD style = mUseBorder ? WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_CLIPCHILDREN : WS_POPUP|WS_VISIBLE|WS_SYSMENU | WS_CLIPCHILDREN;
+
+	AdjustWindowRect(&clientRect, style, false);
 	int width = clientRect.right - clientRect.left;
 	int height = clientRect.bottom - clientRect.top;
 
 	// Create the window with a custom size and make it centered
 	// NOTE: WS_CLIPCHILDREN Makes the area under child windows not be displayed. (Useful when rendering DirectX and using windows controls).
 	mhMainWindow = CreateWindow("D3DWndClassName", mCaption.c_str(), 
-		WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_CLIPCHILDREN, GetSystemMetrics(SM_CXSCREEN)/2-(mWindowedWidth/2),
+		style, GetSystemMetrics(SM_CXSCREEN)/2-(mWindowedWidth/2),
 		GetSystemMetrics(SM_CYSCREEN)/2-(mWindowedHeight/2), width, height, 
 		0, 0, mhInstance, 0); 
 
@@ -286,6 +289,22 @@ Graphics* Runnable::GetGraphics()
 Input* Runnable::GetInput()
 {
 	return mInput;
+}
+
+void Runnable::SetUseWindowBorder(bool use)
+{
+	mUseBorder = use;
+}
+
+void Runnable::ResizeWindow(float width, float height)
+{
+	mWindowedWidth = width;
+	mWindowedHeight = height;
+
+	SetWindowPos(GetHwnd(), HWND_TOP, GetSystemMetrics(SM_CXSCREEN)/2-(width/2.0f), GetSystemMetrics(SM_CYSCREEN)/2-(height/2.0f), width, height, SWP_SHOWWINDOW);
+	GetD3D()->OnResize(width, height);
+	OnResize(width, height);
+	GetGraphics()->GetCamera()->RebuildProjection();
 }
 
 }	// End of Graphics Library namespace.

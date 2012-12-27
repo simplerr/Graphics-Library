@@ -33,7 +33,7 @@ namespace GLib {
 		virtual void Draw(Graphics* pGraphics);
 		void HandleCollisions();
 
-		void AddObject(Object3D* object);
+		void AddObject(Object3D* object, int id = -1);
 		void AddLight(Light* pLight);
 		void RemoveObject(Object3D* pObject);
 		void RemoveObject(int id);

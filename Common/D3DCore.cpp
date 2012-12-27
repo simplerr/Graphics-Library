@@ -18,6 +18,8 @@ D3DCore::D3DCore()
 {
 	m4xMsaaQuality = 0;
 	mEnable4xMsaa = true;
+	mDimensionRatios.right = 1.0f;
+	mDimensionRatios.bottom = 1.0f;
 }
 
 //! Cleans up and frees all pointers.
@@ -189,6 +191,10 @@ void D3DCore::OnResize(int width, int height)
 	mScreenViewport.MaxDepth = 1.0f;
 
 	md3dImmediateContext->RSSetViewports(1, &mScreenViewport);
+
+	// [HACK]
+	mDimensionRatios.right = (float)1600 / width;
+	mDimensionRatios.bottom = (float)900 / height;
 }
 
 //! Calls the swapchain Present() function that swaps the front- and backbuffer.
@@ -202,6 +208,15 @@ void D3DCore::SetFullScreen(int width, int height, bool fullscreen)
 {
 	mSwapChain->SetFullscreenState(fullscreen, NULL);
 	OnResize(width, height);	// [NOTE] Ugly.
+
+	if(fullscreen) {
+		mDimensionRatios.right = (float)width / mClientWidth;
+		mDimensionRatios.bottom = (float)height / mClientHeight;
+	}
+	else {
+		mDimensionRatios.right = 1.0f;
+		mDimensionRatios.bottom = 1.0f;
+	}
 }
 
 //! Returns the ID3D11Device*.
@@ -247,6 +262,11 @@ float D3DCore::GetClientWidth()
 float D3DCore::GetClientHeight()
 {
 	return mClientHeight;
+}
+
+Rect D3DCore::GetDimensionRatio()
+{
+	return mDimensionRatios;
 }
 
 }	// End of Graphics Library namespace.

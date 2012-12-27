@@ -7,10 +7,10 @@
 #include <Windows.h>
 #include <string>
 #include <vector>
-#include <xnamath.h>
-#include <D3DX10math.h>
 #include "xnacollision.h"
-#include <assimp\Importer.hpp>
+//#include <xnamath.h>
+#include <D3DX10math.h>
+//#include <assimp\Importer.hpp>
 
 using namespace XNA;
 using namespace std;
@@ -40,11 +40,13 @@ namespace GLib
 	class Light;
 	class Graphics;
 	class Camera;
+	class Runnable;
 
 	ID3D11Device*			GetD3DDevice();
 	ID3D11DeviceContext*	GetD3DContext();
 	Graphics*				GetGraphics();
 	Camera*					GetCamera();
+	Runnable*					GetGame();
 	HINSTANCE				GetAppInstance();
 	HWND					GetWindowHandler();
 	int						GetClientWidth();
@@ -117,7 +119,7 @@ namespace GLib
 	// Typedef for convenience
 	typedef std::vector<Light*> LightList;
 
-	XMFLOAT4X4 ToXMFloat4X4(aiMatrix4x4 ai);
+	//XMFLOAT4X4 ToXMFloat4X4(aiMatrix4x4 ai);
 
 	// Returns the inverse transpose.
 	XMMATRIX InverseTranspose(CXMMATRIX M);

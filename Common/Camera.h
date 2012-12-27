@@ -25,6 +25,7 @@ namespace GLib
 		void Rotate(Input* pInput);
 		void DrawDebug();
 		void UpdateViewMatrix();
+		void RebuildProjection();
 
 		void SetPosition(XMFLOAT3 position);
 		void SetTarget(XMFLOAT3 target);

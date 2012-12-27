@@ -32,6 +32,7 @@ namespace GLib
 		bool	InitWin32();
 		void	SwitchScreenMode();
 		void	CalculateFrameStats();
+		void	ResizeWindow(float width, float height);
 
 		// Framework methods.
 		virtual void Init();
@@ -44,6 +45,7 @@ namespace GLib
 		void SetVisible(bool visible);
 		void SetFpsCap(float cap);
 		void SetFullscreen(bool fullscreen);
+		void SetUseWindowBorder(bool use);
 	
 		HINSTANCE	GetInstance();
 		HWND		GetHwnd();	
@@ -65,6 +67,7 @@ namespace GLib
 		bool		mFullscreen;
 		int			mWindowedWidth;
 		int			mWindowedHeight;
+		bool		mUseBorder;
 		float		mFpsCap;
 
 	};	// Class

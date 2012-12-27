@@ -73,6 +73,7 @@ void BasicControl::SetParent(BasicControl* pParent)
 bool BasicControl::PointInsideControl(XMFLOAT3 point)
 {
 	GLib::Rect rect = GetRect();
+
 	return (point.x > rect.left && point.x < rect.right && point.y > rect.top && point.y < rect.bottom);
 }
 
@@ -94,4 +95,16 @@ float BasicControl::GetBkgdScale()
 void BasicControl::SetBkgdScale(float scale)
 {
 	mBkgdScale = scale;
+}
+
+ControlAlignment BasicControl::GetAlignment()
+{
+	return mAlignment;
+}
+
+void BasicControl::SetAlignment(bool fixedX, bool fixedY)
+{
+	mAlignment.fixedX = fixedX;
+	mAlignment.fixedY = fixedY;
+
 }

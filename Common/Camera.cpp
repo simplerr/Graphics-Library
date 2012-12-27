@@ -15,7 +15,7 @@ namespace GLib
 		SetMovementSpeed(0.6f);
 
 		// Default position and target
-		mPosition	= XMFLOAT3(0, 100, 60);
+		mPosition	= XMFLOAT3(0, 60, 30);
 		mTarget		= XMFLOAT3(0.0f, 0.0f, 0.0f);
 		mUp			= XMFLOAT3(0.0f, 1.0f, 0.0f);		// Weird up vector
 
@@ -27,7 +27,7 @@ namespace GLib
 		XMStoreFloat4x4(&mProj, proj);
 
 		UpdateViewMatrix();
-
+		
 		// Build the camera frustum.
 		XNA::ComputeFrustumFromProjection(&mFrustum, &XMLoadFloat4x4(&GetProjectionMatrix()));
 	}
@@ -36,6 +36,13 @@ namespace GLib
 	Camera::~Camera()
 	{
 
+	}
+
+	void Camera::RebuildProjection()
+	{
+		// Build the projection matrix
+		XMMATRIX proj = XMMatrixPerspectiveFovLH(XM_PI * 0.25, (float)GetClientWidth()/(float)GetClientHeight(), 1.0f, 1000.0f);
+		XMStoreFloat4x4(&mProj, proj);
 	}
 
 	//! Updates the view matrix.

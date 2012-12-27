@@ -2,6 +2,8 @@
 #include "BasicControl.h"
 #include "d3dUtil.h"
 
+class LuaWrapper;
+
 class Label : public BasicControl
 {
 public:
@@ -11,6 +13,8 @@ public:
 	void Draw(GLib::Graphics* pGraphics);
 	void OnLeftBtnPressed(XMFLOAT3 pos);
 	void OnMouseHoover(XMFLOAT3 pos);
+
+	void LoadLuaProperties(LuaWrapper* pLuaWrapper);
 
 	void SetFontData(string family, int size, UINT32 color = GLib::ColorRGBA(0, 0, 0, 255));
 	void SetText(string text);
@@ -23,7 +27,7 @@ public:
 	float GetTextHeight();
 private:
 	FontData mFontData;
-	string mText;
-	int mCustomWidth;
-	bool mCentered;
+	string	 mText;
+	int		 mCustomWidth;
+	bool	 mCentered;
 };

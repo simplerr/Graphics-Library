@@ -152,7 +152,7 @@ void Graphics::Update(Input* pInput, float dt)
 {
 	mCamera->Update(pInput, dt);
 
-	if(mLightList->size() != 0)
+	if(mLightList != nullptr && mLightList->size() != 0)
 		mShadowMap->BuildShadowTransform(mLightList->operator[](0));
 }
 
@@ -238,12 +238,16 @@ void Graphics::DrawScreenQuad(Texture2D* texture, float x, float y, float width,
 	context->IASetInputLayout(Effects::BasicFX->GetInputLayout());
 	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
+	x *= GetD3D()->GetDimensionRatio().right;
+	y *= GetD3D()->GetDimensionRatio().bottom;
+	width *= GetD3D()->GetDimensionRatio().right;
+	height *= GetD3D()->GetDimensionRatio().bottom;
+
 	// Set the effect parameters.
 	float transformedX = x - GetClientWidth()/2;
 	float transformedY = -(y - GetClientHeight()/2);
 	XMMATRIX T = XMMatrixTranslation(transformedX / GetClientWidth() * 2, transformedY / GetClientHeight() * 2, 0);
 	XMMATRIX S = XMMatrixScaling(width / GetClientWidth(), height / GetClientHeight(), 1);
-	//SetEffectParameters(Effects::BasicFX, S*T, texture, 0, Material(Colors::White));
 
 	// Make sure to not use the view and projection matrices when dealing with NDC coordinates.
 	// Set the world * view * proj matrix.
@@ -306,6 +310,9 @@ void Graphics::ApplyBlur(Texture2D* texture, int blurCount)
 //! Draws text to the screen.
 void Graphics::DrawText(string text, int x, int y, int size,  UINT32 textColor, string fontFamily)
 {
+	//x /= GLib::GetGraphics()->GetD3D()->GetDimensionRatio().right;
+	//y /= GLib::GetGraphics()->GetD3D()->GetDimensionRatio().bottom;
+
 	std::wstring wsTmp(text.begin(), text.end());
 	std::wstring family(fontFamily.begin(), fontFamily.end());
 
@@ -320,7 +327,9 @@ Rect Graphics::MeasureText(string text, int size, string fontFamily)
 	FW1_RECTF inputRect = {0, 0, 0, 0};
 	FW1_RECTF dimensions = mFontWrapper->MeasureString(wsTmp.c_str(), family.c_str(), size, &inputRect, FW1_NOWORDWRAP);
 
-	return Rect(dimensions.Left, dimensions.Right, dimensions.Top, dimensions.Bottom);
+	float x_ratio = 1;//GLib::GetGraphics()->GetD3D()->GetDimensionRatio().right;
+	float y_ratio = 1;//GLib::GetGraphics()->GetD3D()->GetDimensionRatio().bottom;
+	return Rect(dimensions.Left, dimensions.Right * x_ratio, dimensions.Top, dimensions.Bottom * y_ratio);
 }
 
 //! Adds a billboard to the scene.

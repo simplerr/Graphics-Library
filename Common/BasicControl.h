@@ -26,6 +26,16 @@ struct FontData
 	UINT32 color;
 };
 
+struct ControlAlignment
+{
+	ControlAlignment() {
+		fixedX = false;
+		fixedY = false;
+	}
+	bool fixedY;
+	bool fixedX;
+};
+
 class BasicControl
 {
 public:
@@ -48,22 +58,24 @@ public:
 	void SetActivated(bool activated);
 	void SetPosition(float x, float y);
 	void SetBkgdScale(float scale);
+	void SetAlignment(bool fixedX, bool fixedY);
 
 	XMFLOAT2 GetPosition();
 	GLib::Texture2D* GetBkgdTexture();
 	BasicControl* GetParent();
+	ControlAlignment GetAlignment();
 	string GetName();
 	bool GetActivated();
 	float GetBkgdScale();
 	bool IsDrawingBkgd();
 	
-
 	bool PointInsideControl(XMFLOAT3 point);
 
 private:
 	GLib::Texture2D* mBkgdTexture;
 	XMFLOAT2 mPosition;
 	BasicControl* mParent;
+	ControlAlignment mAlignment;
 	string mName;
 	string mLuaScript;
 	bool mDrawBkgdTexture;

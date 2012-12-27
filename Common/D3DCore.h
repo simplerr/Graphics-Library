@@ -17,6 +17,7 @@
 #include <d3dcommon.h>
 #include <d3d11.h>
 #include <d3dx10math.h>
+#include "d3dUtil.h"
 
 //! Graphics Library namespace.
 namespace GLib
@@ -48,6 +49,7 @@ namespace GLib
 
 		float					GetClientWidth();
 		float					GetClientHeight();
+		Rect					GetDimensionRatio();
 
 	private:
 		// Core Direct3D members.
@@ -61,6 +63,7 @@ namespace GLib
 		UINT					m4xMsaaQuality;
 		bool					mEnable4xMsaa;
 		int						mClientWidth, mClientHeight;
+		Rect					mDimensionRatios;
 
 	};	// Class
 }

@@ -1,6 +1,7 @@
 #include "Label.h"
 #include "Graphics.h"
 #include "d3dUtil.h"
+#include "LuaWrapper.h"
 
 GLib::Texture2D* texture;
 
@@ -23,14 +24,26 @@ void Label::Draw(GLib::Graphics* pGraphics)
 	if(IsDrawingBkgd()) 
 	{
 		GLib::Rect rect = GetRect();
-		pGraphics->DrawScreenQuad(GetBkgdTexture(), GetPosition().x + rect.Width()/2.0f, GetPosition().y + rect.Height()/2.0f, rect.Width(), rect.Height());
+		pGraphics->DrawScreenQuad(GetBkgdTexture(), GetPosition().x, GetPosition().y, rect.Width(), rect.Height());
 	}
 
 	if(mCentered) {
-		pGraphics->DrawText(GetText(), GetPosition().x + GetRect().Width()/2 - GetTextWidth()/2, GetPosition().y + GetRect().Height()/2 - GetTextHeight()/2 - mFontData.size/5.0f, mFontData.size, mFontData.color, mFontData.family);
+		pGraphics->DrawText(GetText(), GetPosition().x - GetTextWidth()/2, GetPosition().y - GetTextHeight()/2 - mFontData.size/5.0f, mFontData.size, mFontData.color, mFontData.family);
 	}
 	else
-		pGraphics->DrawText(GetText(), GetPosition().x, GetPosition().y + GetRect().Height()/2 - GetTextHeight()/2 - mFontData.size/5.0f, mFontData.size, mFontData.color, mFontData.family);
+		pGraphics->DrawText(GetText(), GetPosition().x - GetTextWidth()/2, GetPosition().y - GetTextHeight()/2 - mFontData.size/5.0f, mFontData.size, mFontData.color, mFontData.family);
+}
+
+void Label::LoadLuaProperties(LuaWrapper* pLuaWrapper)
+{
+	float x = pLuaWrapper->GetTableNumber(GetName(), "pos_x");
+	float y = pLuaWrapper->GetTableNumber(GetName(), "pos_y");
+	float fontSize = pLuaWrapper->GetTableNumber(GetName(), "font_size");
+	string fontFamily = pLuaWrapper->GetTableString(GetName(), "font_family");
+	string color = pLuaWrapper->GetTableString(GetName(), "font_color");
+
+	SetPosition(x, y);
+	SetFontData(fontFamily, fontSize, GLib::StripRGBA(color));
 }
 
 void Label::OnLeftBtnPressed(XMFLOAT3 pos)
@@ -48,21 +61,22 @@ GLib::Rect Label::GetRect()
 {
 	GLib::Rect rect = GLib::GetGraphics()->MeasureText(GetText(), mFontData.size, mFontData.family);
 
+	// Scale the rect in with GetBkgdScale()
 	float x = rect.left + rect.Width()/2;
 	float y = rect.top + rect.Height()/2;
 
 	float width = rect.Width() * GetBkgdScale();
 	float height = rect.Height() * GetBkgdScale();
 
-	rect.left = x - width / 2;
-	rect.right = x + width / 2;
+	rect.left = x - width;
+	rect.right = x;
 	rect.top = y - height / 2;
 	rect.bottom = y + height / 2;
 
 	if(mCustomWidth == 0)
-		return GLib::Rect(GetPosition().x, rect.right + GetPosition().x, GetPosition().y, rect.bottom + GetPosition().y);
+		return GLib::Rect(GetPosition().x-width/2, rect.right + GetPosition().x, GetPosition().y - height/2, rect.bottom + GetPosition().y - height/2);
 	else
-		return GLib::Rect(GetPosition().x, mCustomWidth + GetPosition().x, GetPosition().y, rect.bottom + GetPosition().y);
+		return GLib::Rect(GetPosition().x-width/2, mCustomWidth + GetPosition().x - width/2, GetPosition().y - height/2, rect.bottom + GetPosition().y - height/2);
 }
 
 float Label::GetTextWidth()

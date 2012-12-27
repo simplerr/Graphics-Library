@@ -2,6 +2,8 @@
 #include "Runnable.h"
 #include "Graphics.h"
 #include "Camera.h"
+#include "D3DCore.h"
+#include "d3dUtil.h"
 
 //! Graphics Library namespace.
 namespace GLib
@@ -127,27 +129,33 @@ bool Input::KeyReleased(int key)
 */
 XMFLOAT3 Input::MousePosition()
 {
-	return mMousePosition;
-	POINT pos;
-	GetCursorPos(&pos);
-	ScreenToClient(GetWindowHandler(), &pos);
-
-	// [NOTE] Doesn't use the other code..
-	//return XMFLOAT3(pos.x, pos.y, 0);
-
-	RECT r;
-	GetWindowRect(GetWindowHandler(), &r);
-	float width = r.right - r.left;
-	float height = r.bottom - r.top;
-
-	GetClientRect(GetWindowHandler(), &r);
 	XMFLOAT3 position = mMousePosition;
-	position.x = (mMousePosition.x / (float)r.right) * width;
-	position.y = (mMousePosition.y / (float)r.bottom) * height;
+	//position.x /= GetGraphics()->GetD3D()->GetDimensionRatio().right;
+	//position.y /= GetGraphics()->GetD3D()->GetDimensionRatio().bottom;
 
-	//position.x /= (gGame->widthRatio();
-	//position.y /= gGame->heightRatio();
 	return position;
+
+	//POINT pos;
+	//GetCursorPos(&pos);
+	//ScreenToClient(GetWindowHandler(), &pos);
+
+	//// [NOTE] Doesn't use the other code..
+	////return XMFLOAT3(pos.x, pos.y, 0);
+
+	//RECT r;
+	//GetWindowRect(GetWindowHandler(), &r);
+	//float width = r.right - r.left;
+	//float height = r.bottom - r.top;
+
+	//GetClientRect(GetWindowHandler(), &r);
+	//XMFLOAT3 position = mMousePosition;
+	//position.x = (mMousePosition.x / (float)r.right) * width;
+	//position.y = (mMousePosition.y / (float)r.bottom) * height;
+
+	//position.x /= GetGraphics()->GetD3D()->GetDimensionRatio().right;
+	//position.y /= GetGraphics()->GetD3D()->GetDimensionRatio().bottom;
+
+	//return position;
 }
 
 //! Set the mouse position.

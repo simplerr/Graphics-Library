@@ -146,11 +146,11 @@ namespace GLib
 	}
 
 	//! Adds an object to the object list.
-	void World::AddObject(Object3D* object)
+	void World::AddObject(Object3D* object, int id)
 	{
 		// [TODO] Set Id.
-		static int id = 0;
-		object->SetId(id++);
+		static int idCounter = 0;
+		object->SetId(id == -1 ? idCounter++ : id);	// Let the ID be hardcoded if wanted.
 		object->SetWorld(this);
 		object->Init();
 		mObjectList.push_back(object);

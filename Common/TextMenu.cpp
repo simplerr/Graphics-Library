@@ -41,7 +41,7 @@ void TextMenu::AddItem(Label* pItem)
 	pItem->SetParent(this);
 	mItemList.push_back(pItem);
 
-	PerformLayout();
+	//PerformLayout();
 }
 
 void TextMenu::AddItem(string name, string text)
@@ -103,7 +103,7 @@ void TextMenu::PerformLayout()
 			float lastHeight = mItemList[i-1]->GetRect().Height();
 			mItemList[i]->SetPosition(0, mItemList[i-1]->GetPosition().y - GetPosition().y + lastHeight + mSpacing);
 			mItemList[i]->SetCustomWidth(maxWidth);
-			mItemList[i] ->SetCentered(mCenteredItems);
+			mItemList[i]->SetCentered(mCenteredItems);
 		}
 	}
 }

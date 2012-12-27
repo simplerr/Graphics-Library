@@ -8,7 +8,7 @@ namespace GLib
 	CameraRTS::CameraRTS() 
 		: Camera()
 	{
-		SetMovementSpeed(0.2f);
+		SetMovementSpeed(0.6f);
 	}
 
 	//! Cleanup.
@@ -22,23 +22,24 @@ namespace GLib
 	{
 		XMFLOAT3 mousePos = pInput->MousePosition();
 
-		if(0) {
-		int scrollBarSize = 30.0f;
-		if(mousePos.x < scrollBarSize || mousePos.x > 65000) // [NOTE] For some reason mousePos.x can be 65 534 when outside the window.
-			Move(XMFLOAT3(1, 0, 0) * GetMovementSpeed());
-		else if(mousePos.x > GetClientWidth() - scrollBarSize)
-			Move(XMFLOAT3(-1, 0, 0) * GetMovementSpeed());
+		// Temp [NOTE]
+		if(pInput->KeyDown(VK_MBUTTON)) {
+			int scrollBarSize = 30.0f;
+			if(mousePos.x < scrollBarSize || mousePos.x > 65000) // [NOTE] For some reason mousePos.x can be 65 534 when outside the window.
+				Move(XMFLOAT3(1, 0, 0) * GetMovementSpeed());
+			else if(mousePos.x > GetClientWidth() - scrollBarSize)
+				Move(XMFLOAT3(-1, 0, 0) * GetMovementSpeed());
 
-		if(mousePos.y < scrollBarSize)
-			Move(XMFLOAT3(0, 0, -1) * GetMovementSpeed());
-		else if(mousePos.y > GetClientHeight() - scrollBarSize)
-			Move(XMFLOAT3(0, 0, 1) * GetMovementSpeed());
+			if(mousePos.y < scrollBarSize)
+				Move(XMFLOAT3(0, 0, -1) * GetMovementSpeed());
+			else if(mousePos.y > GetClientHeight() - scrollBarSize)
+				Move(XMFLOAT3(0, 0, 1) * GetMovementSpeed());
+
+			Move(GetDirection() * pInput->MouseDz() * 0.10f);
+
+			// Update the view matrix.
+			UpdateViewMatrix();
 		}
-
-		Move(GetDirection() * pInput->MouseDz() * 0.10f);
-
-		// Update the view matrix.
-		UpdateViewMatrix();
 	}
 
 }	// End of Graphics Library namespace.

@@ -23,6 +23,7 @@ public:
 	void AddControl(BasicControl* pControl);
 	void LoadLuaProperties();
 	void DeactivateAllControls();
+	void OnResize(float width, float height);
 private:
 	vector<BasicControl*> mControlList;
 	LuaWrapper* mLuaWrapper;
