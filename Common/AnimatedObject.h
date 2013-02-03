@@ -21,7 +21,7 @@ namespace GLib {
 
 		bool RayIntersect(XMVECTOR origin, XMVECTOR direction, float& pDist);
 		void SetAnimation(int index);
-		AxisAlignedBox GetBoundingBox();
+		virtual AxisAlignedBox GetBoundingBox();
 		SkinnedModel* GetModel();
 		string GetFilename();
 	private:

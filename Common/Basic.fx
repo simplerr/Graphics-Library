@@ -352,6 +352,6 @@ technique11 ShadowMapTech
         SetVertexShader(CompileShader( vs_5_0, ShadowVS()));
 		SetGeometryShader(NULL);
         SetPixelShader(NULL);
-		SetRasterizerState(Depth);
+		//SetRasterizerState(Depth);
     }
 }

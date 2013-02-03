@@ -60,8 +60,6 @@ void RenderStates::InitAll(ID3D11Device* device)
 
 	// Don't render the backfacing triangles, the key of this render state..
 	noDoubleBlendDesc.BackFace.StencilFunc   = D3D11_COMPARISON_NEVER;
-
-	HR(device->CreateDepthStencilState(&noDoubleBlendDesc, &NoDoubleBlendDSS));
 }
 
 //! Cleanup.

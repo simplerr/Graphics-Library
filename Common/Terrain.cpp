@@ -60,7 +60,7 @@ namespace GLib
 		Camera* camera = pGraphics->GetCamera();
 		XMMATRIX view = XMLoadFloat4x4(&camera->GetViewMatrix());
 		XMMATRIX proj = XMLoadFloat4x4(&camera->GetProjectionMatrix());
-		Effects::TerrainFX->SetViewProj(view * proj);
+		Effects::TerrainFX->SetViewProj(XMMatrixMultiply(view, proj));
 		Effects::TerrainFX->SetEyePosW(camera->GetPosition());
 		Effects::TerrainFX->SetLights(pGraphics->GetLightList());
 		Effects::TerrainFX->SetFogColor(XMLoadFloat4(&pGraphics->GetFogColor()));
@@ -72,7 +72,7 @@ namespace GLib
 		Effects::TerrainFX->SetTexelCellSpaceV(1.0f / mInfo.HeightmapHeight);
 		Effects::TerrainFX->SetWorldCellSpace(mInfo.CellSpacing);
 
-		// The blend texture SRVs..
+		//// The blend texture SRVs..
 		Effects::TerrainFX->SetLayerMapArray(mLayerTextureArraySRV);
 		Effects::TerrainFX->SetBlendMap(mBlendMapSRV);
 		Effects::TerrainFX->SetHeightMap(mHeightMapSRV);

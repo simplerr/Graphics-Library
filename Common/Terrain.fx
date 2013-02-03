@@ -146,6 +146,10 @@ float4 PS(VertexOut pin) : SV_Target
 	// Sample the blend map.
 	float4 t  = gBlendMap.Sample( samLinear, pin.Tex ); 
     
+	// [NOTE][HACK] Some FPS problem in the pixel shader, just return the texture color for now.
+	// Seems to be ApplyLighting that causes it.
+	return c0*1.3;
+
     // Blend the layers on top of each other.
     float4 texColor = c0;
 	texColor = lerp(texColor, c1, t.r);

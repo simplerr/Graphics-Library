@@ -12,6 +12,7 @@ TextMenu::TextMenu(float x, float y, string name)
 	SetFontData("Arial", 30, GLib::ColorRGBA(0, 0, 0, 255));
 	SetSpacing(20.0f);
 	SetCenteredItems(false);
+	SetTextColor(GLib::ColorRGBA(0, 0, 0, 255), GLib::ColorRGBA(255, 255, 255, 255));
 }
 
 TextMenu::~TextMenu()
@@ -28,7 +29,7 @@ void TextMenu::Draw(GLib::Graphics* pGraphics)
 {
 	if(IsDrawingBkgd()) {
 		GLib::Rect rect = GetRect();
-		pGraphics->DrawScreenQuad(GetBkgdTexture(), GetPosition().x + rect.Width()/2.0f, GetPosition().y + rect.Height()/2.0f, rect.Width()*mBkgdScale, rect.Height()*mBkgdScale);
+		pGraphics->DrawScreenQuad(GetBkgdTexture(), GetPosition().x , GetPosition().y + rect.Height()/2.0f-20, rect.Width()*mBkgdScale, rect.Height()*mBkgdScale); // [NOTE] -20
 	}
 
 	for(int i = 0; i < mItemList.size(); i++)
@@ -62,6 +63,7 @@ void TextMenu::LoadLuaProperties(LuaWrapper* pLuaWrapper)
 	string itemBkgd = pLuaWrapper->GetTableString(GetName(), "item_bkgd");
 	string menuBkgd = pLuaWrapper->GetTableString(GetName(), "menu_bkgd");
 	int drawBkgd = pLuaWrapper->GetTableNumber(GetName(), "draw_bkgd");
+	int drawItemBkgd = pLuaWrapper->GetTableNumber(GetName(), "draw_item_bkgd");
 	int centeredItems = pLuaWrapper->GetTableNumber(GetName(), "centered_items");
 	float itemBkgdScale = pLuaWrapper->GetTableNumber(GetName(), "item_bkgd_scale");
 
@@ -73,9 +75,12 @@ void TextMenu::LoadLuaProperties(LuaWrapper* pLuaWrapper)
 	SetCenteredItems(centeredItems);
 	SetFontData(fontFamily, fontSize, GLib::StripRGBA(color));
 
-	for(int i = 0; i < mItemList.size(); i++) {
-		mItemList[i]->SetBkgdTexture(itemBkgd);
-		mItemList[i]->SetBkgdScale(itemBkgdScale);
+	if(drawItemBkgd)
+	{
+		for(int i = 0; i < mItemList.size(); i++) {
+			mItemList[i]->SetBkgdTexture(itemBkgd);
+			mItemList[i]->SetBkgdScale(itemBkgdScale);
+		}
 	}
 
 	PerformLayout();
@@ -124,8 +129,10 @@ void TextMenu::OnMouseHoover(XMFLOAT3 pos)
 {
 	for(int i = 0; i < mItemList.size(); i++)
 	{
-		if(mItemList[i]->PointInsideControl(pos)) 
-			mItemList[i]->SetDrawBkgd(true);
+		if(mItemList[i]->PointInsideControl(pos))
+			mItemList[i]->SetFontData(mFontData.family, mFontData.size, mHighlightColor);
+		else
+			mItemList[i]->SetFontData(mFontData.family, mFontData.size, mFontData.color);
 	}
 }
 
@@ -171,4 +178,10 @@ void TextMenu::SetBkgdScale(float scale)
 void TextMenu::SetCenteredItems(bool centered)
 {
 	mCenteredItems = centered;
+}
+
+void TextMenu::SetTextColor(UINT32 defaultColor, UINT32 highlightColor)
+{
+	mFontData.color = defaultColor;
+	mHighlightColor = highlightColor;
 }

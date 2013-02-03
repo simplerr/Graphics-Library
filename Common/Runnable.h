@@ -53,6 +53,7 @@ namespace GLib
 		int			GetClientHeight();
 		int			GetFullscreenWidth();
 		int			GetFullscreenHeight();
+		float		GetCurrentFps();
 
 		D3DCore*	GetD3D();
 		Graphics*	GetGraphics();
@@ -69,6 +70,7 @@ namespace GLib
 		int			mWindowedHeight;
 		bool		mUseBorder;
 		float		mFpsCap;
+		float		mCurrentFps;
 
 	};	// Class
 

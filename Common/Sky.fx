@@ -65,6 +65,6 @@ technique11 SkyTech
         SetPixelShader( CompileShader( ps_5_0, PS() ) );
         
         SetRasterizerState(NoCull);
-        SetDepthStencilState(LessEqualDSS, 0);
+        //SetDepthStencilState(LessEqualDSS, 0);
     }
 }

@@ -15,6 +15,7 @@ Particle::~Particle()
 void Particle::SetPosition(float x, float y, float z)
 {
 	position = XMFLOAT3(x, y, z);
+	billboard->SetPos(position);
 }
 
 void Particle::SetSize(float size)
@@ -25,6 +26,7 @@ void Particle::SetSize(float size)
 void Particle::SetInitialPos(float x, float y, float z)
 {
 	initialPos = XMFLOAT3(x, y, z);
+	//SetPosition(x, y, z);
 }
 
 void Particle::SetInitialVelocity(float x, float y, float z)

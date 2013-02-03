@@ -50,7 +50,7 @@ SamplerState samplerState
 //! Blend state.
 BlendState AdditiveBlending
 {
-    AlphaToCoverageEnable = FALSE;
+	AlphaToCoverageEnable = FALSE;
     BlendEnable[0] = TRUE;
     SrcBlend = SRC_ALPHA;
     DestBlend = ONE;
@@ -132,7 +132,7 @@ void GS(point VertexOut gin[1], inout TriangleStream<GeoOut> triStream)
 	}
 }
 
-//! Pixel shader that applies ligthing and fogging.
+//! Pixel shader that applies ligthing and fogging
 float4 PS(GeoOut pin) : SV_Target
 {
 	// Interpolating normal can unnormalize it, so normalize it.

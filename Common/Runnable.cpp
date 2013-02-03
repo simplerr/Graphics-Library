@@ -198,12 +198,12 @@ void Runnable::CalculateFrameStats()
 	// Compute averages over one second period.
 	if((mTimer.TotalTime() - timeElapsed) >= 1.0f)
 	{
-		float fps = (float)frameCnt; // fps = frameCnt / 1
-		float mspf = 1000.0f / fps;
+		mCurrentFps = (float)frameCnt; // fps = frameCnt / 1
+		float mspf = 1000.0f / mCurrentFps;
 
 		std::ostringstream outs;   
 		outs.precision(6);
-		outs << mCaption << "    " << "FPS: " << fps << "    " << "Frame Time: " << mspf << " (ms)";
+		outs << mCaption << "    " << "FPS: " << mCurrentFps << "    " << "Frame Time: " << mspf << " (ms)";
 		SetWindowText(GetHwnd(), outs.str().c_str());
 		
 		// Reset for next average.
@@ -305,6 +305,11 @@ void Runnable::ResizeWindow(float width, float height)
 	GetD3D()->OnResize(width, height);
 	OnResize(width, height);
 	GetGraphics()->GetCamera()->RebuildProjection();
+}
+
+float Runnable::GetCurrentFps()
+{
+	return mCurrentFps;
 }
 
 }	// End of Graphics Library namespace.

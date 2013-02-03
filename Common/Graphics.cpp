@@ -225,14 +225,19 @@ void Graphics::DrawBillboards()
 
 		context->Draw(manager->GetNumBillboards(), 0);
 	}
-
-	float blendFactor[4] = {0, 0, 0, 0};
-	context->OMSetBlendState(RenderStates::TransparentBS, blendFactor, 0xffffffff);
 }
 
 void Graphics::DrawScreenQuad(Texture2D* texture, float x, float y, float width, float height)
 {
 	ID3D11DeviceContext* context = GetD3D()->GetContext();
+
+	float blendFactor[] = {0.0f, 0.0f, 0.0f, 0.0f};
+	GetContext()->OMSetBlendState(RenderStates::TransparentBS, blendFactor, 0xffffffff);
+	ID3D11DepthStencilState* oldDSS;
+
+	// Disable depth testing (the latest drawn quad will stay on top).
+	context->OMGetDepthStencilState(&oldDSS, 0);
+	context->OMSetDepthStencilState(RenderStates::EnableAllDSS, 0);
 
 	// Set the input layout and the primitive topology.
 	context->IASetInputLayout(Effects::BasicFX->GetInputLayout());
@@ -262,6 +267,9 @@ void Graphics::DrawScreenQuad(Texture2D* texture, float x, float y, float width,
 
 	// Draw the primitive.
 	mScreenQuad->Draw<Vertex>(context);
+
+	// Restore the depth testing.
+	context->OMSetDepthStencilState(oldDSS, 0);
 }
 
 void Graphics::DrawBoundingBox(AxisAlignedBox* aabb, CXMMATRIX worldMatrix, Material material, float transparency)
@@ -317,6 +325,7 @@ void Graphics::DrawText(string text, int x, int y, int size,  UINT32 textColor, 
 	std::wstring family(fontFamily.begin(), fontFamily.end());
 
 	mFontWrapper->DrawString(GetD3DContext(), wsTmp.c_str(), family.c_str(), size, x, y, textColor, 0);
+	GetD3DContext()->OMSetDepthStencilState(RenderStates::NoDoubleBlendDSS, 0);
 }
 
 Rect Graphics::MeasureText(string text, int size, string fontFamily)

@@ -38,8 +38,12 @@ ParticleSystem::ParticleSystem(XMFLOAT3 position, string luaScript)
 		mParticles[i] = CreateParticle();
 		mParticles[i]->SetInitialTime(0.0f);
 		mParticles[i]->SetLifetime(-1);
-		mParticles[i]->billboard = GLib::GetGraphics()->AddBillboard(XMFLOAT3(0, 0, 0), XMFLOAT2(1, 1), mTextureName);
+		mParticles[i]->SetInitialPos(GetPosition().x, GetPosition().y, GetPosition().z);
+		mParticles[i]->billboard = GLib::GetGraphics()->AddBillboard(GetPosition(), XMFLOAT2(1, 1), mTextureName);
+		mParticles[i]->SetPosition(GetPosition().x, GetPosition().y, GetPosition().z);
 	}
+
+	SetOriginObject(nullptr);
 }
 
 ParticleSystem::~ParticleSystem()
@@ -62,9 +66,11 @@ Particle* ParticleSystem::CreateParticle()
 	lua_pushnumber(mLuaWrapper->GetLua(), GetPosition().y);
 	lua_pushnumber(mLuaWrapper->GetLua(), GetPosition().z);
 	lua_pushnumber(mLuaWrapper->GetLua(), mTime);
+	static int counter = 0;
+	lua_pushnumber(mLuaWrapper->GetLua(), counter++);
 
 	// Call Lua function.
-	int result = lua_pcall(mLuaWrapper->GetLua(), 4, 1, 0);
+	int result = lua_pcall(mLuaWrapper->GetLua(), 5, 1, 0);
 
 	// Get the return value.
 	Particle* particle = (Particle*)tolua_tousertype(mLuaWrapper->GetLua(), -1, 0);
@@ -106,6 +112,9 @@ void ParticleSystem::AddParticle()
 
 void ParticleSystem::Update(float dt)
 {
+	//if(mOriginObject != nullptr)
+	//	SetPosition(mOriginObject->GetPosition());
+
 	mTime += dt;
 
 	if(mTime >= mLifetime)
@@ -119,8 +128,11 @@ void ParticleSystem::Update(float dt)
 	{
 		Particle* particle = mParticles[i];
 
+		if(particle->lifeTime != -1)
+			int a = 1;
+
 		// Is the particle dead?
- 		if( (mTime - particle->initialTime) > particle->lifeTime)
+ 		if((mTime - particle->initialTime) > particle->lifeTime)
 		{
 			mDeadParticles.push_back(particle);
 
@@ -137,9 +149,9 @@ void ParticleSystem::Update(float dt)
 			tolua_pushusertype(mLuaWrapper->GetLua(), particle, "Particle");
 			lua_pushnumber(mLuaWrapper->GetLua(), GetTime());
 			lua_pcall(mLuaWrapper->GetLua(), 2, 0, 0);
-
+			
 			particle->SetInitialPos(GetPosition().x, GetPosition().y, GetPosition().z);
-			particle->billboard->SetPos(particle->GetPosition());
+			//particle->billboard->SetPos(particle->GetInitialPos());
 			particle->billboard->SetSize(XMFLOAT2(particle->GetSize(), particle->GetSize()));
 		}
 	}
@@ -176,6 +188,24 @@ AxisAlignedBox ParticleSystem::GetBoundingBox()
 	box.Center = GetPosition();
 	box.Extents = XMFLOAT3(mRadius, mRadius, mRadius);
 	return box;
+}
+
+void ParticleSystem::SetOriginObject(Object3D* pObject)
+{
+	mOriginObject = pObject;
+}
+
+Particle* ParticleSystem::GetParticle(int id)
+{
+	if(mAliveParticles.size() > id)
+		return mAliveParticles[id];
+	else
+		return nullptr;
+}
+
+void ParticleSystem::SetRadius(float radius)
+{
+	mRadius = radius;
 }
 
 }

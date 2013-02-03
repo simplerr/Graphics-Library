@@ -27,6 +27,7 @@ public:
 	void SetSpacing(float spacing);
 	void SetBkgdScale(float scale);
 	void SetCenteredItems(bool centered);
+	void SetTextColor(UINT32 defaultColor, UINT32 highlightColor);
 
 	GLib::Rect GetRect();
 
@@ -40,6 +41,7 @@ private:
 private:
 	FontData mFontData;
 	vector<Label*> mItemList;
+	UINT32 mHighlightColor;
 	float mBkgdScale;
 	float mSpacing;
 	bool mCenteredItems;

@@ -49,6 +49,7 @@ namespace GLib {
 		Object3D*	GetSelectedObject(Ray ray, ObjectType type);
 		Object3D*	GetObjectById(int id);
 		Object3D*	GetObjectByName(string name);
+		bool		IsIntersecting(Object3D* pObjectA, Object3D* pObjectB);
 
 		// Callback hookups.
 		template <class T>

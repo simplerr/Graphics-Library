@@ -86,7 +86,8 @@ namespace GLib
 				float dist = sqrt(diff.x * diff.x + diff.y * diff.y + diff.z * diff.z);
 
 				// Collision! [NOTE] Fix proper collision detection.
-				if(dist < 4.0f && !OnObjectCollision.empty())
+				//dist < 4.0f
+				if(IsIntersecting(mObjectList[i], mObjectList[j]) && !OnObjectCollision.empty())
 					OnObjectCollision(mObjectList[i], mObjectList[j]);
 			}
 		}
@@ -110,9 +111,6 @@ namespace GLib
 		// Draw all the objects.
 		for(int i = 0; i < mObjectList.size(); i++)
 			mObjectList[i]->Draw(pGraphics);
-
-		// Draw the lights with a billboard.
-		pGraphics->DrawBillboards();
 	}
 
 	//! Returns the selected object, if any.
@@ -295,5 +293,13 @@ namespace GLib
 		}
 
 		return nullptr;
+	}
+
+	bool World::IsIntersecting(Object3D* pObjectA, Object3D* pObjectB)
+	{
+		if(XNA::IntersectAxisAlignedBoxAxisAlignedBox(&pObjectA->GetBoundingBox(), &pObjectB->GetBoundingBox()))
+			return true;
+		else
+			return false;
 	}
 }	// End of Graphics Library namespace.

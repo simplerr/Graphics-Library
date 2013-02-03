@@ -25,23 +25,27 @@ namespace GLib {
 
 		Particle* CreateParticle();
 		void InitLua();
-		void Update(float dt);
-		void Draw(Graphics* pGraphics);
+		virtual void Update(float dt);
+		virtual void Draw(Graphics* pGraphics);
 
 		void SetSpawnFrequency(float frequency);
 		void SetTime(float time);
 		void SetLifetime(float lifetime);
 		void SetNumMaxParticles(int numMaxParticles);
+		void SetOriginObject(Object3D* pObject);
+		void SetRadius(float radius);
 		
 		void AddParticle();
 
 		float GetTime();
 		void Init() {};
 		bool RayIntersect(XMVECTOR origin, XMVECTOR direction, float& pDist) {return false;}
-		AxisAlignedBox GetBoundingBox();
+		virtual AxisAlignedBox GetBoundingBox();
+		Particle* GetParticle(int id);
 	protected:
 		LuaWrapper*		 mLuaWrapper;
 		ParticleEffect*	 mEffect;
+		Object3D*		 mOriginObject;
 		string			 mTextureName;
 		string			 mLuaScript;
 		float mTime;
