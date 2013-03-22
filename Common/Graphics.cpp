@@ -189,6 +189,7 @@ void Graphics::DrawBillboards()
 	for(auto iter = mBillboardManagerMap.begin(); iter != mBillboardManagerMap.end(); iter++)
 	{
 		if((*iter).second->GetNumBillboards() == 0) {
+			delete (*iter).second;
 			mBillboardManagerMap.erase(iter);
 			break;
 		}
@@ -325,7 +326,11 @@ void Graphics::DrawText(string text, int x, int y, int size,  UINT32 textColor, 
 	std::wstring family(fontFamily.begin(), fontFamily.end());
 
 	mFontWrapper->DrawString(GetD3DContext(), wsTmp.c_str(), family.c_str(), size, x, y, textColor, 0);
+
+	// Restore the things that DrawString() destroys.
 	GetD3DContext()->OMSetDepthStencilState(RenderStates::NoDoubleBlendDSS, 0);
+	float blendFactor[] = {0.0f, 0.0f, 0.0f, 0.0f};
+	GetContext()->OMSetBlendState(RenderStates::TransparentBS, blendFactor, 0xffffffff);
 }
 
 Rect Graphics::MeasureText(string text, int size, string fontFamily)
@@ -459,6 +464,22 @@ void Graphics::RestoreRenderTarget()
 	GetContext()->OMSetRenderTargets(1, &renderTargetView, depthStencilView);
 	GetContext()->ClearRenderTargetView(GetD3D()->GetRenderTargetView(), reinterpret_cast<const float*>(&mFogColor));
 	GetContext()->ClearDepthStencilView(depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+}
+
+XMFLOAT2 Graphics::TransformToScreenSpace(XMFLOAT3 position)
+{
+	auto projection = XMLoadFloat4x4(&GetCamera()->GetProjectionMatrix());
+	auto view = XMLoadFloat4x4(&GetCamera()->GetViewMatrix());
+	auto viewProj = view * projection;
+
+	XMFLOAT3 pos = position;
+	XMVECTOR pos2D = XMVector3Transform(XMLoadFloat3(&pos), viewProj);
+	XMStoreFloat3(&pos, pos2D);
+
+	pos.x = ((pos.x / pos.z) * (GLib::GetClientWidth()*0.5)) + (GLib::GetClientWidth()*0.5f);
+	pos.y = -((pos.y / pos.z) * (GLib::GetClientHeight()*0.5)) + (GLib::GetClientHeight()*0.5f);
+
+	return XMFLOAT2(pos.x, pos.y);
 }
 
 //! Returns the Direct3D device.

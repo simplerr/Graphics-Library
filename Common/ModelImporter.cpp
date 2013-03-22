@@ -138,6 +138,14 @@ SkinnedModel* ModelImporter::LoadSkinnedModel(string filename)
 			mesh->SetIndices(indices);
 			mPrimtiveFactory->AddPrimitive(path.C_Str(), primitive);
 
+			// Replace .tga with .bmp [HACK].
+			string texturePath = path.C_Str();
+			int tgaPos = texturePath.find_first_of(".tga");
+			if(tgaPos != string::npos) {
+				texturePath.replace(texturePath.size()-4, 4, ".bmp");
+				path = texturePath;
+			}
+
 			// Any texture?
 			if(_stricmp(path.C_Str(), "") != 0)
 				mesh->LoadTexture(path.C_Str());
@@ -151,6 +159,7 @@ SkinnedModel* ModelImporter::LoadSkinnedModel(string filename)
 
 			// [NOTE] The material is set to white.
 			mesh->SetMaterial(Material(Colors::White));
+			//mesh->SetMaterial(Material(diffuse, diffuse, diffuse));
 
 			model->SetFilename(filename);
 

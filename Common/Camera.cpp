@@ -13,9 +13,10 @@ namespace GLib
 		// Set the sensitivity and speed
 		SetLookSensitivity(2.0f);
 		SetMovementSpeed(0.6f);
+		SetLocked(false);
 
 		// Default position and target
-		mPosition	= XMFLOAT3(0, 60, 30);
+		mPosition	= XMFLOAT3(-30, 60, 0);
 		mTarget		= XMFLOAT3(0.0f, 0.0f, 0.0f);
 		mUp			= XMFLOAT3(0.0f, 1.0f, 0.0f);		// Weird up vector
 
@@ -111,6 +112,7 @@ namespace GLib
 	{
 		mPosition = position;
 		UpdatePitchYaw();
+		UpdateViewMatrix();
 	}
 
 	//! Sets the cameras direction.
@@ -234,4 +236,13 @@ namespace GLib
 		UpdateViewMatrix();
 	}
 
+	void Camera::SetLocked(bool locked)
+	{
+		mLocked = locked;
+	}
+
+	bool Camera::GetLocked()
+	{
+		return mLocked;
+	}
 }	// End of Graphics Library namespace.

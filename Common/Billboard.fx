@@ -163,6 +163,19 @@ float4 PS(GeoOut pin) : SV_Target
     return litColor;
 }
 
+DepthStencilState DisableDepth
+{
+    DepthEnable = FALSE;
+    DepthWriteMask = ZERO;
+};
+
+DepthStencilState NoDepthWrites
+{
+    DepthEnable = TRUE;
+    DepthWriteMask = ZERO;
+};
+
+
 //! The billboard technique.
 technique11 BillboardTech
 {
@@ -172,6 +185,7 @@ technique11 BillboardTech
 		SetGeometryShader(CompileShader(gs_5_0, GS()));
         SetPixelShader(CompileShader(ps_5_0, PS()));
 
-		//SetBlendState(AdditiveBlending, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xffffffff);
+		SetBlendState(AdditiveBlending, float4(0.0f, 0.0f, 0.0f, 0.0f), 0xffffffff);
+		SetDepthStencilState( NoDepthWrites, 0 );
     }
 }

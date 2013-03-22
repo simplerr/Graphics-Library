@@ -6,6 +6,8 @@
 #include "SkinnedMesh.h"
 #include "Effects.h"
 
+#define INFINITE_ANIMATION -1000
+
 //! Graphics Library namespace.
 namespace GLib
 {
@@ -18,6 +20,9 @@ namespace GLib
 		mElapsedTime = 0.0f;
 		mCurrentAnimIndex = 0;
 		SetAnimation(1);
+
+		mPreviousAnimation = 0;
+		mAnimationDuration = INFINITE_ANIMATION;
 	}
 
 	//! Cleanup.
@@ -35,6 +40,15 @@ namespace GLib
 	//! Updates the object.
 	void AnimatedObject::Update(float dt)
 	{
+		if(mAnimationDuration != INFINITE_ANIMATION) { // [NOTE] INFINITE_ANIMATION is just a random number!
+			mAnimationDuration -= dt;
+
+			if(mAnimationDuration <= 0) {
+				SetAnimation(mPreviousAnimation);
+				mAnimationDuration = INFINITE_ANIMATION;
+			}
+		}
+
 		// Increments the elapsed time counter used for animations. 
 		mElapsedTime += dt;
 		mSkinnedModel->Update(dt);
@@ -44,7 +58,7 @@ namespace GLib
 	void AnimatedObject::Draw(GLib::Graphics* pGraphics)
 	{
 		mSkinnedModel->SetAnimation(mCurrentAnimIndex);
-		mSkinnedModel->SetElapsedTime(mElapsedTime);
+		//mSkinnedModel->SetElapsedTime(mElapsedTime);
 		Effects::BasicFX->SetMaterial(GetMaterial());
 		mSkinnedModel->Draw(pGraphics, GetWorldMatrix());
 
@@ -112,4 +126,26 @@ namespace GLib
 	{
 		return mSkinnedModel->GetFilename();
 	}
+
+	void AnimatedObject::SetAnimation(int index, float duration)
+	{
+		SetAnimation(index);
+		mAnimationDuration = duration;
+	}
+
+	int AnimatedObject::GetCurrentAnimation()
+	{
+		return mCurrentAnimIndex;
+	}
+
+	void AnimatedObject::AdjustAnimationSpeedBy(float percent)
+	{
+		mSkinnedModel->AdjustAnimationSpeedBy(percent);
+	}
+
+	float AnimatedObject::GetAnimationSpeed()
+	{
+		return mSkinnedModel->GetAnimationSpeed();
+	}
+
 }	// End of Graphics Library namespace.

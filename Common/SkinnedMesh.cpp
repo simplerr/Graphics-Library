@@ -29,6 +29,7 @@ void SkinnedMesh::Draw(Graphics* pGraphics)
 	// Set the material properties for this skinned mesh.
 	Effects::BasicFX->SetTexture(mTexture);
 	Effects::BasicFX->SetNormalMap(mNormalMap);
+	Effects::BasicFX->SetMaterial(mMaterial);
 
 	if(!pGraphics->IsRenderingShadows())
 		Effects::BasicFX->Apply(GetD3DContext(), mNormalMap == 0 ? STANDARD_TECH : NMAP_TECH);	

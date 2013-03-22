@@ -2,6 +2,7 @@
 #include "Graphics.h"
 #include "d3dUtil.h"
 #include "LuaWrapper.h"
+#include "UiCoordinate.h"
 
 GLib::Texture2D* texture;
 
@@ -36,14 +37,16 @@ void Label::Draw(GLib::Graphics* pGraphics)
 
 void Label::LoadLuaProperties(LuaWrapper* pLuaWrapper)
 {
-	float x = pLuaWrapper->GetTableNumber(GetName(), "pos_x");
-	float y = pLuaWrapper->GetTableNumber(GetName(), "pos_y");
-	float fontSize = pLuaWrapper->GetTableNumber(GetName(), "font_size");
-	string fontFamily = pLuaWrapper->GetTableString(GetName(), "font_family");
-	string color = pLuaWrapper->GetTableString(GetName(), "font_color");
+	float x = pLuaWrapper->Get<float>(GetName() + ".pos_x");
+	float y = pLuaWrapper->Get<float>(GetName() + ".pos_y");
+	float fontSize = pLuaWrapper->Get<float>(GetName() + ".font_size");
+	float bkgdScale = pLuaWrapper->Get<float>(GetName() + ".bkgd_scale");
+	string fontFamily = pLuaWrapper->Get<string>(GetName() + ".font_family");
+	string color = pLuaWrapper->Get<string>(GetName() + ".font_color");
 
 	SetPosition(x, y);
 	SetFontData(fontFamily, fontSize, GLib::StripRGBA(color));
+	SetBkgdScale(bkgdScale);
 }
 
 void Label::OnLeftBtnPressed(XMFLOAT3 pos)

@@ -3,6 +3,17 @@
 #include <vector>
 #include "d3dUtil.h"
 
+struct Animation
+{
+	Animation(float startFrame, float endFrame, float totalFrames, float length) {
+		startTime = (startFrame / totalFrames) * length;
+		endtime = (endFrame / totalFrames) * length;
+	}
+
+	float startTime;
+	float endtime;
+};
+
 //! Graphics Library namespace.
 namespace GLib
 {
@@ -10,6 +21,7 @@ namespace GLib
 	class Graphics;
 	class SkinnedMesh;
 	class SceneAnimator;
+	struct Material;
 
 	typedef vector<SkinnedMesh*> SkinnedMeshList;
 
@@ -34,17 +46,26 @@ namespace GLib
 		void SetFilename(string filename);
 		void SetAnimation(int index);
 		void SetElapsedTime(float elapsedTime);
-		
+		void SetMeshMaterial(int meshId, Material material);
+		void AdjustAnimationSpeedBy(float percent);
+
 		SkinnedMeshList* GetMeshList();
 		vector<XMFLOAT4X4> GetFinalTransforms();
 		XNA::AxisAlignedBox GetBoundingBox();
 		string GetFilename();
 		void CalculateAABB();
+		int GetCurrentAnimation();
+		float GetAnimationSpeed();
+
+		void AddAnimation(int startFrame, int endFrame, float totalFrames, float length);
 	private:
 		SkinnedMeshList	mMeshList;
 		SceneAnimator*	mAnimator;
+
 		float			mElapsedTime;
 		string			mFilename;
 		XNA::AxisAlignedBox mAABB;
+
+		vector<Animation> mAnimations;
 	};
 }

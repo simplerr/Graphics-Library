@@ -10,22 +10,28 @@
 
 namespace GLib {
 
-ParticleSystem::ParticleSystem(XMFLOAT3 position, string luaScript)
+ParticleSystem::ParticleSystem(XMFLOAT3 position, string luaScript, string particleTexture, float duration)
 	: Object3D(PARTICLE_SYSTEM, position),
 	mTime(0.0f),
 	mLuaScript(luaScript)
 {
 	mLuaWrapper = new LuaWrapper(luaScript);
 
-	float spawnFrequency = mLuaWrapper->GetTableNumber("ParticleSystemData", "spawn_frequency");
-	float lifetime = mLuaWrapper->GetTableNumber("ParticleSystemData", "lifetime");
-	int numMaxParticles = mLuaWrapper->GetTableNumber("ParticleSystemData", "max_particles");
-	mRadius = mLuaWrapper->GetTableNumber("ParticleSystemData", "radius");
+	float spawnFrequency = mLuaWrapper->Get<float>("ParticleSystemData.spawn_frequency");
+	float lifetime = mLuaWrapper->Get<float>("ParticleSystemData.lifetime");
+	int numMaxParticles = mLuaWrapper->Get<int>("ParticleSystemData.max_particles");
+	mRadius = mLuaWrapper->Get<float>("ParticleSystemData.radius");
 
 	SetSpawnFrequency(spawnFrequency);
 	SetLifetime(lifetime);
 	SetNumMaxParticles(numMaxParticles);
-	mTextureName = mLuaWrapper->GetTableString("ParticleData", "texture");
+	mTextureName = mLuaWrapper->Get<string>("ParticleData.texture");
+
+	if(particleTexture != "lua")
+		mTextureName = particleTexture;
+
+	if(duration != 0.0f)
+		SetLifetime(duration);
 
 	// Allocate memory for maximum number of particles.
 	mParticles.resize(mNumMaxParticles);
@@ -49,8 +55,12 @@ ParticleSystem::ParticleSystem(XMFLOAT3 position, string luaScript)
 ParticleSystem::~ParticleSystem()
 {
 	// Remove all the billboards.
-	for(int i = 0; i < mNumMaxParticles; ++i)
+	for(int i = 0; i < mNumMaxParticles; ++i) {
 		GLib::GetGraphics()->RemoveBillboard(mTextureName, mParticles[i]->billboard);
+		delete mParticles[i];
+	}
+
+	delete mLuaWrapper;
 }
 
 void ParticleSystem::InitLua()
@@ -104,6 +114,8 @@ void ParticleSystem::AddParticle()
 		// Get the lifetime variable from Lua.
 		p->lifeTime = mLuaWrapper->GetNumber("GetLifetime");
 
+		p->SetInitialPos(GetPosition().x, GetPosition().y, GetPosition().z);
+
 		// No longer dead.
 		mDeadParticles.pop_back();
 		mAliveParticles.push_back(p);
@@ -128,9 +140,6 @@ void ParticleSystem::Update(float dt)
 	{
 		Particle* particle = mParticles[i];
 
-		if(particle->lifeTime != -1)
-			int a = 1;
-
 		// Is the particle dead?
  		if((mTime - particle->initialTime) > particle->lifeTime)
 		{
@@ -150,7 +159,7 @@ void ParticleSystem::Update(float dt)
 			lua_pushnumber(mLuaWrapper->GetLua(), GetTime());
 			lua_pcall(mLuaWrapper->GetLua(), 2, 0, 0);
 			
-			particle->SetInitialPos(GetPosition().x, GetPosition().y, GetPosition().z);
+			//particle->SetInitialPos(GetPosition().x, GetPosition().y, GetPosition().z);
 			//particle->billboard->SetPos(particle->GetInitialPos());
 			particle->billboard->SetSize(XMFLOAT2(particle->GetSize(), particle->GetSize()));
 		}
@@ -208,4 +217,13 @@ void ParticleSystem::SetRadius(float radius)
 	mRadius = radius;
 }
 
+LuaWrapper* ParticleSystem::GetLuaWrapper()
+{
+	return mLuaWrapper;
+}
+
+void ParticleSystem::SetTexture(string texture)
+{
+	mTextureName = texture;
+}
 }

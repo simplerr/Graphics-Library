@@ -88,6 +88,7 @@ namespace GLib
 		void SetRenderTarget(RenderTarget* renderTarget);
 		void SetCamera(Camera* pCamera);
 		void RestoreRenderTarget();
+		XMFLOAT2 TransformToScreenSpace(XMFLOAT3 position);
 
 		// Getters.
 		ID3D11DeviceContext*	GetContext();

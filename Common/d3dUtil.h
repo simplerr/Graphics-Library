@@ -56,6 +56,7 @@ namespace GLib
 	wstring StringToWString(const std::string &s);
 	unsigned int ColorRGBA(byte red, byte green, byte blue, byte alpha);
 	vector<string> SplitString(string text, char delim);
+	bool IsNumber(const std::string& s);
 
 	//! Takes a "0 0 0 255" string and splits it up to a UIN32 color value.
 	UINT32 StripRGBA(string colors);

@@ -15,6 +15,7 @@ ControlManager::ControlManager(string luaScript)
 ControlManager::~ControlManager()
 {
 	delete mLuaWrapper;
+	mLuaWrapper = nullptr;
 
 	for(int i = 0; i < mControlList.size(); i++)
 		delete mControlList[i];
@@ -37,7 +38,10 @@ void ControlManager::Update(GLib::Input* pInput, float dt)
 	{
 		BasicControl* control = mControlList[i];
 
-		if(control->GetActivated())
+		if(!control->GetVisible())
+			continue;
+
+		//if(control->GetActivated())
 			control->Update(pInput, dt);
 
 		if(control->PointInsideControl(mousePos))
@@ -63,7 +67,8 @@ void ControlManager::Draw(GLib::Graphics* pGraphics)
 {
 	for(int i = 0; i < mControlList.size(); i++)
 	{
-		mControlList[i]->Draw(pGraphics);
+		if(mControlList[i]->GetVisible())
+			mControlList[i]->Draw(pGraphics);
 	}
 }
 
@@ -73,12 +78,23 @@ void ControlManager::OnResize(float width, float height)
 	{
 		XMFLOAT2 pos = mControlList[i]->GetPosition();
 		GLib::Rect ratio = GLib::GetGraphics()->GetD3D()->GetDimensionRatio();
+		float controlWidth = mControlList[i]->GetRect().Width();
+		float controlHeight = mControlList[i]->GetRect().Height();
+		
 
 		float newX, newY;
 		if(mControlList[i]->GetAlignment().fixedX)
 			newX = pos.x;
-		else 
-			newX = pos.x / ratio.right;
+		else {
+		//	if(width != 1600 && i != 0) {
+		//	float temp = pos.x + (controlWidth/2.0f);// * ratio.Width();
+		//	temp = temp / ratio.right;
+		//	newX = temp - (controlWidth / ratio.Width());///2.0f;
+		//	}
+		//	else
+			newX = pos.x / ratio.right;	// OLD (working!=!=!)
+
+		}
 
 		if(mControlList[i]->GetAlignment().fixedY)
 			newY = pos.y;
@@ -97,9 +113,11 @@ void ControlManager::AddControl(BasicControl* pControl)
 
 void ControlManager::LoadLuaProperties()
 {
-	mLuaWrapper->Reload();
-	for(int i = 0; i < mControlList.size(); i++)
+	//mLuaWrapper->Reload();
+	for(int i = 0; i < mControlList.size(); i++) {
+		mLuaWrapper->Reload();
 		mControlList[i]->LoadLuaProperties(mLuaWrapper);
+	}
 
 	OnResize(GLib::GetClientWidth(), GLib::GetClientHeight());
 }

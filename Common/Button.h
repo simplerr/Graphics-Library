@@ -22,6 +22,7 @@ public:
 	void LoadLuaProperties(LuaWrapper* pLuaWrapper);
 
 	void SetDisabled(bool disabled);
+	void SetPressedSound(string filename);
 	bool GetDisabled();
 
 	// Callback hookups.
@@ -36,4 +37,5 @@ private:
 	GLib::Texture2D* mHooverTexture;
 	bool mMouseOver;
 	bool mDisabled;
+	string mSoundEffect;
 };

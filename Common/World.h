@@ -81,7 +81,9 @@ namespace GLib {
 		ObjectList		mObjectList;
 		LightList		mLightList;
 		WorldLoader*	mWorldLoader;
-		Sky*		mSkyBox;
-		Terrain*	mTerrain;
+		Sky*			mSkyBox;
+		Terrain*		mTerrain;
+		int				mIdCounter;
+		int				mLightIdCounter;
 	};
 }

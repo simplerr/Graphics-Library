@@ -6,6 +6,9 @@
 #include <string>
 #include <vector>
 #include <sstream>
+#include <ctype.h>
+#include <stdio.h>
+#include <stdlib.h>
 using namespace std;
 
 //! Graphics Library namespace.
@@ -97,6 +100,15 @@ UINT32 StripRGBA(string colors)
 {
 	vector<string> split = SplitString(colors, ' ');
 	return ColorRGBA(atoi(split[0].c_str()), atoi(split[1].c_str()), atoi(split[2].c_str()), atoi(split[3].c_str()));
+}
+
+bool IsNumber(const std::string& s)
+{
+	std::string::const_iterator it = s.begin();
+	while (it != s.end() && (isdigit(*it) || *it == '.'))
+		++it;
+
+	return !s.empty() && it == s.end();
 }
 
 //! Loads and creates a SRV to a 2d texture array.

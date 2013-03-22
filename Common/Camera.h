@@ -34,6 +34,7 @@ namespace GLib
 		void SetDirection(XMFLOAT3 direction);
 		void SetYaw(float yaw);
 		void SetPitch(float pitch);
+		void SetLocked(bool locked);
 
 		XMFLOAT4X4	GetViewMatrix();
 		XMFLOAT4X4	GetProjectionMatrix();
@@ -44,6 +45,7 @@ namespace GLib
 		float		GetMovementSpeed();
 		Frustum		GetFrustum();
 		Ray			GetWorldPickingRay();
+		bool		GetLocked();
 	private:
 		void UpdatePitchYaw();
 		XMFLOAT4X4	mView;
@@ -58,5 +60,6 @@ namespace GLib
 		float		mSensitivity;
 		float		mHeightOffset;
 		float		mYaw, mPitch;
+		bool		mLocked;
 	};
 }

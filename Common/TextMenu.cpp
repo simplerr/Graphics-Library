@@ -3,6 +3,7 @@
 #include "Graphics.h"
 #include "LuaWrapper.h"
 #include "d3dUtil.h"
+#include "Sound.h"
 
 TextMenu::TextMenu(float x, float y, string name)
 	: BasicControl(x, y, name)
@@ -13,11 +14,15 @@ TextMenu::TextMenu(float x, float y, string name)
 	SetSpacing(20.0f);
 	SetCenteredItems(false);
 	SetTextColor(GLib::ColorRGBA(0, 0, 0, 255), GLib::ColorRGBA(255, 255, 255, 255));
+	SetPressedSound("-none-");
 }
 
 TextMenu::~TextMenu()
 {
+	for(int i = 0; i < mItemList.size(); i++)
+		delete mItemList[i];
 
+	mItemList.clear();
 }
 
 void TextMenu::Update(GLib::Input* pInput, float dt)
@@ -29,7 +34,7 @@ void TextMenu::Draw(GLib::Graphics* pGraphics)
 {
 	if(IsDrawingBkgd()) {
 		GLib::Rect rect = GetRect();
-		pGraphics->DrawScreenQuad(GetBkgdTexture(), GetPosition().x , GetPosition().y + rect.Height()/2.0f-20, rect.Width()*mBkgdScale, rect.Height()*mBkgdScale); // [NOTE] -20
+		pGraphics->DrawScreenQuad(GetBkgdTexture(), GetPosition().x , GetPosition().y + rect.Height()*mBkgdScale/2.0f - mItemList[0]->GetRect().Height()/2, rect.Width()*mBkgdScale, rect.Height()*mBkgdScale); // [NOTE] -20
 	}
 
 	for(int i = 0; i < mItemList.size(); i++)
@@ -53,19 +58,19 @@ void TextMenu::AddItem(string name, string text)
 
 void TextMenu::LoadLuaProperties(LuaWrapper* pLuaWrapper)
 {
-	float x = pLuaWrapper->GetTableNumber(GetName(), "pos_x");
-	float y = pLuaWrapper->GetTableNumber(GetName(), "pos_y");
-	float spacing = pLuaWrapper->GetTableNumber(GetName(), "spacing");
-	float fontSize = pLuaWrapper->GetTableNumber(GetName(), "font_size");
-	float bkgdScale = pLuaWrapper->GetTableNumber(GetName(), "bkgd_scale");
-	string fontFamily = pLuaWrapper->GetTableString(GetName(), "font_family");
-	string color = pLuaWrapper->GetTableString(GetName(), "font_color");
-	string itemBkgd = pLuaWrapper->GetTableString(GetName(), "item_bkgd");
-	string menuBkgd = pLuaWrapper->GetTableString(GetName(), "menu_bkgd");
-	int drawBkgd = pLuaWrapper->GetTableNumber(GetName(), "draw_bkgd");
-	int drawItemBkgd = pLuaWrapper->GetTableNumber(GetName(), "draw_item_bkgd");
-	int centeredItems = pLuaWrapper->GetTableNumber(GetName(), "centered_items");
-	float itemBkgdScale = pLuaWrapper->GetTableNumber(GetName(), "item_bkgd_scale");
+	float x = pLuaWrapper->Get<float>(GetName() + ".pos_x");
+	float y = pLuaWrapper->Get<float>(GetName() + ".pos_y");
+	float spacing = pLuaWrapper->Get<float>(GetName() + ".spacing");
+	float fontSize = pLuaWrapper->Get<float>(GetName() + ".font_size");
+	float bkgdScale = pLuaWrapper->Get<float>(GetName() + ".bkgd_scale");
+	string fontFamily = pLuaWrapper->Get<string>(GetName() + ".font_family");
+	string color = pLuaWrapper->Get<string>(GetName() + ".font_color");
+	string itemBkgd = pLuaWrapper->Get<string>(GetName() + ".item_bkgd");
+	string menuBkgd = pLuaWrapper->Get<string>(GetName() + ".menu_bkgd");
+	int drawBkgd = pLuaWrapper->Get<float>(GetName() + ".draw_bkgd");
+	int drawItemBkgd = pLuaWrapper->Get<float>(GetName() + ".draw_item_bkgd");
+	int centeredItems = pLuaWrapper->Get<float>(GetName() + ".centered_items");
+	float itemBkgdScale = pLuaWrapper->Get<float>(GetName() + ".item_bkgd_scale");
 
 	SetBkgdScale(bkgdScale);
 	SetBkgdTexture(menuBkgd);
@@ -115,14 +120,21 @@ void TextMenu::PerformLayout()
 
 void TextMenu::OnLeftBtnPressed(XMFLOAT3 pos)
 {
+	Label* pressed = nullptr;
 	for(int i = 0; i < mItemList.size(); i++)
 	{
 		if(mItemList[i]->PointInsideControl(pos)) {
+			if(mSoundEffect != "-none-")
+				gSound->PlayEffect(mSoundEffect);
+
 			// Callback.
-			if(!OnItemPressed.empty())
-				OnItemPressed(mItemList[i]);
+			pressed = mItemList[i];
 		}
 	}
+
+	if(pressed != nullptr && !OnItemPressed.empty())
+		OnItemPressed(pressed);
+
 }
 
 void TextMenu::OnMouseHoover(XMFLOAT3 pos)
@@ -162,7 +174,7 @@ GLib::Rect TextMenu::GetRect()
 void TextMenu::DeactivateAllItems()
 {
 	for(int i = 0; i < mItemList.size(); i++)
-		mItemList[i]->SetDrawBkgd(false);
+		mItemList[i]->SetFontData(mFontData.family, mFontData.size, mFontData.color);
 }
 
 void TextMenu::SetSpacing(float spacing)
@@ -184,4 +196,22 @@ void TextMenu::SetTextColor(UINT32 defaultColor, UINT32 highlightColor)
 {
 	mFontData.color = defaultColor;
 	mHighlightColor = highlightColor;
+}
+
+float TextMenu::GetBkgdScale()
+{
+	return mBkgdScale;
+}
+
+void TextMenu::ClearItems()
+{
+	for(int i = 0; i < mItemList.size(); i++)
+		delete mItemList[i];
+
+	mItemList.clear();
+}
+
+void TextMenu::SetPressedSound(string filename)
+{
+	mSoundEffect = filename;
 }

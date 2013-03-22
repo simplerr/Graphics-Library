@@ -16,10 +16,11 @@ class ControlManager
 {
 public:
 	ControlManager(string luaScript);
-	~ControlManager();
+	virtual ~ControlManager();
 
-	void Update(GLib::Input* pInput, float dt);
-	void Draw(GLib::Graphics* pGraphics);
+	virtual void Update(GLib::Input* pInput, float dt);
+	virtual void Draw(GLib::Graphics* pGraphics);
+
 	void AddControl(BasicControl* pControl);
 	void LoadLuaProperties();
 	void DeactivateAllControls();

@@ -40,7 +40,7 @@ class BasicControl
 {
 public:
 	BasicControl(float x, float y, string name);
-	~BasicControl();
+	virtual ~BasicControl();
 
 	virtual void Update(GLib::Input* pInput, float dt) {};
 	virtual void Draw(GLib::Graphics* pGraphics) = 0;
@@ -54,6 +54,7 @@ public:
 	void SetParent(BasicControl* pParent);
 	void SetBkgdTexture(string textureName);
 	void SetDrawBkgd(bool drawBkgd);
+	void SetVisible(bool visible);
 	void SetName(string name);
 	void SetActivated(bool activated);
 	void SetPosition(float x, float y);
@@ -66,6 +67,7 @@ public:
 	ControlAlignment GetAlignment();
 	string GetName();
 	bool GetActivated();
+	bool GetVisible();
 	float GetBkgdScale();
 	bool IsDrawingBkgd();
 	
@@ -80,5 +82,6 @@ private:
 	string mLuaScript;
 	bool mDrawBkgdTexture;
 	bool mActivated;
+	bool mVisible;
 	float mBkgdScale;
 };

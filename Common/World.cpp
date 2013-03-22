@@ -22,14 +22,15 @@ namespace GLib
 	//! Constructor.
 	World::World()
 	{
-		
+		mIdCounter = 0;
+		mLightIdCounter = 0;
 	}
 
 	//! Init.
 	void World::Init(Graphics* pGraphics)
 	{
 		// Create the sky box.
-		mSkyBox = new Sky(pGraphics, "textures/sunsetcube1024.dds", 1000.0f);
+		mSkyBox = new Sky(pGraphics, "textures/grassenvmap1024.dds", 1000.0f);
 
 		// Create the terrain.
 		mTerrain = new Terrain();
@@ -147,8 +148,7 @@ namespace GLib
 	void World::AddObject(Object3D* object, int id)
 	{
 		// [TODO] Set Id.
-		static int idCounter = 0;
-		object->SetId(id == -1 ? idCounter++ : id);	// Let the ID be hardcoded if wanted.
+		object->SetId(id == -1 ? mIdCounter++ : id);	// Let the ID be hardcoded if wanted.
 		object->SetWorld(this);
 		object->Init();
 		mObjectList.push_back(object);
@@ -161,8 +161,7 @@ namespace GLib
 	//! Adds a light to the light list.
 	void World::AddLight(Light* light)
 	{
-		static int id = 0;
-		light->SetId(id++);
+		light->SetId(mLightIdCounter++);
 		mLightList.push_back(light);
 	}
 

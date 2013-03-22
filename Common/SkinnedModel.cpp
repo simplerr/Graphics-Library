@@ -17,6 +17,15 @@ SkinnedModel::SkinnedModel()
 	SetFilename("#NOVALUE");
 	mAnimator = nullptr;
 	mElapsedTime = 0.0f;
+
+	AddAnimation(0, 37, 662, 20);
+	AddAnimation(38, 83, 662, 20);
+	AddAnimation(84, 264, 662, 20);
+	AddAnimation(265, 445, 662, 20);
+	AddAnimation(446, 491, 662, 20);
+	AddAnimation(492, 537, 662, 20);
+	AddAnimation(538, 553, 662, 20);
+	AddAnimation(554, 662, 662, 20);
 }
 	
 //! Cleaunp.
@@ -31,7 +40,15 @@ SkinnedModel::~SkinnedModel()
 
 void SkinnedModel::Update(float dt)
 {
+	mElapsedTime += dt;
 
+	//// Update the elapsed time based on the current animation index.
+	//int currentAnimation = mAnimator->GetAnimationIndex();
+	//float animationLength = mAnimations[currentAnimation].endtime - mAnimations[currentAnimation].startTime;
+	////mElapsedTime = mAnimations[currentAnimation].startTime + mElapsedTime;
+
+	//if(mElapsedTime > animationLength)
+	//	mElapsedTime = 0;
 }
 
 //! Draws all the skinned meshes. Sets the bone transforms to use in the shader.
@@ -62,6 +79,8 @@ void SkinnedModel::Draw(Graphics* pGraphics, CXMMATRIX world)
 
 	// Bone transforms.
 	vector<XMFLOAT4X4> finalTransforms = mAnimator->GetTransforms(mElapsedTime);	//mElapsedTime
+
+	//OutputDebugString(string(to_string(mElapsedTime + mAnimations[mAnimator->GetAnimationIndex()].startTime)+"\n").c_str());
 
 	Effects::BasicFX->SetBoneTransforms(&finalTransforms[0], finalTransforms.size());
 
@@ -199,6 +218,32 @@ XNA::AxisAlignedBox SkinnedModel::GetBoundingBox()
 string SkinnedModel::GetFilename()
 {
 	return mFilename;
+}
+
+void SkinnedModel::SetMeshMaterial(int meshId, Material material)
+{
+	if(meshId < mMeshList.size() && meshId >= 0)
+		mMeshList[meshId]->SetMaterial(material);
+}
+
+int SkinnedModel::GetCurrentAnimation()
+{
+	return mAnimator->GetAnimationIndex();
+}
+
+void SkinnedModel::AddAnimation(int startFrame, int endFrame, float totalFrames, float length)
+{
+	mAnimations.push_back(Animation(startFrame, endFrame, totalFrames, length));
+}
+
+void SkinnedModel::AdjustAnimationSpeedBy(float percent)
+{
+	mAnimator->AdjustAnimationSpeedBy(percent);
+}
+
+float SkinnedModel::GetAnimationSpeed()
+{
+	return mAnimator->GetAnimationSpeed();
 }
 
 }	// End of Graphics Library namespace.

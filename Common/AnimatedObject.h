@@ -21,12 +21,19 @@ namespace GLib {
 
 		bool RayIntersect(XMVECTOR origin, XMVECTOR direction, float& pDist);
 		void SetAnimation(int index);
+		void SetAnimation(int index, float duration);
+		void AdjustAnimationSpeedBy(float percent);
 		virtual AxisAlignedBox GetBoundingBox();
 		SkinnedModel* GetModel();
 		string GetFilename();
+		int GetCurrentAnimation();
+		float GetAnimationSpeed();
+
 	private:
 		SkinnedModel* mSkinnedModel;
 		int		mCurrentAnimIndex;
 		float	mElapsedTime;
+		int		mPreviousAnimation;
+		float	mAnimationDuration;
 	};
 }

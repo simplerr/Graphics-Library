@@ -8,6 +8,7 @@ BasicControl::BasicControl(float x, float y, string name)
 	SetName(name);
 	SetParent(nullptr);
 	SetDrawBkgd(false);
+	SetVisible(true);
 	SetBkgdScale(1.0f);
 	mBkgdTexture = nullptr;
 }
@@ -107,4 +108,14 @@ void BasicControl::SetAlignment(bool fixedX, bool fixedY)
 	mAlignment.fixedX = fixedX;
 	mAlignment.fixedY = fixedY;
 
+}
+
+bool BasicControl::GetVisible()
+{
+	return mVisible;
+}
+
+void BasicControl::SetVisible(bool visible)
+{
+	mVisible = visible;
 }

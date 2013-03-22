@@ -285,6 +285,7 @@ namespace GLib
 		void SetLights(LightList* lights);
 		void SetToolCenter(XMFLOAT2 center)					{ ToolCenter->SetRawValue(&center, 0, sizeof(XMFLOAT2)); }
 		void SetToolRadius(float radius)					{ ToolRadius->SetFloat(radius); }
+		void SetArenaRadius(float radius)					{ ArenaRadius->SetFloat(radius); }
 
 		ID3DX11EffectMatrixVariable* ViewProj;
 		ID3DX11EffectMatrixVariable* World;
@@ -309,6 +310,7 @@ namespace GLib
 
 		ID3DX11EffectVectorVariable* ToolCenter;
 		ID3DX11EffectScalarVariable* ToolRadius;
+		ID3DX11EffectScalarVariable* ArenaRadius;
 	};
 	#pragma endregion
 

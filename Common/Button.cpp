@@ -1,11 +1,14 @@
 #include "Button.h"
 #include "Graphics.h"
 #include "LuaWrapper.h"
+#include "UiCoordinate.h"
+#include "Sound.h"
 
 Button::Button(int x, int y, string name, string text)
 	: Label(x, y, name, text)
 {
 	SetDisabled(false);
+	SetPressedSound("-none-");
 	mMouseOver = false;
 }
 
@@ -37,8 +40,12 @@ void Button::Draw(GLib::Graphics* pGraphics)
 
 void Button::OnLeftBtnPressed(XMFLOAT3 pos)
 {
-	if(!OnPressed.empty() && !mDisabled)
+	if(!OnPressed.empty() && !mDisabled) {
 		OnPressed(this);
+
+		if(mSoundEffect != "-none-")
+			gSound->PlayEffect(mSoundEffect);
+	}
 }
 
 void Button::OnMouseHoover(XMFLOAT3 pos)
@@ -50,9 +57,9 @@ void Button::LoadLuaProperties(LuaWrapper* pLuaWrapper)
 {
 	Label::LoadLuaProperties(pLuaWrapper);
 
-	string defaultTexture = pLuaWrapper->GetTableString(GetName(), "default_texture");
-	string disabledTexture = pLuaWrapper->GetTableString(GetName(), "disabled_texture");
-	string hooverTexture = pLuaWrapper->GetTableString(GetName(), "hoover_texture");
+	string defaultTexture = pLuaWrapper->Get<string>(GetName() + ".default_texture");
+	string disabledTexture = pLuaWrapper->Get<string>(GetName() + ".disabled_texture");
+	string hooverTexture = pLuaWrapper->Get<string>(GetName() + ".hoover_texture");
 
 	SetBkgdTexture(defaultTexture);
 	mDisabledTexture = GLib::GetGraphics()->LoadTexture(disabledTexture);
@@ -67,4 +74,9 @@ void Button::SetDisabled(bool disabled)
 bool Button::GetDisabled()
 {
 	return mDisabled;
+}
+
+void Button::SetPressedSound(string filename)
+{
+	mSoundEffect = filename;
 }

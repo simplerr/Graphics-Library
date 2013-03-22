@@ -12,13 +12,14 @@ public:
 	TextMenu(float x, float y, string name);
 	~TextMenu();
 
-	void Update(GLib::Input* pInput, float dt);
-	void Draw(GLib::Graphics* pGraphics);
+	virtual void Update(GLib::Input* pInput, float dt);
+	virtual void Draw(GLib::Graphics* pGraphics);
 	void AddItem(Label* pItem);
 	void AddItem(string name, string text);
 	void LoadLuaProperties(LuaWrapper* pLuaWrapper);
 	void PerformLayout();
 	void DeactivateAllItems();
+	void ClearItems();
 
 	void OnLeftBtnPressed(XMFLOAT3 pos);
 	void OnMouseHoover(XMFLOAT3 pos);
@@ -28,8 +29,10 @@ public:
 	void SetBkgdScale(float scale);
 	void SetCenteredItems(bool centered);
 	void SetTextColor(UINT32 defaultColor, UINT32 highlightColor);
+	void SetPressedSound(string filename);
 
 	GLib::Rect GetRect();
+	float GetBkgdScale();
 
 	// Callback hookups.
 	template <class T>
@@ -45,4 +48,5 @@ private:
 	float mBkgdScale;
 	float mSpacing;
 	bool mCenteredItems;
+	string mSoundEffect;
 };

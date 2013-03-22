@@ -137,7 +137,7 @@ int Runnable::Run()
 				CalculateFrameStats();
 				mInput->Poll();
 				mInput->Update(elapsedTime);
-				mGraphics->Update(mInput, elapsedTime);
+				//mGraphics->Update(mInput, elapsedTime);
 				Update(mInput, elapsedTime);
 				Draw(GetGraphics());
 				elapsedTime = 0.0f;

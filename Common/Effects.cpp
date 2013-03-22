@@ -234,12 +234,12 @@ void BasicEffect::SetLights(LightList* lights)
 {
 	if(lights != nullptr) {
 		Light lightArray[10];
-		for(int i = 0; i < lights->size(); i++)
+		for(int i = 0; i < lights->size() && i < 10; i++)
 			lightArray[i] = *lights->operator[](i);
 
 		// Sets the light list in the effect file.
-		mfxLights->SetRawValue((void*)lightArray, 0, sizeof(Light) * lights->size());
-		float size = lights->size();
+		float size = min(10, lights->size());
+		mfxLights->SetRawValue((void*)lightArray, 0, sizeof(Light) * size);
 		mfxNumLights->SetRawValue(&size, 0, sizeof(float));
 	}
 	else {
@@ -328,14 +328,20 @@ void BillboardEffect::SetTexture(Texture2D* texture)
 	
 void BillboardEffect::SetLights(LightList* lights)
 {
-	Light lightArray[10];
-	for(int i = 0; i < lights->size(); i++)
-		lightArray[i] = *lights->operator[](i);
+	if(lights != nullptr) {
+		Light lightArray[10];
+		for(int i = 0; i < lights->size() && i < 10; i++)
+			lightArray[i] = *lights->operator[](i);
 
-	// Sets the light list in the effect file.
-	mfxLights->SetRawValue((void*)lightArray, 0, sizeof(Light) * lights->size());
-	float size = lights->size();
-	mfxNumLights->SetRawValue(&size, 0, sizeof(float));
+		// Sets the light list in the effect file.
+		float size = min(10, lights->size());
+		mfxLights->SetRawValue((void*)lightArray, 0, sizeof(Light) * size);
+		mfxNumLights->SetRawValue(&size, 0, sizeof(float));
+	}
+	else {
+		float size = 0;
+		mfxNumLights->SetRawValue(&size, 0, sizeof(float));
+	}
 }
 #pragma endregion
 
@@ -473,8 +479,9 @@ void TerrainEffect::Init()
 	BlendMap           = mEffect->GetVariableByName("gBlendMap")->AsShaderResource();
 	HeightMap          = mEffect->GetVariableByName("gHeightMap")->AsShaderResource();
 
-	ToolCenter         = mEffect->GetVariableByName("gToolCenter")->AsVector();
-	ToolRadius           = mEffect->GetVariableByName("gToolRadius")->AsScalar();
+	ToolCenter			= mEffect->GetVariableByName("gToolCenter")->AsVector();
+	ToolRadius          = mEffect->GetVariableByName("gToolRadius")->AsScalar();
+	ArenaRadius         = mEffect->GetVariableByName("gArenaRadius")->AsScalar();
 }
 	
 void TerrainEffect::CreateInputLayout(ID3D11Device* pDevice)
@@ -498,14 +505,20 @@ void TerrainEffect::CreateInputLayout(ID3D11Device* pDevice)
 //! Sets the lights to use in the shader.
 void TerrainEffect::SetLights(LightList* lights)
 {
-	Light lightArray[10];
-	for(int i = 0; i < lights->size(); i++)
-		lightArray[i] = *lights->operator[](i);
+	if(lights != nullptr) {
+		Light lightArray[10];
+		for(int i = 0; i < lights->size() && i < 10; i++)
+			lightArray[i] = *lights->operator[](i);
 
-	// Sets the light list in the effect file.
-	Lights->SetRawValue((void*)lightArray, 0, sizeof(Light) * lights->size());
-	float size = lights->size();
-	NumLights->SetRawValue(&size, 0, sizeof(float));
+		// Sets the light list in the effect file.
+		float size = min(10, lights->size());
+		Lights->SetRawValue((void*)lightArray, 0, sizeof(Light) * size);
+		NumLights->SetRawValue(&size, 0, sizeof(float));
+	}
+	else {
+		float size = 0;
+		NumLights->SetRawValue(&size, 0, sizeof(float));
+	}
 }
 
 #pragma endregion

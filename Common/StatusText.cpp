@@ -33,8 +33,10 @@ StatusText::~StatusText()
 //! Draws the status text.
 void StatusText::Draw(Graphics* pGraphics)
 {
-	if(mTime > 0)	
-		pGraphics->DrawText(mText, mPosition.x, mPosition.y, mSize, mColor);
+	if(mTime > 0)	{
+		float width = pGraphics->MeasureText(mText, mSize, "Arial").Width();
+		pGraphics->DrawText(mText, mPosition.x - width/2, mPosition.y, mSize, mColor);
+	}
 }
 
 //! Updates the timer.
@@ -60,6 +62,21 @@ void StatusText::Activate(float time)
 void StatusText::SetSize(float size)
 {
 	mSize = size;
+}
+
+void StatusText::SetPosition(float x, float y)
+{
+	mPosition = XMFLOAT3(x, y, 0);
+}
+
+XMFLOAT3 StatusText::GetPosition()
+{
+	return mPosition;
+}
+
+bool StatusText::IsTimeOut()
+{
+	return mTime > 0 ? false : true;
 }
 
 }

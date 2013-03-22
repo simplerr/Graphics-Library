@@ -120,7 +120,7 @@ namespace GLib
 		for(int i = 0; i < size; i++) {
 			float height;
 			fin >> height;
-			mHeightMap.push_back(height);
+			mHeightMap.push_back(height);		
 		}
 
 		// Build the heightmap SRV.

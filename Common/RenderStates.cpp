@@ -18,7 +18,7 @@ void RenderStates::InitAll(ID3D11Device* device)
 	transparentDesc.AlphaToCoverageEnable = false;
 	transparentDesc.IndependentBlendEnable = false;
 
-	transparentDesc.RenderTarget[0].BlendEnable = true;
+	transparentDesc.RenderTarget[0].BlendEnable	   = true;
 	transparentDesc.RenderTarget[0].SrcBlend       = D3D11_BLEND_SRC_ALPHA;
 	transparentDesc.RenderTarget[0].DestBlend      = D3D11_BLEND_INV_SRC_ALPHA;
 	transparentDesc.RenderTarget[0].BlendOp        = D3D11_BLEND_OP_ADD;

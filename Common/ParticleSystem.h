@@ -20,9 +20,10 @@ namespace GLib {
 	class ParticleSystem : public GLib::Object3D
 	{
 	public:
-		ParticleSystem(XMFLOAT3 position, string luaScript);
+		ParticleSystem(XMFLOAT3 position, string luaScript, string particleTexture = "lua", float duration = 0.0f);
 		virtual ~ParticleSystem();
 
+		virtual void Init() {};
 		Particle* CreateParticle();
 		void InitLua();
 		virtual void Update(float dt);
@@ -34,14 +35,15 @@ namespace GLib {
 		void SetNumMaxParticles(int numMaxParticles);
 		void SetOriginObject(Object3D* pObject);
 		void SetRadius(float radius);
+		void SetTexture(string texture);
 		
 		void AddParticle();
 
 		float GetTime();
-		void Init() {};
 		bool RayIntersect(XMVECTOR origin, XMVECTOR direction, float& pDist) {return false;}
 		virtual AxisAlignedBox GetBoundingBox();
 		Particle* GetParticle(int id);
+		LuaWrapper* GetLuaWrapper();
 	protected:
 		LuaWrapper*		 mLuaWrapper;
 		ParticleEffect*	 mEffect;

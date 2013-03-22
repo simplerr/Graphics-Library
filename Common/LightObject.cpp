@@ -13,7 +13,7 @@ namespace GLib
 		: Object3D(LIGHT_OBJECT)
 	{
 		// Add test billboards.
-		mBillboard = GLib::GetGraphics()->AddBillboard(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(5, 5), "textures\\light_icon.png"); //[NOTE] Ugly.
+		//mBillboard = GLib::GetGraphics()->AddBillboard(XMFLOAT3(0.0f, 0.0f, 0.0f), XMFLOAT2(5, 5), "textures\\light_icon.png"); //[NOTE] Ugly.
 
 		// Create the light.
 		mLight = new GLib::Light();
@@ -23,7 +23,7 @@ namespace GLib
 	LightObject::~LightObject()
 	{
 		// Remove the billboard.
-		mBillboard->Remove();
+		//mBillboard->Remove();
 
 		// Remove the light from the world.
 		if(GetWorld() != nullptr)
@@ -79,7 +79,7 @@ namespace GLib
 	{
 		Object3D::SetPosition(position);
 		mLight->SetPosition(position);
-		mBillboard->SetPos(position);
+		//mBillboard->SetPos(position);
 	}
 
 	// [NOTE] For some reason the rotation cant be (0, -1, 0) for the shadow mapping to work!
