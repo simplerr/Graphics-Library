@@ -11,7 +11,7 @@ Label::Label(int x, int y, string name, string text)
 {
 	SetFontData("Arial", 30);
 	SetText(text);
-	SetBkgdTexture("textures/crate.dds");
+	SetBkgdTexture("data/textures/crate.dds");
 	SetCustomWidth(0);
 }
 

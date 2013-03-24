@@ -8,7 +8,7 @@
 TextMenu::TextMenu(float x, float y, string name)
 	: BasicControl(x, y, name)
 {
-	SetBkgdTexture("textures/snow.dds");
+	SetBkgdTexture("data/textures/snow.dds");
 	SetDrawBkgd(true);
 	SetFontData("Arial", 30, GLib::ColorRGBA(0, 0, 0, 255));
 	SetSpacing(20.0f);

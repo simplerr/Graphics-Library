@@ -27,7 +27,7 @@ public:
 	// get function
 	template<typename T>
 	T Get(string varname) {
-		char temp[64];
+		char temp[128];
 		memset(temp, 0, sizeof(temp));
 		int i=0;
 		int j=0;

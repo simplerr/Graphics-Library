@@ -27,7 +27,7 @@ ParticleSystem::ParticleSystem(XMFLOAT3 position, string luaScript, string parti
 	SetNumMaxParticles(numMaxParticles);
 	mTextureName = mLuaWrapper->Get<string>("ParticleData.texture");
 
-	if(particleTexture != "lua")
+	if(particleTexture != "lua") 
 		mTextureName = particleTexture;
 
 	if(duration != 0.0f)

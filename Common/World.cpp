@@ -30,14 +30,14 @@ namespace GLib
 	void World::Init(Graphics* pGraphics)
 	{
 		// Create the sky box.
-		mSkyBox = new Sky(pGraphics, "textures/grassenvmap1024.dds", 1000.0f);
+		mSkyBox = new Sky(pGraphics, "data/textures/grassenvmap1024.dds", 1000.0f);
 
 		// Create the terrain.
 		mTerrain = new Terrain();
 
 		// Create the world loader.
 		mWorldLoader = new WorldLoader();
-		mWorldLoader->LoadWorld(this, mTerrain, "world.wmap");
+		mWorldLoader->LoadWorld(this, mTerrain, "data/world.wmap");
 	}
 
 	//! Cleanup the object and light lists.

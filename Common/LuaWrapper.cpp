@@ -24,7 +24,7 @@ void LuaWrapper::Reload()
 	tolua_open(mLuaState);
 
 	tolua_Particle_open(mLuaState);
-	luaL_dofile(mLuaState, mScriptName.c_str());
+	int error = luaL_dofile(mLuaState, mScriptName.c_str());
 }
 
 float LuaWrapper::GetNumber(string function)
